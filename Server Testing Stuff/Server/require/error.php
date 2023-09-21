@@ -1,7 +1,7 @@
 <?php
 function errorResponse($e) {
     return json_encode([
-        'status' => 'error'
+        'status' => 'error',
         'error' => $e
     ]);
 }
