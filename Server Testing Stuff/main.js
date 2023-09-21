@@ -35,28 +35,47 @@ const throwError = (msg) => {
     window.setTimeout(hideError, 5000);
 };
 
-const phpAPI = (url, callback) => {
+const phpAPI = (url, roomCode, callBack) => {
     //Will update later with real functionality, just need to make sure server calls work for now.
-
+const xhr = new XMLHttpRequest();
+  xhr.open('POST', `Server/${url}.php`, true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+    }
+  };
+  //let response = JSON.parse(xhr.responseText);
+  //callBack(response);
+  xhr.send('roomCode='+roomCode);
 };
 
 const host = () => {
-    const regex = /^[a-zA-Z0-9]+$/;
-
-    // TODO: Name entry (Should be 3 < x < 32 chars)
-
     // Game Code Generation ~~~~~~~~
-    code = (Math.random()).toString(36).substring(9);
-    console.log("RoomCode", code);
+    const chars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+    var code = '';
+    for(var i = 0; i < 4; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    console.log("RoomCode:", code);
+    phpAPI('host', code);
     return;
 };
 
 const join = () => {
+    const regex = /^[a-zA-Z0-9]+$/;
     const roomCodeInput = $('room-code');
     const roomCode = roomCodeInput.value;
-    if(roomCode.length != 4) {
+    if(roomCode.length != 4 || !regex.test(roomCode)) {
         throwError("Invalid Room Code!");
+        return;
     }
+    phpAPI('join', roomCode, (response) => {
+        console.log(response.roomCode);
+        if(roomCode == response.roomCode ) {
+            console.log("Joined!");
+        }
+    });
 };
 
 window.onload = async () => {
