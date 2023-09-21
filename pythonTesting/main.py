@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'fwjioewifejijoweffew' #arbitrary string
 
 CLIENT_ID = '585ff571a79142129e95d7f13861c2ea'
-CLIENT_SECRET = '7b230a6351344782a9255fe1767863d2'
+CLIENT_SECRET = '' #insert client secret for songsync app locally before compiling, but don't post it to github as it's a security issue. gonna need to figure out a more secure way of getting the secret in the future
 REDIRECT_URI = 'http://localhost:5000/callback'
 
 AUTH_URL = 'https://accounts.spotify.com/authorize'
@@ -16,7 +16,7 @@ API_BASE_URL = 'https://api.spotify.com/v1/'
 
 @app.route('/')
 def index():
-    return "<center style=\"margin-top:50vh;font-family:Gotham;font-size:50px;\">Welcome to SongSync <br><span style=\"font-size:25px\"><a href='login'>Login with Spotify</a></span></center>"
+    return "<center style=\"margin-top:45vh;font-family:Gotham;font-size:50px;\">Welcome to SongSync <br><span style=\"font-size:25px\"><a href='login'>Login with Spotify</a></span></center>"
 
 @app.route('/login')
 def login():
@@ -25,7 +25,7 @@ def login():
         'response_type': 'code',
         'scope': 'user-read-private user-read-email',
         'redirect_uri': REDIRECT_URI,
-        'show_dialog': True #comment out this line later. this is just to force authentication requests each time for testing
+        'show_dialog': True #comment out this before going to prod. this is just to force authentication requests each time for testing
     }
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
     return redirect(auth_url)
