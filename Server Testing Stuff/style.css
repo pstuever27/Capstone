@@ -57,6 +57,10 @@
     top: 5%;
 }
 
+#host-button:hover{
+    background-color: rgb(63, 255, 194);
+}
+
 #join-button{
     position: absolute;
         background-color: aqua;
@@ -66,6 +70,10 @@
         height: 50%;
         left: 55%;
         top: 5%;
+}
+
+#join-button:hover{
+    background-color: rgb(63, 255, 194);
 }
 
 #room-code {
