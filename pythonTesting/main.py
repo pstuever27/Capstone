@@ -1,13 +1,17 @@
 import requests
 import urllib.parse
+import json
 from datetime import datetime, timedelta
 from flask import Flask, redirect, redirect, request, jsonify, session
+
+with open('config.json') as f:
+    config = json.load(f)
 
 app = Flask(__name__)
 app.secret_key = 'fwjioewifejijoweffew' #arbitrary string
 
 CLIENT_ID = '585ff571a79142129e95d7f13861c2ea'
-CLIENT_SECRET = '' #insert client secret for songsync app locally before compiling, but don't post it to github as it's a security issue. gonna need to figure out a more secure way of getting the secret in the future
+CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = 'http://localhost:5000/callback'
 
 AUTH_URL = 'https://accounts.spotify.com/authorize'
