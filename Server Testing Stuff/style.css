@@ -79,7 +79,7 @@
 }
 
 #host-join {
-    background-color: turquoise;
+    background-color: rgb(95, 95, 95);
     width: fit-content;
     padding: 20px;
     text-align: center;
@@ -91,7 +91,7 @@
 
 #host-button{
     position: absolute;
-    background-color: aqua;
+    background-color: rgb(254, 255, 255);
     border-radius: 5px;
     border-style: none;
     width: 40%;
@@ -101,12 +101,12 @@
 }
 
 #host-button:hover{
-    background-color: rgb(63, 255, 194);
+    background-color: rgb(155, 155, 155);
 }
 
 #join-button{
     position: absolute;
-        background-color: aqua;
+        background-color: rgb(254, 255, 255);;
         border-radius: 5px;
         border-style: none;
         width: 40%;
@@ -116,19 +116,30 @@
 }
 
 #join-button:hover{
-    background-color: rgb(63, 255, 194);
+    background-color: rgb(155, 155, 155);;
 }
 
 #room-code {
     position: relative;
-    background-color: aqua;
+    background-color: rgb(254, 255, 255);
     text-align: center;
     border-radius: 5px;
-    border-style: dashed;
-    border-color: aquamarine;
+    border-style: solid;
+    border-color: rgb(155, 155, 155);
     top: 60%;
+}
+#room-code:hover {
+    color: black;
+    background-color: rgb(155, 155, 155);
 }
 
 body {
     background-color: darkblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    color: white;
+    margin: 0, auto;
+
 }
