@@ -35,30 +35,67 @@ const throwError = (msg) => {
     window.setTimeout(hideError, 5000);
 };
 
+const hideCode = () => {
+    $('code-box').classList.remove('show');
+}
+
+const showCode = (msg, code) => {
+    $('code-box-message').innerText = msg;
+    $('code-box-code').innerText = code;
+    $('code-box').classList.add('show');
+    window.setTimeout(hideCode, 10000);
+}
+
 const phpAPI = (url, roomCode, callBack) => {
     //Will update later with real functionality, just need to make sure server calls work for now.
 const xhr = new XMLHttpRequest();
   xhr.open('POST', `Server/${url}.php`, true);
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.onreadystatechange = () => {
+    
+    xhr.onreadystatechange = () => {
     if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(xhr.responseText);
+        let response;
+        try {
+            response = JSON.parse(xhr.responseText);
+            if (response.status === 'error') {
+                throwError(response.error);
+            }
+            else {
+                callBack(response);
+            }
+        }
+        catch (err) {
+            console.log("here?");
+            throwError(err);
+        }
     }
   };
-  //let response = JSON.parse(xhr.responseText);
-  //callBack(response);
-  xhr.send('roomCode='+roomCode);
+  xhr.send('roomCode=' + roomCode);
 };
 
-const host = () => {
+const genCode = () => {
     // Game Code Generation ~~~~~~~~
     const chars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
     var code = '';
-    for(var i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
         code += chars[Math.floor(Math.random() * chars.length)];
     }
-    console.log("RoomCode:", code);
-    phpAPI('host', code);
+    return code;
+};
+
+const host = () => {
+    var roomCode = genCode();
+    phpAPI('host', roomCode, (response) => {
+        console.log(response.status);
+        if (response.status === 'ok') {
+            showCode("Room Generated!", roomCode);
+        }
+        else {
+            //If that roomcode is already taken, then generate another one.
+            roomCode = genCode();
+            host();
+        }
+    });
     return;
 };
 
@@ -71,9 +108,9 @@ const join = () => {
         return;
     }
     phpAPI('join', roomCode, (response) => {
-        console.log(response.roomCode);
-        if(roomCode == response.roomCode ) {
-            console.log("Joined!");
+        console.log(response);
+        if( response.status === 'ok' ) {
+            showCode("Room Found!", roomCode)
         }
     });
 };

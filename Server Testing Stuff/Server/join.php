@@ -1,30 +1,35 @@
 <?php
 require_once('require/error.php');
 require_once('require/sql.php');
-$mysql = mysqliConnect();
+$mysql = SQLConnect();
 $status = 'wait';
 
 //Check if the gamecode exists
-$stmt = $mysql -> prepare('SELECT roomCode FROM rool WHERE roomCode = ?');
-$stmt -> pind_param('s', $_POST['roomCode']);
+$stmt = $mysql -> prepare('SELECT roomCode FROM room WHERE BINARY roomCode = ?');
+$stmt -> bind_param('s', $_POST['roomCode']);
 $stmt -> execute();
 
 $result = $stmt -> get_result();
-if(!$result) {
-    echo("room doesn't exist!");
+$row = mysqli_fetch_row($result);
+
+if(!$result || !$row) {
+    $status = 'error';
+    $response = ['status' => $status, 
+                 'error' => "Room Doesn't Exist!"    
+                ];
+    echo json_encode($response);
     return;
 }
 else {
-    $roomCode = $result -> fetch_array()[0];
+    $roomCode = $row[0];
     $status = 'ok';
     $response = [
-        'roomCode' => $roomCode
+        'roomCode' => $roomCode,
+        'status' => $status
     ];
     $mysql->close();
-    echo($result);
     echo json_encode($response);
-    exit(200);
 }
-
+exit(200);
 
 ?>
