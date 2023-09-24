@@ -79,7 +79,7 @@
 }
 
 #host-join {
-    background-color: rgb(95, 95, 95);
+    background-color: rgb(255 139 139);
     width: fit-content;
     padding: 20px;
     text-align: center;
@@ -134,7 +134,7 @@
 }
 
 body {
-    background-color: darkblue;
+    background-color: #9393ff;
     font-family: Arial, Helvetica, sans-serif;
 }
 
