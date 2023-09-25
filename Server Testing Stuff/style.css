@@ -119,18 +119,20 @@
     background-color: rgb(155, 155, 155);;
 }
 
-#room-code {
-    position: relative;
-    background-color: rgb(254, 255, 255);
-    text-align: center;
-    border-radius: 5px;
-    border-style: solid;
-    border-color: rgb(155, 155, 155);
-    top: 60%;
-}
-#room-code:hover {
+.code-entry:hover {
     color: black;
     background-color: rgb(155, 155, 155);
+}
+
+.code-entry{
+        position: relative;
+            background-color: rgb(254, 255, 255);
+            text-align: center;
+            border-radius: 5px;
+            border-style: solid;
+            border-color: rgb(155, 155, 155);
+            top: 60%;
+    
 }
 
 body {
