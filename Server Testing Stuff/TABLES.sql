@@ -1,3 +1,4 @@
+--mySQL table setup. Not in use yet
 CREATE TABLE room (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     roomCode VARCHAR(4) NOT NULL PRIMARY KEY,

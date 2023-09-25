@@ -1,3 +1,23 @@
+/**
+ * Prolouge
+ * File: style.css
+ * Description: Style file for html elements
+ * Programmer's Name: Paul Stuever
+ * Date Created: 9/20/2023 
+ * Date Revised: 9/24/2023 - Paul Stuever - Updated CSS styling for basic front-end
+ *  Revision: 9/21/2023 - Paul Stuever - Continuing server work, added more front end style
+ *  Revision: 9/20/2023 - Paul Stuever - File created 
+ * Preconditions: 
+ *  @inputs : Requires HTML elements
+ * Postconditions:
+ *  @returns : Displays CSS styling
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: Will need updating to reflect official UI design
+ * **/
+ 
+ /*Style the error box shown in the lower right corner*/
 #error{
     z-index: 999;
     position: fixed;
@@ -18,23 +38,27 @@
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
+/*When show attribute is given to error, show the error */
 #error.show{
     opacity: 1;
     transform: translateX(0px);
 }
 
+/*Style h2 in error block*/
 #error h2{
     display: block;
     margin: 0;
     padding: 0;
 }
 
+/*Style p in error block*/
 #error p{
     display: block;
     margin: 0;
     padding: 0;
 }
 
+ /*Style the code box shown in the lower right corner*/
 #code-box {
     z-index: 999;
     position: fixed;
@@ -55,29 +79,34 @@
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
+/*Show the code box when given attribute*/
 #code-box.show {
     opacity: 1;
     transform: translateX(0px);
 }
 
+/*Style code box h2*/
 #code-box h2 {
     display: block;
     margin: 0;
     padding: 0;
 }
 
+/*Style code box p*/
 #code-box p {
     display: block;
     margin: 0;
     padding: 0;
 }
 
+/*Style code box h3*/
 #code-box h3 {
     display: block;
     margin: 0;
     padding: 0;
 }
 
+/*Style host-join div container*/
 #host-join {
     background-color: rgb(255 139 139);
     width: fit-content;
@@ -89,6 +118,7 @@
     top: 25%;
 }
 
+/*Style host button*/
 #host-button{
     position: absolute;
     background-color: rgb(254, 255, 255);
@@ -100,10 +130,12 @@
     top: 5%;
 }
 
+/*Style host button on hover*/
 #host-button:hover{
     background-color: rgb(155, 155, 155);
 }
 
+/*Style join buttn*/
 #join-button{
     position: absolute;
         background-color: rgb(254, 255, 255);;
@@ -115,16 +147,19 @@
         top: 5%;
 }
 
+/*Style join button hover*/
 #join-button:hover{
     background-color: rgb(155, 155, 155);;
 }
 
-.code-entry:hover {
+/*Style code text entry hover*/
+#room-code:hover {
     color: black;
     background-color: rgb(155, 155, 155);
 }
 
-.code-entry{
+/*Style code entry box hover*/
+#room-code{
         position: relative;
             background-color: rgb(254, 255, 255);
             text-align: center;
@@ -135,11 +170,13 @@
     
 }
 
+/*Give body background*/
 body {
     background-color: #9393ff;
     font-family: Arial, Helvetica, sans-serif;
 }
 
+/*Give h1 white color*/
 h1 {
     color: white;
     margin: 0, auto;

@@ -1,30 +1,53 @@
+<!--
+/**
+ * Prolouge
+ * File: index.html
+ * Description: Displays basic HTML elements
+ * Programmer's Name: Paul Stuever
+ * Date Created: 9/20/2023 
+ * Date Revised: 9/24/2023 - Paul Stuever - Finished php proof-of-concept
+ *  Revision: 9/20/2023 - Paul Stuever - File created
+ * Preconditions: 
+ *  @inputs : None
+ * Postconditions:
+ *  @returns : Hands input off to JS
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: Will need to be updated to meet new UI standards
+ * **/
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!--Header information-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SongSync</title>
+    <!--main.js is our main script file-->
     <script src="main.js"></script>
+    <!--style.css holds styling for now-->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!--Generic placeholder title-->
     <h1>HOST/JOIN PROOF-OF-CONCEPT</h1>
     <div id="error">
+        <!--Div holds error message handling. Gets changed by innerHtml later in main.js-->
         <h2>Error</h2>
         <p id="error-message">placeholder</p>
     </div>
     <div id="code-box">
+        <!--Code-box displays roomCode information when returned by php. Changed by innerHtml in js-->
         <h2>Room Code</h2>
         <p id="code-box-message">placeholder</p>
         <h3 id="code-box-code">code goes here</h3>
     </div>
     <div id="host-join">
+        <!--Basic interaction buttons. JS listens to buttons and takes input-->
         <button id='host-button'>Host</button>
         <button id='join-button'>Join</button> <br> <br>
-        <input type="text" class="code-entry" id="room-code1" placeholder="S" maxlength="1">
-        <input type="text" class="code-entry" id="room-code2" placeholder="O" maxlength="1">
-        <input type="text" class="code-entry" id="room-code3" placeholder="N" maxlength="1">
-        <input type="text" class="code-entry" id="room-code4" placeholder="G" maxlength="1">
+        <input type="text" id="room-code" placeholder="Room Code" minlength="4" maxlength="4">
     </div>
 </body>
 </html>
