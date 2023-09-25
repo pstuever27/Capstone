@@ -4,19 +4,22 @@ import json
 from datetime import datetime, timedelta
 from flask import Flask, redirect, redirect, request, jsonify, session
 
-with open('config.json') as f:
-    config = json.load(f)
+# This block of code serves to open config.json 
+with open('config.json') as f: # opening the config.json file
+    config = json.load(f) # loading the config.json file into a variable
 
-app = Flask(__name__)
-app.secret_key = 'fwjioewifejijoweffew' #arbitrary string
+app = Flask(__name__) # creating the flask app
+app.secret_key = 'fwjioewifejijoweffew' # arbitrary string
 
-CLIENT_ID = '585ff571a79142129e95d7f13861c2ea'
-CLIENT_SECRET = config['client_secret']
-REDIRECT_URI = 'http://localhost:5000/callback'
+# This block of code is to get the client_id and client_secret from the config.json file
+CLIENT_ID = config['client_id'] # client_id is the key in the config.json file
+CLIENT_SECRET = config['client_secret'] # client_secret is the key in the config.json file
 
-AUTH_URL = 'https://accounts.spotify.com/authorize'
-TOKEN_URL = 'https://accounts.spotify.com/api/token'
-API_BASE_URL = 'https://api.spotify.com/v1/'
+# This block of code is to handle the URI and URLs for the Spotify API
+REDIRECT_URI = 'http://localhost:5000/callback' # redirect_uri is how the user will be redirected after authenticating
+AUTH_URL = 'https://accounts.spotify.com/authorize' # AUTH_URL is the url to authenticate the user
+TOKEN_URL = 'https://accounts.spotify.com/api/token' # TOKEN_URL is the url to get the token
+API_BASE_URL = 'https://api.spotify.com/v1/' # API_BASE_URL is the base url for the api
 
 @app.route('/')
 def index():
