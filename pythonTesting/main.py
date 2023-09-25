@@ -1,3 +1,18 @@
+#--------------------------------
+# File: main.py
+# Description: Python script that generates a Flask webapp. This is a demo that lets a user login to their spotify account and then view their profile or playlist data directly from Spotify API in json format. This is a proof of concept and will be expanded upon in future revisions.
+# Programmer(s): Kieran Delaney, Chinh Nguyen
+# Created on: 9/20/2023
+# Revised on: 9/22/2023
+# Revision: Chinh added the config file to store the Spotify app client secret
+# Preconditions: Must have valid CLIENT_ID and CLIENT_SECRET from spotify app to function. No input values or types from user, since the input is passed through Spotify's login API webpage
+# Postconditions: Return value of app is a json text string, returned to the webpage
+# Error conditions: Errors from callback of Spotify API are displayed on webpage in a json text blurb for all request arguments
+# Side effects: No known side effects
+# Invariants: One invariant of this demo is the "Show dialog" parameter of the login function being set to true. This makes it so that the site will always ask for authentication from spotify
+# Faults: No known faults, apart from the errors that show if CLIENT_ID and CLIENT_SECRET aren't inputted into the code
+#--------------------------------
+
 # IMPORTS: Necessary libraries and modules needed for the app to run correctly
 import requests # importing the requests module for the http requests
 import urllib.parse # importing the urllib.parse module for the url encoding
