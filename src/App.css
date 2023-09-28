@@ -37,6 +37,22 @@
   padding: 2em;
 }
 
+.searchDiv {
+  position: absolute;
+  left:0;
+  margin-left:5vw;
+  width: '500px';
+  height: '100px';
+}
+
+.qDiv {
+  position: absolute;
+  right:0;
+  margin-right:5vw;
+  width: '400px';
+  height: '100px';
+}
+
 .read-the-docs {
   color: #888;
 }
