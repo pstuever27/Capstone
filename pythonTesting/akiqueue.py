@@ -1,16 +1,17 @@
-from flask import Flask, redirect, request, session, url_for, render_template_string
-from flask import jsonify
+from flask import Flask, redirect, request, session, url_for, jsonify, render_template
 import json
 import requests
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enabling CORS
 
 # load config file
 with open('config.json') as f:
     config = json.load(f)
 
-# spotify app credentials
+# Spotify app credentials
 CLIENT_ID = config['client_id']
 CLIENT_SECRET = config['client_secret']
 REDIRECT_URI = 'http://localhost:5000/callback'
@@ -37,15 +38,14 @@ app.secret_key = os.urandom(24)
 @app.route('/')
 def index():
     """Render the HTML page with form."""
-    return render_template_string(open("template.html").read())
+    return render_template("template.html")
 
 @app.route('/login')
 def login():
-    """Redirect user to Spotify login."""
+    """Return the Spotify login URL."""
     auth_url = f"https://accounts.spotify.com/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope=user-modify-playback-state"
-    print("WHY WONT YOU WORK")
-    print(auth_url)
-    return redirect(auth_url)
+    return jsonify({"url": auth_url})
+
 
 @app.route('/callback')
 def callback():
@@ -63,7 +63,10 @@ def callback():
     token_info = response.json()
     session["access_token"] = token_info["access_token"]
     session['song_history'] = [] 
-    return redirect(url_for('index'))
+    
+    # Redirect to React frontend after handling the token
+    react_app_url = 'http://localhost:3000'  # Adjust this to your React app's address
+    return redirect(react_app_url)
 
 @app.route('/add_song', methods=['POST'])
 def add_song():
@@ -93,7 +96,6 @@ def add_song():
         return jsonify({"message": "Track added to queue successfully.", "song_detail": display_text})
     else:
         return jsonify({"message": f"Failed to add track. Response: {response.text}", "song_detail": ""})
-
 
 if __name__ == '__main__':
     app.run(debug=True)
