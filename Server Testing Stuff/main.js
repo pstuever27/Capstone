@@ -58,7 +58,7 @@ const showCode = (msg, code, username) => {
     $('code-box-username').innerText = username;
     $('code-box').classList.add('show');
     //Hide after 10 seconds, will need to be static later
-    window.setTimeout(hideCode, 10000);
+    window.setTimeout(hideCode, 3000);
 }
 
 //Set up PHP calls 
@@ -114,19 +114,12 @@ const genCode = () => {
 
 //When host button is clicked, call this
 const host = () => {
-    // prevent a host from creating a room without giving it or themselves a name
-    if( (username = $('username')).innerText == "" )
-    {
-        throwErorr("Please provide a username.");
-        return;
-    }
-
     var roomCode = genCode();
     //Call host.php with roomcode. Get response JSON
-    phpAPI('host', roomCode, username, (response) => {
+    phpAPI('host', roomCode, "", (response) => {
         //If it's ok, then PHP indicates the roomcode is good
         if (response.status === 'ok') {
-            showCode("Room Generated!", roomCode, username);
+            showCode("Room Generated!", roomCode, "");
         }
         else {
             //If that roomcode is already taken, then generate another one.
@@ -141,7 +134,7 @@ const host = () => {
 //When join button is clicked, call this
 const join = () => {
     // prevent a client from joining a room without providing a name
-    if( (username = $('username').value) == "" )
+    if((username = $('username').value) == "" )
     {
         throwError("Please provide a username.");
         return;
@@ -159,7 +152,7 @@ const join = () => {
         return;
     }
     //If regex good, then call PHP
-    phpAPI('join', roomCode, (response) => {
+    phpAPI('join', roomCode, username, (response) => {
         //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
             showCode("Room Found!", roomCode, username)

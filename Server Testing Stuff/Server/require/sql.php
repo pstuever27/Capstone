@@ -17,7 +17,7 @@
  * **/
 function SQLConnect() {
   //Create mysqli object with authentication information encoded
-  $sql = new mysqli("localhost", "u394330643_songsync", 'o~9>@Kxd4UF9pVzpKi#Z$', 'u394330643_database');
+  $sql = new mysqli("62.72.50.204", "u394330643_songsync", 'o~9>@Kxd4UF9pVzpKi#Z$', 'u394330643_database');
   //Throw error if connection didn't work
   if($sql -> connect_errno) {
     throw new Exception("MySQL database: Connection Failed");

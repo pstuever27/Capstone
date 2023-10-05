@@ -19,7 +19,7 @@
  * **/
 
  //Use the sql.php file
-require_once('require/sql.php');
+require_once('./require/sql.php');
 
 //Connect to SQL
 $mysql = SQLConnect();
@@ -31,6 +31,7 @@ $status = 'wait';
 $stmt = $mysql->prepare('SELECT roomCode FROM room WHERE BINARY roomCode = ?');
 //Set roomCode to param
 $stmt->bind_param('s', $_POST['roomCode']);
+
 //Execute the SQL
 $stmt->execute();
 
