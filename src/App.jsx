@@ -1,24 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQueueState } from "rooks";
 import './App.css'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useAPI } from './SpotifyAPI';
 
 function App() {
-  const exampSongs = [
-    "Shore",
-    "Lundi",
-    "Tokai",
-    "Sugar",
-    "Isobel",
-    "Dorian",
-    "Angel",
-    "Frosti",
-    "Nocturne",
-    "Shadow",
-    "Pink",
-    "What's Going On"
-  ]
+  const [searchResults, setSearchRes] = useState([]);
+  //spotify api call initizations 
+  const { makeRequest: reqSearch } = useAPI('https://api.spotify.com/v1/search'); 
+  //add more api things later, like const { makeRequest: reqPlay } = useAPI('https://api.spotify.com/v1/play'); 
+
+  async function search(){
+    if(inputVal.length==0){
+      return;
+    }
+    reqSearch(`?q=${inputVal}&type=track`)
+      .then(
+        data => {
+          if(!data.tracks){ //handle invalid searches
+            return;
+          }
+          console.log(data);
+          setSearchRes(data.tracks.items.map(item => `${item.name} - ${item.artists[0].name}`))
+        }
+      )
+  }
 
   const [songChoice, setValue] = useState("");
   const [inputVal, setInputValue] = useState("");
@@ -42,11 +49,12 @@ function App() {
           inputValue={inputVal}
           onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
+            search();
           }}
           onChange={(event, newValue) => {
             setValue(newValue);
           }}
-          options={(inputVal=="") ? [] : exampSongs}
+          options={searchResults}
           sx={{ width: 300,}}
           renderInput={(params) => <TextField {...params} label="Search Songs" />}
         />

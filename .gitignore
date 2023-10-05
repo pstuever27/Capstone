@@ -22,4 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.vite
 .vite/*
+# client_secret.json
