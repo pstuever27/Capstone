@@ -1,4 +1,5 @@
 --mySQL table setup. Not in use yet
+--revision: 10/05/2023 - Nicholas Nguyen - added username field 
 CREATE TABLE room (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     roomCode VARCHAR(4) NOT NULL PRIMARY KEY,

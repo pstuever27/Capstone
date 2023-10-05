@@ -19,10 +19,13 @@
  * **/
 //Require error handling
 require_once('require/error.php');
+
 //Require mySQL php file
 require_once('require/sql.php');
+
 //Connect to SQL
 $mysql = SQLConnect();
+
 //Set status to 'wait' until determination is made later
 $status = 'wait';
 
@@ -36,26 +39,34 @@ $stmt -> execute();
 
 //Grab the result from the SQL query
 $result = $stmt -> get_result();
+
 //Get the row 
 $row = mysqli_fetch_row($result);
 
 function unIsUnique()
-{
-    // echo 'poop3';
-    global $mysql;
+{ //open curly
+    global $mysql;    
     //Check if the username exists
-    $unStmt = $mysql -> prepare('SELECT username FROM client WHERE BINARY username = ? AND roomCode = ?');
-    // echo 'poop4';
-    //Set parameter to 'username' & roomcode from JS call
-    $unStmt -> bind_param('ss', $_POST['username'], $_POST['roomCode']);
-    $unStmt -> execute();
+    $un_prepare = $mysql->prepare('SELECT username FROM client WHERE BINARY username = ? AND roomCode = ?');
 
-    $unResult = $unStmt -> get_result();
-    echo $_POST['username'];
-    echo $unResult->num_rows > 0;
-    // echo 'poop5';
-    print( $unResult )[0];
-    return mysqli_fetch_row($unResult)[0]; //return the username
+    //Set parameter to 'username' & roomcode from JS call
+    $un_prepare -> bind_param('ss', $_POST['username'], $_POST['roomCode']);
+    $un_prepare -> execute();
+
+    //"if the username is unique relative to the room"
+    if( $un_prepare->get_result()->num_rows == 0 )
+    {
+        //id is [roomcode]_[username] for each client
+        $id = $_POST['roomCode'].'_'.$_POST['username'];
+        //check if the ID exists
+        $un_insert = $mysql->prepare('INSERT INTO client (username, roomCode, id) VALUES (?, ?, ?)');
+        //set parameter to 'username', 'roomCode' & 'id'
+        $un_insert->bind_param('sss', $_POST['username'], $_POST['roomCode'], $id);
+        $un_insert->execute();
+    }
+
+    //return the username
+    return $_POST['username']; 
 }
 
 //If the row doesn't exist or there was no result, hen the room doesn't exist. Error out
@@ -71,38 +82,41 @@ if(!$result || !$row) {
 }
 //If the row exists...
 else {
-    // echo 'poop1';
     //if the username is unique (relative to the room)
     if(($username = unIsUnique()) != null)
     {
-        // echo 'poop2';
         //Grab the roomCode
-        $roomCode = $row[0];
         $username = $_POST['username'];
+        $roomCode = $_POST['roomCode'];
+
         //Set status to OK
         $status = 'ok';
+
         //Set up JSON to respond with
         $response = [
             'roomCode' => $roomCode,
             'status' => $status,
             'username' => $username
         ];
+
         //Close SQL connection
-        
-
         $mysql->close();
-
     }
-    //otherwise, the username is already taken–prompt for a new one
+
+    //otherwise, the username is already taken (prompt for a new one)
     else
     {
+        //set status to error
         $status = 'error';
+
+        //set up JSON to respond with
         $response = ['status' => $status,
                      'error' => "username already taken" ];
     }
     //Send response
     echo json_encode($response);
 }
+
 //Exit 200 indicates good exit
 exit(200);
 

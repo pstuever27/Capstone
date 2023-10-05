@@ -4,10 +4,11 @@
  * Description: Handles all major javascript functionality for our server
  * Programmer's Name: Paul Stuever
  * Date Created: 9/20/2023
- * Date Revised:9/24/2023
+ * Date Revised: 10/05/2023
  *  Revision: 9/20/2023 - Paul Stuever - File created
  *  Revision: 9/21/2023 - Paul Stuever - Began work on php server integration
  *  Revision: 9/24/2023 - Paul Stuever - Finished preliminary php integration for room codes
+ *  RevusuibL 10/05/2023 - Nicholas Nguyen - Finished implementing username functionality for clients
  *  
  * Preconditions:
  *  @inputs : Will take input from index.html for user input such as room code, or code generation
@@ -93,10 +94,8 @@ const phpAPI = (url, roomCode, username, callBack) => {
         }
     }
     };
-    //Send the roomcode to PHP file
-    xhr.send('roomCode=' + roomCode);
-    //Send the username to the PHP file
-    xhr.send('username=' + username);
+    //Send the roomcode and username to PHP file
+    xhr.send('roomCode=' + roomCode + '&username=' + username);
 };
 
 //Generate a roomcode by random 
@@ -152,6 +151,7 @@ const join = () => {
         return;
     }
     //If regex good, then call PHP
+    console.log( username );
     phpAPI('join', roomCode, username, (response) => {
         //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
