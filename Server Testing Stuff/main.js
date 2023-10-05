@@ -4,10 +4,11 @@
  * Description: Handles all major javascript functionality for our server
  * Programmer's Name: Paul Stuever
  * Date Created: 9/20/2023
- * Date Revised:9/24/2023
+ * Date Revised: 10/05/2023
  *  Revision: 9/20/2023 - Paul Stuever - File created
  *  Revision: 9/21/2023 - Paul Stuever - Began work on php server integration
  *  Revision: 9/24/2023 - Paul Stuever - Finished preliminary php integration for room codes
+ *  RevusuibL 10/05/2023 - Nicholas Nguyen - Finished implementing username functionality for clients
  *  
  * Preconditions:
  *  @inputs : Will take input from index.html for user input such as room code, or code generation
@@ -51,16 +52,18 @@ const hideCode = () => {
 }
 
 //When room code is generated or entered, display room code and corresponding message
-const showCode = (msg, code) => {
+const showCode = (msg, code, username) => {
     $('code-box-message').innerText = msg;
     $('code-box-code').innerText = code;
+    console.log( username );
+    $('code-box-username').innerText = username;
     $('code-box').classList.add('show');
     //Hide after 10 seconds, will need to be static later
-    window.setTimeout(hideCode, 10000);
+    window.setTimeout(hideCode, 3000);
 }
 
 //Set up PHP calls 
-const phpAPI = (url, roomCode, callBack) => {
+const phpAPI = (url, roomCode, username, callBack) => {
     //Will update later with real functionality, just need to make sure server calls work for now.
 
     const xhr = new XMLHttpRequest();
@@ -91,8 +94,8 @@ const phpAPI = (url, roomCode, callBack) => {
         }
     }
     };
-    //Send the roomcode to PHP file
-    xhr.send('roomCode=' + roomCode);
+    //Send the roomcode and username to PHP file
+    xhr.send('roomCode=' + roomCode + '&username=' + username);
 };
 
 //Generate a roomcode by random 
@@ -110,13 +113,12 @@ const genCode = () => {
 
 //When host button is clicked, call this
 const host = () => {
-    //Generate a code
     var roomCode = genCode();
     //Call host.php with roomcode. Get response JSON
-    phpAPI('host', roomCode, (response) => {
+    phpAPI('host', roomCode, "", (response) => {
         //If it's ok, then PHP indicates the roomcode is good
         if (response.status === 'ok') {
-            showCode("Room Generated!", roomCode);
+            showCode("Room Generated!", roomCode, "");
         }
         else {
             //If that roomcode is already taken, then generate another one.
@@ -124,11 +126,19 @@ const host = () => {
             host();
         }
     });
+
     return;
 };
 
 //When join button is clicked, call this
 const join = () => {
+    // prevent a client from joining a room without providing a name
+    if((username = $('username').value) == "" )
+    {
+        throwError("Please provide a username.");
+        return;
+    }
+
     //Regex to test preliminary roomCode entry
     const regex = /^[A-Z0-9]+$/;
     //Gets room-code from html
@@ -141,10 +151,11 @@ const join = () => {
         return;
     }
     //If regex good, then call PHP
-    phpAPI('join', roomCode, (response) => {
+    console.log( username );
+    phpAPI('join', roomCode, username, (response) => {
         //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
-            showCode("Room Found!", roomCode)
+            showCode("Room Found!", roomCode, username)
         }
     });
 };

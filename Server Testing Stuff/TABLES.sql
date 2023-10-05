@@ -1,4 +1,5 @@
 --mySQL table setup. Not in use yet
+--revision: 10/05/2023 - Nicholas Nguyen - added username field 
 CREATE TABLE room (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     roomCode VARCHAR(4) NOT NULL PRIMARY KEY,
@@ -9,6 +10,12 @@ CREATE TABLE client (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     roomCode VARCHAR(32) NOT NULL,
-    userName VARCHAR(32) NOT NULL
+    username VARCHAR(32) NOT NULL
 );
 
+CREATE TABLE host (
+    createdAT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    roomCode VARCHAR(32) NOT NULL,
+    roomName VARCHAR(32) NOT NULL
+);
