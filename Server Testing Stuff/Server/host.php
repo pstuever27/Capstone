@@ -27,7 +27,7 @@ $mysql = SQLConnect();
 //Status to wait
 $status = 'wait';
 
-//Add gamecode to the database if it doesn't already exist
+//Add roomCode to the database if it doesn't already exist
 $stmt = $mysql->prepare('SELECT roomCode FROM room WHERE BINARY roomCode = ?');
 //Set roomCode to param
 $stmt->bind_param('s', $_POST['roomCode']);

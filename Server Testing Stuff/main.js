@@ -51,16 +51,18 @@ const hideCode = () => {
 }
 
 //When room code is generated or entered, display room code and corresponding message
-const showCode = (msg, code) => {
+const showCode = (msg, code, username) => {
     $('code-box-message').innerText = msg;
     $('code-box-code').innerText = code;
+    console.log( username );
+    $('code-box-username').innerText = username;
     $('code-box').classList.add('show');
     //Hide after 10 seconds, will need to be static later
     window.setTimeout(hideCode, 10000);
 }
 
 //Set up PHP calls 
-const phpAPI = (url, roomCode, callBack) => {
+const phpAPI = (url, roomCode, username, callBack) => {
     //Will update later with real functionality, just need to make sure server calls work for now.
 
     const xhr = new XMLHttpRequest();
@@ -93,6 +95,8 @@ const phpAPI = (url, roomCode, callBack) => {
     };
     //Send the roomcode to PHP file
     xhr.send('roomCode=' + roomCode);
+    //Send the username to the PHP file
+    xhr.send('username=' + username);
 };
 
 //Generate a roomcode by random 
@@ -110,13 +114,19 @@ const genCode = () => {
 
 //When host button is clicked, call this
 const host = () => {
-    //Generate a code
+    // prevent a host from creating a room without giving it or themselves a name
+    if( (username = $('username')).innerText == "" )
+    {
+        throwErorr("Please provide a username.");
+        return;
+    }
+
     var roomCode = genCode();
     //Call host.php with roomcode. Get response JSON
-    phpAPI('host', roomCode, (response) => {
+    phpAPI('host', roomCode, username, (response) => {
         //If it's ok, then PHP indicates the roomcode is good
         if (response.status === 'ok') {
-            showCode("Room Generated!", roomCode);
+            showCode("Room Generated!", roomCode, username);
         }
         else {
             //If that roomcode is already taken, then generate another one.
@@ -124,11 +134,19 @@ const host = () => {
             host();
         }
     });
+
     return;
 };
 
 //When join button is clicked, call this
 const join = () => {
+    // prevent a client from joining a room without providing a name
+    if( (username = $('username').value) == "" )
+    {
+        throwError("Please provide a username.");
+        return;
+    }
+
     //Regex to test preliminary roomCode entry
     const regex = /^[A-Z0-9]+$/;
     //Gets room-code from html
@@ -144,7 +162,7 @@ const join = () => {
     phpAPI('join', roomCode, (response) => {
         //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
-            showCode("Room Found!", roomCode)
+            showCode("Room Found!", roomCode, username)
         }
     });
 };
