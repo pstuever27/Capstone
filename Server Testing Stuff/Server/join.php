@@ -54,8 +54,7 @@ function unIsUnique()
     $un_prepare -> execute();
 
     //"if the username is unique relative to the room"
-    if( $un_prepare->get_result()->num_rows == 0 )
-    {
+    if( $un_prepare->get_result()->num_rows == 0 ){
         //id is [roomcode]_[username] for each client
         $id = $_POST['roomCode'].'_'.$_POST['username'];
         //check if the ID exists
@@ -63,10 +62,12 @@ function unIsUnique()
         //set parameter to 'username', 'roomCode' & 'id'
         $un_insert->bind_param('sss', $_POST['username'], $_POST['roomCode'], $id);
         $un_insert->execute();
+        return $_POST['username']; 
     }
 
-    //return the username
-    return $_POST['username']; 
+    else{
+        return null;
+    }
 }
 
 //If the row doesn't exist or there was no result, hen the room doesn't exist. Error out
@@ -82,8 +83,12 @@ if(!$result || !$row) {
 }
 //If the row exists...
 else {
+    //if the username is unique, $username gets assigned a value.
+    //otherwise, $username = null.
+    $username = unIsUnique();
+
     //if the username is unique (relative to the room)
-    if(($username = unIsUnique()) != null)
+    if( $username != null)
     {
         //Grab the roomCode
         $username = $_POST['username'];
