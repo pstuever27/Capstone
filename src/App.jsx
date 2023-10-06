@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQueueState } from "rooks";
 import './App.css'
 import TextField from '@mui/material/TextField';
@@ -34,8 +34,8 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={'./src/assets/logo.png'} className="logo react" alt="React logo" />
+        <a href="https://songsync.live" target="_blank" rel="noreferrer">
+          <img src="./src/assets/logo.png" className="logo react" alt="Songsync logo" />
         </a>
       </div>
       <div className="searchDiv">

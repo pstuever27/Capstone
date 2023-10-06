@@ -1,7 +1,5 @@
 import React from 'react';
-import env from '../client_secret.json'
-
-const CLIENT_ID = "585ff571a79142129e95d7f13861c2ea";
+import env from '../client.json'
 
 export const useAPI = url => {
     const [accessToken, setAccessToken] = React.useState(null); //storing token here
@@ -12,7 +10,7 @@ export const useAPI = url => {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${env.CLIENT_SECRET}`
+            body: `grant_type=client_credentials&client_id=${env.CLIENT_ID}&client_secret=${env.CLIENT_SECRET}`
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param);
         const data = await result.json();
