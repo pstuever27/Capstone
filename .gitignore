@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 .vite
 .vite/*
-client_secret.json
+client.json
 build
 build/*
