@@ -1,58 +1,51 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/*
+ File: App.css
+ Description: Styling of react app
+ Programmer(s): Kieran Delaney
+ Created on: 9/21/2023
+ Revised on: 9/27/2023
+ Revision: Kieran added search and queue divs for styling those sections of the webpage
+ Preconditions: None
+ Postconditions: Sets styling specifications for rendering webpage content
+ Error conditions: None
+ Side effects: No known side effects
+ Invariants: None
+ Faults: None
+*/
+
+#root { /* styling for root id in index.html, effectively setting the default for the whole webpage */
+  max-width: 1280px; /* the max width of the webpage is set to 1280 px */
+  margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
+  padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
+  text-align: center; /* text is centered */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.logo { /* logo class */
+  height: 6em; /* height of logo is set to 6 units relative to the font size of the parent element */
+  padding: 1.5em; /* padding is 1.5 units relative to the font size of the parent element */
+  will-change: filter; /* indicating that we expect this styling to change during runtime */
+  transition: filter 300ms; /* filter transition take 300 miliseconds to complete */
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.logo:hover { /* when hovering on a logo element */
+  filter: drop-shadow(0 0 2em #646cffaa); /* apply a colored shadow */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.searchDiv { /* search div class */
+  position: absolute; /* positioning is absolute to make it stick to the side */
+  left:0; /* on left side of page */
+  margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
+  width: '500px'; /* width of the div is 500px */
+  height: '100px'; /* height of the div is 100px */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.qDiv { /* queue div class */
+  position: absolute; /* positioning is absolute to make it stick to its side */
+  right:0; /* sticks to right side*/
+  margin-right:5vw; /* 5% of the viewport width separates the search div from the right edge of the screen  */
+  width: '400px'; /* 400px wide */
+  height: '100px'; /* 100 px tall */
 }
 
-.card {
-  padding: 2em;
-}
-
-.searchDiv {
-  position: absolute;
-  left:0;
-  margin-left:5vw;
-  width: '500px';
-  height: '100px';
-}
-
-.qDiv {
-  position: absolute;
-  right:0;
-  margin-right:5vw;
-  width: '400px';
-  height: '100px';
-}
-
-.read-the-docs {
-  color: #888;
+.read-the-docs { /* class for showing what tools we're using in its own style */
+  color: #888; /* sets specific color for these words */
 }
