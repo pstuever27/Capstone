@@ -44,8 +44,9 @@ dist-ssr
 
 # git ignores node and vite dependencies
 node_modules
+node_modules/*
 .vite
 .vite/*
 
 #git ignore the client.json file to make sure spotify client ID and secret aren't uploaded to github but can be used locally when testing 
-client.json
+#client.json
