@@ -4,9 +4,9 @@
  * File: index.html
  * Description: Displays basic HTML elements for host who creates room
  * Programmer's Name: Rylan DeGarmo
- * Date Created: 10/7/2023 
+ * Date Created: 10/07/2023 
  * Date Revised: XX/X/XXXX - XXXX XXXX - Placeholder
- *  Revision: 10/7/2023  - RylanDeGarmo - File created
+ *  Revision: 10/07/2023  - Rylan DeGarmo - File created
  * Preconditions: 
  *  @inputs : Takes input from main.js
  * Postconditions:
@@ -29,7 +29,7 @@
     <!--style.css holds styling for now-->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="LoadHost()">
     <!--Generic placeholder title-->
     <h1>HOST PROOF-OF-CONCEPT</h1>
     <div id="error">
@@ -41,7 +41,7 @@
         <!--Code-box displays roomCode information when returned by php. Changed by innerHtml in js-->
         <h2>Room Code</h2>
         <p id="code-box-host-message">placeholder</p>
-        <h3 id="code-box-host-code">code goes here</h3>
+        <h3 id="code-box-host-code">Code goes here</h3>
         <p id="code-box-host-username">username goes here</p>
     </div>
 </body>

@@ -9,7 +9,8 @@
  *  Revision: 9/21/2023 - Paul Stuever - Began work on php server integration
  *  Revision: 9/24/2023 - Paul Stuever - Finished preliminary php integration for room codes
  *  RevusuibL 10/05/2023 - Nicholas Nguyen - Finished implementing username functionality for clients
- *  Revision: 10/07/2023 - Rylan DeGarmo - Added functionality for Host/Join pages
+ *  Revision: 10/07/2023 - Rylan DeGarmo - Added partial functionality for Host/Join pages
+ *  Revision: 10/08/2023 - Rylan DeGarmo - Finished adding functionality for Host/Join pages
  *  
  * Preconditions:
  *  @inputs : Will take input from index.html for user input such as room code, or code generation
@@ -54,20 +55,18 @@ const hideCode = () => {
 
 //When room code is generated, display room code and corresponding message
 const showCodeHost = (msg, code, username) => {
-    $('code-box-host-message').innerText = msg;
-    $('code-box-host-code').innerText = code;
+    localStorage.setItem('message', JSON.stringify(msg));
+    localStorage.setItem('code', JSON.stringify(code));
     console.log( username );
-    $('code-box-host-username').innerText = username;
-    $('code-box-host').classList.add('show');
+    localStorage.setItem('username', JSON.stringify(username));
 }
 
 //When room code is entered, display room code and corresponding message
 const showCodeJoin = (msg, code, username) => {
-    $('code-box-join-message').innerText = msg;
-    $('code-box-join-code').innerText = code;
+    localStorage['message'] = msg;
+    localStorage['code'] = code;
     console.log( username );
-    $('code-box-join-username').innerText = username;
-    $('code-box-join').classList.add('show');
+    localStorage['username'] = username;
 }
 
 //Set up PHP calls 
@@ -128,13 +127,16 @@ const host = () => {
         return;
     }
 
+    location.href="host.html"
+
     var roomCode = genCode();
     //Call host.php with roomcode. Get response JSON
     phpAPI('host', roomCode, "", (response) => {
         //If it's ok, then PHP indicates the roomcode is good and redirects to host page
         if (response.status === 'ok') {
-            location.href="host.html"
             showCodeHost("Room Generated!", roomCode, username);
+
+            location.href="host.html";
         }
         else {
             //If that roomcode is already taken, then generate another one.
@@ -169,15 +171,38 @@ const join = () => {
     //If regex good, then call PHP
     console.log( username );
     phpAPI('join', roomCode, username, (response) => {
-        //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
+        //If the room is found, then open join room display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
-            showCodeJoin("Room Found!", roomCode, username)
+            showCodeJoin("Room Found!", roomCode, username);
+            location.href="join.html";
         }
     });
-
-    //redirect to join page (current href is placeholder)
-    location.href="join.html"
 };
+
+//When load window refreshes, load localStorage information
+const LoadJoin = () => {
+    //$('code-box-join-message').innerText = localStorage.getItem('message');
+    $('code-box-join-message').innerText = 'Test';
+    $('code-box-join-code').innerText = localStorage.getItem('code');
+    $('code-box-join-username').innerText = localStorage.getItem('username');
+
+    //$('code-box-host-message').innerText = localStorage.getItem('message');
+    $('code-box-host-message').innerText = "Test";
+    $('code-box-host-code').innerText = localStorage.getItem('code');
+    $('code-box-host-username').innerText = localStorage.getItem('username');
+}
+
+//When host window refreshes, load localStorage information
+function LoadHost() {
+    let message = localStorage.getItem('message')
+    let code = localStorage.getItem('code')
+    let username = localStorage.getItem('username')
+
+    $('code-box-host-message').innerText = message;
+    //$('code-box-host-message').innerText = "Test";
+    $('code-box-host-code').innerText = code;
+    $('code-box-host-username').innerText = username;
+}
 
 //When the window refreshes
 window.onload = async () => {
@@ -185,4 +210,8 @@ window.onload = async () => {
     //Listen for host or join button and call corresponding function
     $('host-button').addEventListener('click', host);
     $('join-button').addEventListener('click', join);
+
+    //load join and host pages
+    $('code-box-join').addEventListener('load', LoadJoin);
+    $('code-box-host').addEventListener('load', LoadHost);
 };
