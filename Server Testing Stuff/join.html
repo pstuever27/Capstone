@@ -2,15 +2,15 @@
 /**
  * Prolouge
  * File: index.html
- * Description: Displays basic HTML elements
- * Programmer's Name: Paul Stuever
- * Date Created: 9/20/2023 
- * Date Revised: 9/24/2023 - Paul Stuever - Finished php proof-of-concept
- *  Revision: 9/20/2023 - Paul Stuever - File created
+ * Description: Displays basic HTML elements for users who join host room
+ * Programmer's Name: Rylan DeGarmo
+ * Date Created: 10/7/2023 
+ * Date Revised: XX/X/XXXX - XXXX XXXX - Placeholder
+ *  Revision: 10/7/2023  - Rylan DeGarmo - File created
  * Preconditions: 
- *  @inputs : None
+ *  @inputs : Takes input from main.js
  * Postconditions:
- *  @returns : Hands input off to JS
+ *  @returns : No outputs given (at this stage)
  * Error conditions: None
  * Side effects: None
  * Invariants: None
@@ -29,27 +29,20 @@
     <!--style.css holds styling for now-->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="LoadJoin()">
     <!--Generic placeholder title-->
-    <h1>HOST/JOIN PROOF-OF-CONCEPT</h1>
+    <h1>JOIN PROOF-OF-CONCEPT</h1>
     <div id="error">
         <!--Div holds error message handling. Gets changed by innerHtml later in main.js-->
         <h2>Error</h2>
         <p id="error-message">placeholder</p>
     </div>
-    <div id="code-box">
+    <div id="code-box-join">
         <!--Code-box displays roomCode information when returned by php. Changed by innerHtml in js-->
         <h2>Room Code</h2>
-        <p id="code-box-message">placeholder</p>
-        <h3 id="code-box-code">code goes here</h3>
-        <p id="code-box-username">username goes here</p>
-    </div>
-    <div id="host-join">
-        <!--Basic interaction buttons. JS listens to buttons and takes input-->
-        <button id='host-button'>Host</button>
-        <button id='join-button'>Join</button> <br> <br>
-        <input type="text" id="room-code" placeholder="Room Code" minlength="4" maxlength="4"/>
-        <input type="text" id="username" placeholder="What's your name?" minlength="1"; maxlength="32">
+        <p id="code-box-join-message">placeholder</p>
+        <h3 id="code-box-join-code">code goes here</h3>
+        <p id="code-box-join-username">username goes here</p>
     </div>
 </body>
 </html>

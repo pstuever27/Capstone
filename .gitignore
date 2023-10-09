@@ -1,4 +1,23 @@
-# Logs
+# --------------------------------
+#  File: .gitignore
+#  Description: File that prevents files or large dependencies from clouding up our git repo
+#  Programmer(s): Kieran Delaney
+#  Created on: 9/21/2023
+#  Revised on: 9/27/2023
+#  Revision: Added ignoring of .vite files
+#  Revised on: 10/05/2023
+#  Revision: Added ignoring of client_secret.json file which will prevent us from accidentally uploading the spotify dev app clientSecret which is confidential
+#  Revised on: 10/06/2023
+#  Revision: Edited name from client_secret.json to client.json to match the file name change
+#  Preconditions: None
+#  Postconditions: Git ignores the files / directories listed
+#  Error conditions: None
+#  Side effects: No known side effects
+#  Invariants: None
+#  Faults: None
+# --------------------------------
+
+# git ignores log files from being pushed to git repo
 logs
 *.log
 npm-debug.log*
@@ -7,13 +26,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-node_modules/*
+# git ignores dist and local files
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# git ignores editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -23,5 +41,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# git ignores node and vite dependencies
+node_modules
+node_modules/*
 .vite
 .vite/*
+
+#git ignore the client.json file to make sure spotify client ID and secret aren't uploaded to github but can be used locally when testing 
+client.json
