@@ -1,0 +1,51 @@
+/*
+ File: App.css
+ Description: Styling of react app
+ Programmer(s): Kieran Delaney
+ Created on: 9/21/2023
+ Revised on: 9/27/2023
+ Revision: Kieran added search and queue divs for styling those sections of the webpage
+ Preconditions: None
+ Postconditions: Sets styling specifications for rendering webpage content
+ Error conditions: None
+ Side effects: No known side effects
+ Invariants: None
+ Faults: None
+*/
+
+#root { /* styling for root id in index.html, effectively setting the default for the whole webpage */
+  max-width: 1280px; /* the max width of the webpage is set to 1280 px */
+  margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
+  padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
+  text-align: center; /* text is centered */
+}
+
+.logo { /* logo class */
+  height: 6em; /* height of logo is set to 6 units relative to the font size of the parent element */
+  padding: 1.5em; /* padding is 1.5 units relative to the font size of the parent element */
+  will-change: filter; /* indicating that we expect this styling to change during runtime */
+  transition: filter 300ms; /* filter transition take 300 miliseconds to complete */
+}
+.logo:hover { /* when hovering on a logo element */
+  filter: drop-shadow(0 0 2em #646cffaa); /* apply a colored shadow */
+}
+
+.searchDiv { /* search div class */
+  position: absolute; /* positioning is absolute to make it stick to the side */
+  left:0; /* on left side of page */
+  margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
+  width: '500px'; /* width of the div is 500px */
+  height: '100px'; /* height of the div is 100px */
+}
+
+.qDiv { /* queue div class */
+  position: absolute; /* positioning is absolute to make it stick to its side */
+  right:0; /* sticks to right side*/
+  margin-right:5vw; /* 5% of the viewport width separates the search div from the right edge of the screen  */
+  width: '400px'; /* 400px wide */
+  height: '100px'; /* 100 px tall */
+}
+
+.read-the-docs { /* class for showing what tools we're using in its own style */
+  color: #888; /* sets specific color for these words */
+}

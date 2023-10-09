@@ -1,0 +1,81 @@
+/*
+ File: index.css
+ Description: Styling of index.html page
+ Programmer(s): Kieran Delaney
+ Created on: 9/21/2023
+ Preconditions: None
+ Postconditions: Sets styling specifications for rendering webpage content
+ Error conditions: None
+ Side effects: No known side effects
+ Invariants: None
+ Faults: None
+*/
+
+:root { /* styling of root element */
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root */
+  line-height: 1.5; /* line height is 1.5 */
+  font-weight: 400; /* font boldness is 400 */
+
+  color-scheme: light dark; /* color sceme allows for light and dark mode */
+  color: rgba(255, 255, 255, 0.87); /* color of text is defaulted to white */
+  background-color: #a0aaba; /* background color of webpage is set to light blue */
+
+  font-synthesis: none; /* font synthesis is disabled */
+  text-rendering: optimizeLegibility; /* text is rendered to optimize legibility, making it easier to read */
+  -webkit-font-smoothing: antialiased; /* antialiasing is used to make the text less pixelated and easier to read */
+  -moz-osx-font-smoothing: grayscale; /* enables font smoothing for mozilla browsers */
+  -webkit-text-size-adjust: 100%; /* prevents text size adjustments on mobile devices */
+}
+
+a { /* styling for links */
+  font-weight: 500; /* font boldness is 500 */
+  color: #646cff; /* link colors are blue */
+  text-decoration: inherit; /* inherits text decoration from the parent element */
+}
+a:hover { /* styling of links on hover */
+  color: #535bf2; /* slightly changes the hue of the link */
+}
+
+body { /* styling of the body of the webpage */
+  margin: 0; /* 0 margins */
+  display: flex; /* display type is using the flexbox layout */
+  place-items: top; /* items are aligned to the top of the body element */
+  min-width: 320px; /* the min width of the body is 320px */
+  min-height: 100vh; /* the min height of the body is 100% of the viewport height, so the whole screen */
+}
+
+h1 { /* header styling */
+  font-size: 3.2em; /* font size is 3.2 times the parent's font-size */
+  line-height: 1.1; /* line height is scaled to 1.1 */
+}
+
+button { /* button styling */
+  border-radius: 8px; /* corners are rounded by 8 px radially */
+  border: 1px solid transparent; /* border of button are 1px of solid transparent color */
+  padding: 0.6em 1.2em; /* padding is 60% of the parent's for top/bottom and 120% of parent's left/right padding */
+  font-size: 1em; /* font size is the same as the parent's */
+  font-weight: 500; /* font boldness is 500 */
+  font-family: inherit; /* font style is inherited from the parent element */
+  background-color: #1a1a1a; /* background color is dark */
+  cursor: pointer; /* cursor will become a pointer hand when over the button */
+  transition: border-color 0.25s; /* there is a .25 second transition to the new border color when hovering over the button */
+}
+button:hover { /* styling when hovering over button */
+  border-color: #646cff; /* border color becomes blue */
+}
+button:focus, button:focus-visible { /* styling for when a button is focused on (by reaching it with tab keypresses, for example) */
+  outline: 4px auto -webkit-focus-ring-color; /* adds outline to the button when focused on */
+}
+
+@media (prefers-color-scheme: light) { /* applies media query rules when user prefers light color scheme */
+  :root { /* overwrites root text color and background colors to fit their lightmode preferences */
+    color: #213547; /* text color set to darker blue */
+    background-color: #ffffff; /* background color set to pure white */
+  }
+  a:hover { /* overwrites link hovering style */
+    color: #747bff; /* color is different hue of blue */
+  }
+  button { /* overwrites button styling */
+    background-color: #f9f9f9; /* background color set to white for lightmode preferences */
+  }
+}
