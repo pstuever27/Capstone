@@ -4,11 +4,13 @@
  * Description: Handles all major javascript functionality for our server
  * Programmer's Name: Paul Stuever
  * Date Created: 9/20/2023
- * Date Revised: 10/05/2023
+ * Date Revised: 10/07/2023
  *  Revision: 9/20/2023 - Paul Stuever - File created
  *  Revision: 9/21/2023 - Paul Stuever - Began work on php server integration
  *  Revision: 9/24/2023 - Paul Stuever - Finished preliminary php integration for room codes
  *  RevusuibL 10/05/2023 - Nicholas Nguyen - Finished implementing username functionality for clients
+ *  Revision: 10/07/2023 - Rylan DeGarmo - Added partial functionality for Host/Join pages
+ *  Revision: 10/08/2023 - Rylan DeGarmo - Finished adding functionality for Host/Join pages
  *  
  * Preconditions:
  *  @inputs : Will take input from index.html for user input such as room code, or code generation
@@ -51,15 +53,20 @@ const hideCode = () => {
     $('code-box').classList.remove('show');
 }
 
-//When room code is generated or entered, display room code and corresponding message
-const showCode = (msg, code, username) => {
-    $('code-box-message').innerText = msg;
-    $('code-box-code').innerText = code;
+//When room code is generated, display room code and corresponding message
+const showCodeHost = (msg, code, username) => {
+    localStorage.setItem('message', JSON.stringify(msg));
+    localStorage.setItem('code', JSON.stringify(code));
     console.log( username );
-    $('code-box-username').innerText = username;
-    $('code-box').classList.add('show');
-    //Hide after 10 seconds, will need to be static later
-    window.setTimeout(hideCode, 3000);
+    localStorage.setItem('username', JSON.stringify(username));
+}
+
+//When room code is entered, display room code and corresponding message
+const showCodeJoin = (msg, code, username) => {
+    localStorage['message'] = msg;
+    localStorage['code'] = code;
+    console.log( username );
+    localStorage['username'] = username;
 }
 
 //Set up PHP calls 
@@ -113,12 +120,23 @@ const genCode = () => {
 
 //When host button is clicked, call this
 const host = () => {
+    // prevent a client from creating a room without providing a name
+    if((username = $('username').value) == "" )
+    {
+        throwError("Please provide a username.");
+        return;
+    }
+
+    location.href="host.html"
+
     var roomCode = genCode();
     //Call host.php with roomcode. Get response JSON
     phpAPI('host', roomCode, "", (response) => {
-        //If it's ok, then PHP indicates the roomcode is good
+        //If it's ok, then PHP indicates the roomcode is good and redirects to host page
         if (response.status === 'ok') {
-            showCode("Room Generated!", roomCode, "");
+            showCodeHost("Room Generated!", roomCode, username);
+
+            location.href="host.html";
         }
         else {
             //If that roomcode is already taken, then generate another one.
@@ -153,12 +171,38 @@ const join = () => {
     //If regex good, then call PHP
     console.log( username );
     phpAPI('join', roomCode, username, (response) => {
-        //If the room is found, then display roomCode. If not, PHP will show error in phpAPI 
+        //If the room is found, then open join room display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {
-            showCode("Room Found!", roomCode, username)
+            showCodeJoin("Room Found!", roomCode, username);
+            location.href="join.html";
         }
     });
 };
+
+//When load window refreshes, load localStorage information
+const LoadJoin = () => {
+    //$('code-box-join-message').innerText = localStorage.getItem('message');
+    $('code-box-join-message').innerText = 'Test';
+    $('code-box-join-code').innerText = localStorage.getItem('code');
+    $('code-box-join-username').innerText = localStorage.getItem('username');
+
+    //$('code-box-host-message').innerText = localStorage.getItem('message');
+    $('code-box-host-message').innerText = "Test";
+    $('code-box-host-code').innerText = localStorage.getItem('code');
+    $('code-box-host-username').innerText = localStorage.getItem('username');
+}
+
+//When host window refreshes, load localStorage information
+function LoadHost() {
+    let message = localStorage.getItem('message')
+    let code = localStorage.getItem('code')
+    let username = localStorage.getItem('username')
+
+    $('code-box-host-message').innerText = message;
+    //$('code-box-host-message').innerText = "Test";
+    $('code-box-host-code').innerText = code;
+    $('code-box-host-username').innerText = username;
+}
 
 //When the window refreshes
 window.onload = async () => {
@@ -166,4 +210,8 @@ window.onload = async () => {
     //Listen for host or join button and call corresponding function
     $('host-button').addEventListener('click', host);
     $('join-button').addEventListener('click', join);
+
+    //load join and host pages
+    $('code-box-join').addEventListener('load', LoadJoin);
+    $('code-box-host').addEventListener('load', LoadHost);
 };
