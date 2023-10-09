@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Queue App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Add Song to Spotify Queue</h2>
+    <form id="songForm">
+        <label for="track_url">Spotify Track URL or URI:</label><br>
+        <input type="text" id="track_url" name="track_uri"><br><br>
+        <input type="submit" value="Add to Queue">
+    </form>
+    <br>
+    <h3>Added Songs History</h3>
+    <textarea id="songHistory" rows="10" cols="50" readonly></textarea>
+    <br>
+    <a href="/login">Login to Spotify</a>
+
+    <script>
+        $('#songForm').submit(function(e) {
+            e.preventDefault();
+            let track_url = $('#track_url').val();
+            $.post('/add_song', { track_uri: track_url }, function(response) {
+                alert(response.message);
+                if (response.song_detail) {
+                    $('#songHistory').val($('#songHistory').val() + response.song_detail + '\n');
+                }
+            }, 'json')
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                alert("Error: " + errorThrown + ". " + jqXHR.responseText);
+            });
+        });
+    </script>
+</body>
+</html>
