@@ -55,10 +55,10 @@ const hideCode = () => {
 
 //When room code is generated, display room code and corresponding message
 const showCodeHost = (msg, code, username) => {
-    localStorage.setItem('message', JSON.stringify(msg));
-    localStorage.setItem('code', JSON.stringify(code));
+    localStorage.setItem('message', msg);
+    localStorage.setItem('code', code);
     console.log( username );
-    localStorage.setItem('username', JSON.stringify(username));
+    localStorage.setItem('username', username)
 }
 
 //When room code is entered, display room code and corresponding message
