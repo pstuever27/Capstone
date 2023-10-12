@@ -1,7 +1,7 @@
 //--------------------------------
 // File: App.jsx
 // Description: This is the react component that handles the majority of the app frontend and functionality
-// Programmer(s): Kieran Delaney
+// Programmer(s): Kieran Delaney, Chinh Nguyen
 // Created on: 9/21/2023
 // Revised on: 9/27/2023
 // Revision: Kieran made the initial React prototype with an MUI search bar and queue. It allowed for searching dummy songs from a small array of strings, adding them to the queue to be rendered in the queue onscreen, and then removed from the queue with a button as well. 
@@ -9,6 +9,8 @@
 // Revision: Kieran added spotify api calls to the search bar, and replaced the small dummy songs array with an array of the songs sourced from the spotify api responses.
 // Revised on: 10/06/2023
 // Revision: Removed useEffect import from react as it is no longer needed, and set the image link and alt text to be for songsync
+// Revised on: 10/12/2023
+// Revision: Added the spotify login button and functionality to the app, and added the spotify api calls to the queue to allow for play/pause functionality of the queue
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -22,6 +24,11 @@ import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
 import { useAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import env from '../client.json' // importing the spotify dev app client ID and secret from our local json file 
+const CLIENT_ID = env.CLIENT_ID; // sets the client ID to the one imported from the json file
+const REDIRECT_URI = "http://localhost:3000/callback"; // sets the redirect uri to be the local host for now, but will be changed to our website later
+const SCOPES = ["playlist-read-private", "app-remote-control"].join(" "); // sets the scopes to be the ones we need for our app to function
+const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`; // sets the auth url to be the spotify auth url with the client id, redirect uri, and scopes appended to it
 
 function App() { // app function to wrap all the contents of the webpage
   const [searchResults, setSearchRes] = useState([]); // state to save search results to be rendered in search bar
@@ -76,6 +83,7 @@ function App() { // app function to wrap all the contents of the webpage
         />
         
         <button onClick={() => {enqueue(songChoice);setSongChoice("")}} style={{left:500, float:'right',}}>Add to Queue</button>{/* button that adds the selected song to the queue and resets the songchoice to be empty */}
+        <button onClick={() => window.location = AUTH_URL} style={{left:400, float:'left'}}>Login to Spotify</button>{/* button that redirects the user to the spotify login page */}
         
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
