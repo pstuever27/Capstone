@@ -89,7 +89,7 @@ if(!$result || !$row) {
 //If the row exists...
 else {
     // $username is assigned a value if it is unique, otherwise it is assigned null
-    $username = unIsUnique()
+    $username = unIsUnique();
 
     //if the username is unique (relative to the room)
     if( $username != null)

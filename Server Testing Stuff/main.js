@@ -58,7 +58,7 @@ const showCodeHost = (msg, code, username) => {
     localStorage.setItem('message', JSON.stringify(msg));
     localStorage.setItem('code', JSON.stringify(code));
     console.log( username );
-    localStorage.setItem('username', JSON.stringify(username));
+    localStorage.setItem('hostName', JSON.stringify(username));
 }
 
 //When room code is entered, display room code and corresponding message
@@ -84,11 +84,15 @@ const phpAPI = (url, roomCode, username, callBack) => {
         let response;
         //try/catch if JSON works
         try {
+            console.log(xhr.responseText);
             //Response should have a JSON in it, if not, this will error out
             response = JSON.parse(xhr.responseText);
             //If error, then throw an error
             if (response.status === 'error') {
                 throwError(response.error);
+            }
+            if (response.status === 'no-guests') {
+                throwError("No Guests in the Room!");
             }
             //Else, set the callback to the JSON response and return
             else {
@@ -97,6 +101,7 @@ const phpAPI = (url, roomCode, username, callBack) => {
         }
         catch (err) {
             //Catch whatever error was thrown. This also catches PHP errors to display them
+            console.log(err);
             throwError(err);
         }
     }
@@ -179,6 +184,40 @@ const join = () => {
     });
 };
 
+function checkGuests() {
+    let code = localStorage.getItem('code');
+    let hostName = localStorage.getItem('hostName');
+    phpAPI('guest-list', code, hostName, (response) => {
+            const listDiv = document.getElementById('guest-list-guests');
+            if(response.status != 'error') {
+                while(listDiv.firstChild) {
+                        listDiv.removeChild(listDiv.firstChild);
+                    }
+                response.forEach(element => {
+                    var p = document.createElement('p');
+                    var text = document.createTextNode(element.userName);
+                    p.appendChild(text);
+                    listDiv.appendChild(p);
+                });
+            }
+        });
+};
+
+const guestList = () => {
+    const buttonElem = document.getElementById('guest-list-guests')
+    var listShown = buttonElem.classList.contains('show');
+    checkGuests();
+    if(listShown) {
+        var buttonText = 'Show Guest List';
+        buttonElem.classList.remove('show');
+    }
+    else {
+        var buttonText = 'Hide Guest List';
+        buttonElem.classList.add('show');
+    }
+    $('guest-button').innerText = buttonText;
+};
+
 //When load window refreshes, load localStorage information
 const LoadJoin = () => {
     //$('code-box-join-message').innerText = localStorage.getItem('message');
@@ -196,12 +235,17 @@ const LoadJoin = () => {
 function LoadHost() {
     let message = localStorage.getItem('message')
     let code = localStorage.getItem('code')
-    let username = localStorage.getItem('username')
+    let hostName = localStorage.getItem('hostName')
+    guestList;
 
     $('code-box-host-message').innerText = message;
     //$('code-box-host-message').innerText = "Test";
     $('code-box-host-code').innerText = code;
-    $('code-box-host-username').innerText = username;
+    $('code-box-host-username').innerText = hostName;
+    $('guest-button').addEventListener('click', guestList);
+    setInterval(function() {
+            checkGuests();
+    }, 5000);
 }
 
 //When the window refreshes
@@ -214,4 +258,7 @@ window.onload = async () => {
     //load join and host pages
     $('code-box-join').addEventListener('load', LoadJoin);
     $('code-box-host').addEventListener('load', LoadHost);
+    if(document.location.href == '~/host.html'){
+        console.log('yes');
+    }
 };

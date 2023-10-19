@@ -170,6 +170,14 @@
     
 }
 
+#guest-list-guests{
+    opacity: 0;
+}
+
+#guest-list-guests.show{
+    opacity: 1;
+}
+
 /*Give body background*/
 body {
     background-color: #9393ff;
