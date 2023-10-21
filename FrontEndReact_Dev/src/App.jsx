@@ -1,7 +1,7 @@
 //--------------------------------
 // File: App.jsx
 // Description: This is the react component that handles the majority of the app frontend and functionality
-// Programmer(s): Kieran Delaney
+// Programmer(s): Kieran Delaney, Chinh Nguyen
 // Created on: 9/21/2023
 // Revised on: 9/27/2023
 // Revision: Kieran made the initial React prototype with an MUI search bar and queue. It allowed for searching dummy songs from a small array of strings, adding them to the queue to be rendered in the queue onscreen, and then removed from the queue with a button as well. 
@@ -11,6 +11,8 @@
 // Revision: Kieran removed useEffect import from react as it is no longer needed, and set the image link and alt text to be for songsync
 // Revised on: 10/21/2023
 // Revision: Kieran reworked the search bar and searchresults data structure to retain all the spotify data of the track when adding it from the search bar to the queue, rather than losing the data after converting to a string as it was doing in the prototype previously. 
+// Revised on: 10/21/2023
+// REvision: Chinh added the login button to redirect to spotify login page and updated import getAuthUrl from SpotifyAPI.js
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -23,12 +25,13 @@ import { useQueueState } from "rooks"; // imports usequeuestate from available r
 import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
-import { useAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import { useAPI, getAuthUrl } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 
 function App() { // app function to wrap all the contents of the webpage
   const [searchResults, setSearchRes] = useState([]); // state to save search results to be rendered in search bar
   //spotify api call initizations 
   const { makeRequest: reqSearch } = useAPI('https://api.spotify.com/v1/search'); //initializes spotify search base url api call, and sets the reqSearch alias to call makeRequest from the useAPI function definition
+  const authUrl = getAuthUrl(); // gets the auth url from the getAuthUrl function in SpotifyAPI.js
   //add more api call types later as needed, like const { makeRequest: reqPlayer } = useAPI('https://api.spotify.com/v1/me/player'), which could then be used to do play calls reqPlayer('play') or pause reqPlayer('pause') or other functions as specified in the url appending options documented at https://developer.spotify.com/documentation/web-api under REFERENCE > Player
 
   async function search(){ // search function which is calls spotify api search
@@ -80,7 +83,7 @@ function App() { // app function to wrap all the contents of the webpage
         />
         
         <button onClick={() => {if(songChoice!=null)enqueue(songChoice); setSongChoice(null);}} style={{left:500, float:'right',}}>Add to Queue</button>{/* button that adds the selected song to the queue and resets the songchoice to be empty */}
-        
+        <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button>{/* button that redirects the user to the spotify login page */}
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
       <h1 style={{ margin: '20px', textShadow:'1px 1px 2px black' }}>Queue</h1> {/* renders queue title with text shadow */}
