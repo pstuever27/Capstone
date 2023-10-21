@@ -5,6 +5,8 @@
 // Created on: 10/05/2023
 // Revised on: 10/06/2023
 // Revision: Kieran moved client ID to be defined in client.json file and made changes to the API authentication call to handle this change.
+// Revised on: 10/21/2023
+// Revision: Kieran added a popup warning and console warning log for if the client.json file doesn't have our developer app credentials added
 // Preconditions: Must have client ID and client secret in client.json. These credentials are found in the Spotify Development dashboard https://developer.spotify.com/dashboard within the app settings.
 // Postconditions: Returns json data from Spotify to the react app to be parsed and then rendered as needed to the site.
 // Error conditions: If token is null or http status is anything other than the good 200 (401, 400, etc), the Spotify authentication token will be refreshed
@@ -44,6 +46,12 @@ export const useAPI = url => { // exports these functions to the other module th
     };
 
     const makeRequest = async (urlOptions) => { // makerequest function which is the "main" of this api calling system. It takes in an append portion for the base url specified in the useAPI() call, and this append portion urloptions allows for different search requests or other data requests under the same base request type
+        if(env.CLIENT_ID=="add_client_id_locally___Dont_push_to_github_for_security_concerns" || env.CLIENT_SECRET=="add_client_secret_locally___Dont_push_to_github_for_security_concerns"){
+            console.warn("EASY FIX: Don't forget to add the Client ID and Client Secret locally to client.json for this to work!");// added this for testing purposes
+            if(!alert("ERROR: Add Client ID and secret to your local client.json file, or the API calls won't work."))
+                window.location.reload(); //if the client.json file still contains the GitHub placeholder text, show error and then refresh page after user clicks OK
+        }
+        
         // get token if it hasn't been made yet
         let token = accessToken; //sets to local variable so it updates in this render cycle
         if(token == null){ // check if token is the initial null state

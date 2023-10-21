@@ -8,7 +8,9 @@
 // Revised on: 10/05/2023
 // Revision: Kieran added spotify api calls to the search bar, and replaced the small dummy songs array with an array of the songs sourced from the spotify api responses.
 // Revised on: 10/06/2023
-// Revision: Removed useEffect import from react as it is no longer needed, and set the image link and alt text to be for songsync
+// Revision: Kieran removed useEffect import from react as it is no longer needed, and set the image link and alt text to be for songsync
+// Revised on: 10/21/2023
+// Revision: Kieran reworked the search bar and searchresults data structure to retain all the spotify data of the track when adding it from the search bar to the queue, rather than losing the data after converting to a string as it was doing in the prototype previously. 
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -38,12 +40,12 @@ function App() { // app function to wrap all the contents of the webpage
             return; // if no spotify tracks correspond to the search bar input text, return to skip. otherwise we'll try to access track and artist name data that isn't available and get errors.
           }
           console.log(data); // print spotify request json data to the browser's console. useful for navigating through the json structure with the gui dropdowns as a reference on how to access certain data you need within it
-          setSearchRes(data.tracks.items.map(item => `${item.name} - ${item.artists[0].name}`)) // maps each spotify track result to a place in the searchResults array, in the format "TrackName - ArtistName"
+          setSearchRes(data.tracks.items.map(item=>item)) // adds each spotify track data object into our array
         }
       )
   }
 
-  const [songChoice, setSongChoice] = useState(""); // uses a save state to set the song that the user selects from the search results to memory for being inserted into the queue
+  const [songChoice, setSongChoice] = useState(null); // uses a null-initialized save state to set the song that the user selects from the search results to memory for being inserted into the queue
   const [inputVal, setInputValue] = useState(""); // uses a save state to set the text that the user is typing into the search bar to a variable for passing into the api calls and other uses throughout the program
   const [songQueue, { enqueue, dequeue, peek }] = useQueueState([]); // uses the queuestate react save state to maintain the state of the queue over render cycles, and includes the enqueue, dequeue, and peek queue methods for the songQueue alias
 
@@ -65,17 +67,19 @@ function App() { // app function to wrap all the contents of the webpage
           inputValue={inputVal} // saves the text inputted to the search bar by the user to the inputVal save state
           onInputChange={(event, newInputValue) => { //when the user is typing in the search bar, the new text is passed in through the newInputValue argument. the event arguement can be used later if needed, but is required to be listed for the function to work.
             setInputValue(newInputValue); // saves the new text typed in the search bar to the inputvalue state
-            search(); // runs the search function to get the spotify search results based off the text the user inputted
+            if(newInputValue!="") search(); // runs the search function to get the spotify search results based off the text the user inputted
           }}
           onChange={(event, newValue) => { // when the user selects a different search result, the new selected value is passed into this function
             setSongChoice(newValue); // the new song is saved in the songChoice state
           }}
+          isOptionEqualToValue={(option,value)=>`${option.name} - ${option.artists[0].name}`===`${value.name} - ${value.artists[0].name}`} //used to eliminate a warning
+          getOptionLabel={searchResult => `${searchResult.name} - ${searchResult.artists[0].name}`} //renders the song option text in the dropdown in the format "Track - Artist"
           options={searchResults} // the "options" prop takes an array of what will be shown as the listed options that the user can search through. These are set to the searchResults array filled with spotify search results from the search() function
           sx={{ width: 300,}} // sets the width of the search box to be 300 px
           renderInput={(params) => <TextField {...params} label="Search Songs" />} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
         />
         
-        <button onClick={() => {enqueue(songChoice);setSongChoice("")}} style={{left:500, float:'right',}}>Add to Queue</button>{/* button that adds the selected song to the queue and resets the songchoice to be empty */}
+        <button onClick={() => {if(songChoice!=null)enqueue(songChoice); setSongChoice(null);}} style={{left:500, float:'right',}}>Add to Queue</button>{/* button that adds the selected song to the queue and resets the songchoice to be empty */}
         
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
@@ -102,9 +106,9 @@ function App() { // app function to wrap all the contents of the webpage
                     margin: "10px", //distance between song bubbles within the queue render is 10 px
                     textAlign: "center", //the song name is in the center of the bubble
                   }}
-                  key={item} //sets the key of the div to be the name of the item from the queue
+                  key={item.name} //sets the key of the div to be the name of the item from the queue
                 >
-                  {item} {/* renders the content of the item from the queue, in our case the song name */}
+                  {item.name} {/* renders the name of the item from the queue, in our case the song name */}
                 </div>
               );
           })}
@@ -121,7 +125,7 @@ function App() { // app function to wrap all the contents of the webpage
             color: '#000000', //color is black
             fontSize: '20px', //font size is 20px
             margin: '20px'   //sets margin around this to be 20px
-        }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue */}
+        }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
       </div>
       <p className="read-the-docs"> {/* uses the "read-the-docs" styling on this text */}
         Using React + Vite + MaterialUI {/* specifies what tools are being used to render this page */}
