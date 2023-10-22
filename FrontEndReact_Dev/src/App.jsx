@@ -45,6 +45,18 @@ function App() { // app function to wrap all the contents of the webpage
     setSongChoice(null); //resets the song choice to be empty
   }
 
+  // DANGER COMMIT: GET CURRENT PLAYING SONG BUTTON
+  const { makeRequest: getCurrentPlayingSong } = useAPI('https://api.spotify.com/v1/me/player/currently-playing');
+
+  async function showCurrentPlayingSong() {
+    const currentPlaying = await getCurrentPlayingSong();
+    if (currentPlaying && currentPlaying.item) {
+      alert(`Currently playing: ${currentPlaying.item.name} by ${currentPlaying.item.artists.map(artist => artist.name).join(', ')}`);
+    } else {
+      alert('No song currently playing.');
+    }
+  }
+
   async function search(){ // search function which is calls spotify api search
     if(inputVal.length==0){ return; } // if the search bar is empty, don't try to do api calls and simply return to skip
     reqSearch(`?q=${inputVal}&type=track`) // calling the search api call, appending the search query with with search bar field input as the track name being requested
@@ -95,6 +107,8 @@ function App() { // app function to wrap all the contents of the webpage
         
         <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
         <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button>{/* button that redirects the user to the spotify login page */}
+        <button onClick={showCurrentPlayingSong} style={{ left: 600, float: 'right', }}>Show Current Playing Song</button>{/* DANGER COMMIT, NEW BUTTON? */}
+
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
       <h1 style={{ margin: '20px', textShadow:'1px 1px 2px black' }}>Queue</h1> {/* renders queue title with text shadow */}

@@ -18,18 +18,20 @@
 //--------------------------------
 import React from 'react'; // import react dependencies for usestates and exporting modules
 import env from '../client.json' // importing the spotify dev app client ID and secret from our local json file 
+
 const CLIENT_ID = env.CLIENT_ID;
 const CLIENT_SECRET = env.CLIENT_SECRET;
 const REDIRECT_URI = "http://localhost:3000/callback";
-const SCOPES = ["playlist-read-private", "app-remote-control", "user-modify-playback-state"].join(" ");
+const SCOPES = ["playlist-read-private", "app-remote-control", "user-modify-playback-state", "user-read-playback-state"].join(" ");
 
 export const getAuthUrl = () => {
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
     return AUTH_URL;
-  };
+};
 
 export const useAPI = url => { // exports these functions to the other module that imports this file, and takes a base url as a parameter
-    const [accessToken, setAccessToken] = React.useState(null); //storing token here
+    // DANGER COMMIT: I UPDATED TOKEN STORAGE TO BE LOCAL STORAGE
+    const [accessToken, setAccessToken] = React.useState(localStorage.getItem('spotifyAccessToken') || null);; //storing token here
 
     const refreshToken = async () => { // asyncronous function to refresh the spotify authentication function
         const param = { // parameters to the spotify authentication token request call
@@ -41,8 +43,13 @@ export const useAPI = url => { // exports these functions to the other module th
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
-        setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
-        return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
+
+        // DANGER COMMIT: I MADE IT SO IT STORES TOKENS THIS WAY
+        if (data.access_token) {
+            setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
+            localStorage.setItem('spotifyAccessToken', data.access_token);
+        }
+        return data.access_token || null; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
 
     const spotifyFetch = async (url, accessToken) => { // spotify fetch function to get spotify data, passing in the url to specify the type of data being requested, and the authentication token
@@ -84,7 +91,10 @@ export const useAPI = url => { // exports these functions to the other module th
             let result = await queueAddRequest(url+urlOptions,token);
             if (result.status != 204){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token
                 token = await refreshToken(); // overwrites the existing token with a new token
-                result = await queueAddRequest(url+urlOptions,token); // makes the call again with the now valid token
+                // DANGER COMMIT: I ADDED THIS IF STATEMENT
+                if (token) {
+                    result = await queueAddRequest(url+urlOptions,token); // makes the call again with the now valid token
+                }
             }
             /*
                 RESPONSE SAMPLE from https://developer.spotify.com/documentation/web-api/reference/add-to-queue
@@ -94,9 +104,11 @@ export const useAPI = url => { // exports these functions to the other module th
                     "message": "Player command failed: No active device found",
                     "reason": "NO_ACTIVE_DEVICE"
             */
-            if (result.status != 204)
-                if(!alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work."))
-                    window.location.reload();
+           // DANGER COMMIT, I JUST REFORMATTED THIS, IDK
+            if (result.status != 204) {
+                alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work.");
+                window.location.reload();
+            }
             return result.status;
         }
 
@@ -104,7 +116,10 @@ export const useAPI = url => { // exports these functions to the other module th
         let result = await spotifyFetch(url+urlOptions,token); // pass the full url of its base url and specified call details, along with the current token, and set the response to a result variable
         if (result.status != 200){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token
             token = await refreshToken(); // overwrites the existing token with a new token
-            result = await spotifyFetch(url+urlOptions,token); // makes the call again with the now valid token
+            // DANGER COMMIT, I JUST REFORMATTED THIS, IDK
+            if (token) {
+                result = await spotifyFetch(url+urlOptions,token); // makes the call again with the now valid token
+            }
         }
         const data = await result.json(); // converts the response to the reponse body's json data, and binds it to a variable
         return data; //returns this data of the api call request which contains the information we want
