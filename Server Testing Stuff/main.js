@@ -199,6 +199,10 @@ function checkGuests() {
                     p.appendChild(text);
                     listDiv.appendChild(p);
                 });
+
+                setInterval(function() {
+                    checkGuests();
+                }, 5000);
             }
         });
 };
@@ -216,6 +220,18 @@ const guestList = () => {
         buttonElem.classList.add('show');
     }
     $('guest-button').innerText = buttonText;
+};
+
+const closeRoom = () => {
+    let code = localStorage.getItem('code');
+    let hostName = localStorage.getItem('hostName');
+    phpAPI('close-room', code, hostName, (response) => {
+        if(response.status == 'error') {
+            throwError(response.error);
+        } else {
+            location.replace('index.html');
+        }
+    });
 };
 
 //When load window refreshes, load localStorage information
@@ -243,9 +259,7 @@ function LoadHost() {
     $('code-box-host-code').innerText = code;
     $('code-box-host-username').innerText = hostName;
     $('guest-button').addEventListener('click', guestList);
-    setInterval(function() {
-            checkGuests();
-    }, 5000);
+    $('close-room').addEventListener('click', closeRoom);
 }
 
 //When the window refreshes
@@ -258,7 +272,4 @@ window.onload = async () => {
     //load join and host pages
     $('code-box-join').addEventListener('load', LoadJoin);
     $('code-box-host').addEventListener('load', LoadHost);
-    if(document.location.href == '~/host.html'){
-        console.log('yes');
-    }
 };
