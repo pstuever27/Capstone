@@ -21,7 +21,7 @@ import env from '../client.json' // importing the spotify dev app client ID and 
 const CLIENT_ID = env.CLIENT_ID;
 const CLIENT_SECRET = env.CLIENT_SECRET;
 const REDIRECT_URI = "http://localhost:3000/callback";
-const SCOPES = ["playlist-read-private", "app-remote-control"].join(" ");
+const SCOPES = ["playlist-read-private", "app-remote-control", "user-modify-playback-state"].join(" ");
 
 export const getAuthUrl = () => {
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
@@ -56,6 +56,16 @@ export const useAPI = url => { // exports these functions to the other module th
           return await fetch(url,param); // returns the response of the spotify data we're requesting by passing in the request url and our request parameters
     };
 
+    const queueAddRequest = async (url, accessToken) => {
+        const param = { // parameters of the http request
+            method: 'POST', // using the GET method because this will be repeated many times and it is well suited for this use
+            headers: { // specific header formatting of the HTTP request
+              'Authorization': `Bearer ${accessToken}` // the bearer name specifies that authentication is accessible to anyone with the token
+            }
+          };
+          return await fetch(url,param); // returns the response of the spotify data we're requesting by passing in the request url and our request parameters
+    };
+
     const makeRequest = async (urlOptions) => { // makerequest function which is the "main" of this api calling system. It takes in an append portion for the base url specified in the useAPI() call, and this append portion urloptions allows for different search requests or other data requests under the same base request type
         if(CLIENT_ID=="add_client_id_locally___Dont_push_to_github_for_security_concerns" || CLIENT_SECRET=="add_client_secret_locally___Dont_push_to_github_for_security_concerns"){
             console.warn("EASY FIX: Don't forget to add the Client ID and Client Secret locally to client.json for this to work!");// added this for testing purposes
@@ -68,6 +78,28 @@ export const useAPI = url => { // exports these functions to the other module th
         if(token == null){ // check if token is the initial null state
             token = await refreshToken(); // if so, set it to a new token
         }
+
+
+        if(url=='https://api.spotify.com/v1/me/player/queue?uri='){
+            let result = await queueAddRequest(url+urlOptions,token);
+            if (result.status != 204){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token
+                token = await refreshToken(); // overwrites the existing token with a new token
+                result = await queueAddRequest(url+urlOptions,token); // makes the call again with the now valid token
+            }
+            /*
+                RESPONSE SAMPLE from https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+                {
+                "error": {
+                    "status": 404,
+                    "message": "Player command failed: No active device found",
+                    "reason": "NO_ACTIVE_DEVICE"
+            */
+            if (result.status != 204)
+                if(!alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work."))
+                    window.location.reload();
+            return result.status;
+        }
+
         //make the request
         let result = await spotifyFetch(url+urlOptions,token); // pass the full url of its base url and specified call details, along with the current token, and set the response to a result variable
         if (result.status != 200){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token

@@ -33,6 +33,17 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqSearch } = useAPI('https://api.spotify.com/v1/search'); //initializes spotify search base url api call, and sets the reqSearch alias to call makeRequest from the useAPI function definition
   const authUrl = getAuthUrl(); // gets the auth url from the getAuthUrl function in SpotifyAPI.js
   //add more api call types later as needed, like const { makeRequest: reqPlayer } = useAPI('https://api.spotify.com/v1/me/player'), which could then be used to do play calls reqPlayer('play') or pause reqPlayer('pause') or other functions as specified in the url appending options documented at https://developer.spotify.com/documentation/web-api under REFERENCE > Player
+  const { makeRequest: qAdd } = useAPI('https://api.spotify.com/v1/me/player/queue?uri=');
+
+  async function addToQueue(){
+    if(songChoice!=null){
+      enqueue(songChoice); //adds valid song to queue on screen
+      qAdd(`${encodeURIComponent(songChoice.uri)}`)
+        .then(()=>{})
+    }
+
+    setSongChoice(null); //resets the song choice to be empty
+  }
 
   async function search(){ // search function which is calls spotify api search
     if(inputVal.length==0){ return; } // if the search bar is empty, don't try to do api calls and simply return to skip
@@ -82,7 +93,7 @@ function App() { // app function to wrap all the contents of the webpage
           renderInput={(params) => <TextField {...params} label="Search Songs" />} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
         />
         
-        <button onClick={() => {if(songChoice!=null)enqueue(songChoice); setSongChoice(null);}} style={{left:500, float:'right',}}>Add to Queue</button>{/* button that adds the selected song to the queue and resets the songchoice to be empty */}
+        <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
         <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button>{/* button that redirects the user to the spotify login page */}
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
