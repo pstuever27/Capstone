@@ -184,22 +184,32 @@ const join = () => {
     });
 };
 
+//Function checks if there are guests in the room, and updates the list accordingly
 function checkGuests() {
+    //Get roomCode from localstorage
     let code = localStorage.getItem('code');
+    //Get the hostname from localstorage
     let hostName = localStorage.getItem('hostName');
+    //Call phpApi with guest-list.php as the url
     phpAPI('guest-list', code, hostName, (response) => {
+            //Grabs the div containing the list of guests
             const listDiv = document.getElementById('guest-list-guests');
+            //If we have no error return from php...
             if(response.status != 'error') {
+                //Go through the div and remove everything
                 while(listDiv.firstChild) {
                         listDiv.removeChild(listDiv.firstChild);
-                    }
+                }
+                //Now, for each userName we get back
                 response.forEach(element => {
+                    //Make a new p element
                     var p = document.createElement('p');
                     var text = document.createTextNode(element.userName);
                     p.appendChild(text);
+                    //Add it to the div
                     listDiv.appendChild(p);
                 });
-
+                //Since there are guests, check every 5000 seconds to keep updated
                 setInterval(function() {
                     checkGuests();
                 }, 5000);
@@ -207,31 +217,44 @@ function checkGuests() {
         });
 };
 
+//Const function to begin checking for guests
 const guestList = () => {
-    const buttonElem = document.getElementById('guest-list-guests')
+    const buttonElem = document.getElementById('guest-list-guests');
+    //Determine if our list is being shown right now
     var listShown = buttonElem.classList.contains('show');
+    //Call helper function
     checkGuests();
+    //Update button text depending on whether the list is shown or not
     if(listShown) {
         var buttonText = 'Show Guest List';
+        //Hide the list
         buttonElem.classList.remove('show');
     }
     else {
         var buttonText = 'Hide Guest List';
+        //Show the list
         buttonElem.classList.add('show');
     }
+    //Update the button text
     $('guest-button').innerText = buttonText;
 };
 
+//Const function to close the room
 const closeRoom = () => {
+    //Get the code and hostName from localstorage
     let code = localStorage.getItem('code');
     let hostName = localStorage.getItem('hostName');
+    //Call the php api 
     phpAPI('close-room', code, hostName, (response) => {
-        if(response.status == 'error') {
+        //If we get an error then it didn't work
+        if(response.status != 'error') {
             throwError(response.error);
         } else {
+            //Otherwise, redirect back to index.html
             location.replace('index.html');
         }
     });
+    location.replace('index.html');
 };
 
 //When load window refreshes, load localStorage information

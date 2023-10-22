@@ -32,5 +32,5 @@ else{
     }
     echo json_encode($myArray);
 }
-
+exit(200);
 ?>

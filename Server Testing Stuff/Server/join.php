@@ -6,6 +6,7 @@
  * Programmer's Name: Paul Stuever
  * Date Created: 9/21/2023 
  * Date Revised: 10/05/2023 – Nicholas Nguyen – added client username functionality
+ *  Revision: 10/22/2023 - Paul Stuever - Added mySQL close for debugging
  *  Revision: 9/24/2023 - Paul Stuever - Finished php set up for room codes
  *  Revision: 9/21/2023 - Paul Stuever - File created
  * Preconditions: 
@@ -83,6 +84,7 @@ if(!$result || !$row) {
                  'error' => "Room Doesn't Exist!"    
                 ];
     //Send back an error response
+    $result->free_result();
     echo json_encode($response); 
     return;
 }
@@ -109,6 +111,7 @@ else {
         ];
 
         //Close SQL connection
+        $result->free_result();
         $mysql->close();
     }
 
@@ -123,6 +126,8 @@ else {
                      'error' => "username already taken" ];
     }
     //Send response
+    $result->free_result();
+    $mysql->close();
     echo json_encode($response);
 }
 
