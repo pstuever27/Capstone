@@ -6,6 +6,7 @@
  * Programmer's Name: Paul Stuever
  * Date Created: 9/21/2023 
  * Date Revised: 9/24/2023 - Paul Stuever - Finished php set up for room codes
+ *  Revision: 10/22/2023 - Paul Stuever - Added mySQL close for debugging
  *  Revision: 9/21/2023 - Paul Stuever - Continued server work for room codes
  *  Revision: 9/20/2023 - Paul Stuever - File Created
  * Preconditions: 
@@ -68,6 +69,7 @@ else {
     'status' => $status
   ];
   //Send error response
+  $mysql->close();
   echo json_encode($response);
   return;
 }
