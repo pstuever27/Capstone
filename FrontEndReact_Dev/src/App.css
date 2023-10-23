@@ -12,12 +12,14 @@
  Invariants: None
  Faults: None
 */
+@import url("https://use.typekit.net/wwk0mzk.css"); /* proxima nova, roboto, roboto mono */
 
 #root { /* styling for root id in index.html, effectively setting the default for the whole webpage */
   max-width: 1280px; /* the max width of the webpage is set to 1280 px */
   margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
   padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
   text-align: center; /* text is centered */
+  font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root */
 }
 
 .logo { /* logo class */

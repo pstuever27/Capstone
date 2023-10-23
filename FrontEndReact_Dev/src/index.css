@@ -10,9 +10,10 @@
  Invariants: None
  Faults: None
 */
+@import url("https://use.typekit.net/wwk0mzk.css"); /* proxima nova, roboto, roboto mono */
 
 :root { /* styling of root element */
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root */
+  font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root */
   line-height: 1.5; /* line height is 1.5 */
   font-weight: 400; /* font boldness is 400 */
 
@@ -29,7 +30,7 @@
 
 a { /* styling for links */
   font-weight: 500; /* font boldness is 500 */
-  color: #646cff; /* link colors are blue */
+  color: #0ebf95; /* link colors are blue */
   text-decoration: inherit; /* inherits text decoration from the parent element */
 }
 a:hover { /* styling of links on hover */
@@ -70,7 +71,7 @@ button:focus, button:focus-visible { /* styling for when a button is focused on 
 @media (prefers-color-scheme: light) { /* applies media query rules when user prefers light color scheme */
   :root { /* overwrites root text color and background colors to fit their lightmode preferences */
     color: #213547; /* text color set to darker blue */
-    background-color: #ffffff; /* background color set to pure white */
+    background-color: #17DE92; /* background color set to pure white */
   }
   a:hover { /* overwrites link hovering style */
     color: #747bff; /* color is different hue of blue */
