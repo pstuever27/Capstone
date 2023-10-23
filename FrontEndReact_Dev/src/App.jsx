@@ -12,7 +12,9 @@
 // Revised on: 10/21/2023
 // Revision: Kieran reworked the search bar and searchresults data structure to retain all the spotify data of the track when adding it from the search bar to the queue, rather than losing the data after converting to a string as it was doing in the prototype previously. 
 // Revised on: 10/21/2023
-// REvision: Chinh added the login button to redirect to spotify login page and updated import getAuthUrl from SpotifyAPI.js
+// Revision: Chinh added the login button to redirect to spotify login page and updated import getAuthUrl from SpotifyAPI.js
+// Revised on: 10/22/2023
+// Revision: Kieran added add to queue functionality by getting the code from the URL for the user's access token to add the song to their account's queue, and then calling the api function from SpotifyAPI.js
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -25,7 +27,7 @@ import { useQueueState } from "rooks"; // imports usequeuestate from available r
 import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
-import { useAPI, getAuthUrl } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 
 function App() { // app function to wrap all the contents of the webpage
   const [searchResults, setSearchRes] = useState([]); // state to save search results to be rendered in search bar
@@ -33,13 +35,18 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqSearch } = useAPI('https://api.spotify.com/v1/search'); //initializes spotify search base url api call, and sets the reqSearch alias to call makeRequest from the useAPI function definition
   const authUrl = getAuthUrl(); // gets the auth url from the getAuthUrl function in SpotifyAPI.js
   //add more api call types later as needed, like const { makeRequest: reqPlayer } = useAPI('https://api.spotify.com/v1/me/player'), which could then be used to do play calls reqPlayer('play') or pause reqPlayer('pause') or other functions as specified in the url appending options documented at https://developer.spotify.com/documentation/web-api under REFERENCE > Player
-  const { makeRequest: qAdd } = useAPI('https://api.spotify.com/v1/me/player/queue?uri=');
+  const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
 
   async function addToQueue(){
     if(songChoice!=null){
       enqueue(songChoice); //adds valid song to queue on screen
-      qAdd(`${encodeURIComponent(songChoice.uri)}`)
-        .then(()=>{})
+      if (window.location.pathname === '/callback') { //if user has logged into spotify and the callback result is in the url bar
+        let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
+        let code = urlParams.get('code') || "empty"; //gets code from the url, or sets code variable to "empty" if the url doesn't contain a code
+        reqPlayer(`/queue?uri=${encodeURIComponent(songChoice.uri)}`, code) //calls the add to queue API request
+          .then(()=>{})    //nothing to return 
+      }
+      else alert("Must login to add song to Spotify queue."); //if the url doesn't contain callback, it means they didn't login to spotify first 
     }
 
     setSongChoice(null); //resets the song choice to be empty
