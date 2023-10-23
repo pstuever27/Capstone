@@ -1,0 +1,48 @@
+<!--
+/**
+ * Prolouge
+ * File: index.html
+ * Description: Displays basic HTML elements for users who join host room
+ * Programmer's Name: Rylan DeGarmo
+ * Date Created: 10/7/2023 
+ * Date Revised: XX/X/XXXX - XXXX XXXX - Placeholder
+ *  Revision: 10/7/2023  - Rylan DeGarmo - File created
+ * Preconditions: 
+ *  @inputs : Takes input from main.js
+ * Postconditions:
+ *  @returns : No outputs given (at this stage)
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: Will need to be updated to meet new UI standards
+ * **/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Header information-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SongSync</title>
+    <!--main.js is our main script file-->
+    <script src="main.js"></script>
+    <!--style.css holds styling for now-->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="LoadJoin()">
+    <!--Generic placeholder title-->
+    <h1>JOIN PROOF-OF-CONCEPT</h1>
+    <div id="error">
+        <!--Div holds error message handling. Gets changed by innerHtml later in main.js-->
+        <h2>Error</h2>
+        <p id="error-message">placeholder</p>
+    </div>
+    <div id="code-box-join">
+        <!--Code-box displays roomCode information when returned by php. Changed by innerHtml in js-->
+        <h2>Room Code</h2>
+        <p id="code-box-join-message">placeholder</p>
+        <h3 id="code-box-join-code">code goes here</h3>
+        <p id="code-box-join-username">username goes here</p>
+    </div>
+</body>
+</html>
