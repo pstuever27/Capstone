@@ -1,7 +1,7 @@
 //--------------------------------
 // File: App.jsx
 // Description: This is the react component that handles the majority of the app frontend and functionality
-// Programmer(s): Kieran Delaney, Chinh Nguyen
+// Programmer(s): Kieran Delaney, Chinh Nguyen, Nicholas Nguyen
 // Created on: 9/21/2023
 // Revised on: 9/27/2023
 // Revision: Kieran made the initial React prototype with an MUI search bar and queue. It allowed for searching dummy songs from a small array of strings, adding them to the queue to be rendered in the queue onscreen, and then removed from the queue with a button as well. 
@@ -13,6 +13,8 @@
 // Revision: Kieran reworked the search bar and searchresults data structure to retain all the spotify data of the track when adding it from the search bar to the queue, rather than losing the data after converting to a string as it was doing in the prototype previously. 
 // Revised on: 10/21/2023
 // REvision: Chinh added the login button to redirect to spotify login page and updated import getAuthUrl from SpotifyAPI.js
+// Revised on: 10/22/2023
+// Revision: Nicholas added styling for the background, queue list, search header, and buttons
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
