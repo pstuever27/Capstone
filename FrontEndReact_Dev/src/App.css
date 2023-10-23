@@ -1,10 +1,12 @@
 /*
  File: App.css
  Description: Styling of react app
- Programmer(s): Kieran Delaney
+ Programmer(s): Kieran Delaney, Nicholas Nguyen
  Created on: 9/21/2023
  Revised on: 9/27/2023
  Revision: Kieran added search and queue divs for styling those sections of the webpage
+ Revised on: 10/22/2023
+ Revosopm: Nicholas changed the font-family for the entirety of thewebpage
  Preconditions: None
  Postconditions: Sets styling specifications for rendering webpage content
  Error conditions: None
@@ -13,11 +15,15 @@
  Faults: None
 */
 
+/*Adobe Fonts import specifically for SognSync*/
+@import url("https://use.typekit.net/wwk0mzk.css"); /* proxima nova, roboto, roboto mono */
+
 #root { /* styling for root id in index.html, effectively setting the default for the whole webpage */
   max-width: 1280px; /* the max width of the webpage is set to 1280 px */
   margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
   padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
   text-align: center; /* text is centered */
+  font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root, proxima-nova is the main becuase it follows hte branding */
 }
 
 .logo { /* logo class */
