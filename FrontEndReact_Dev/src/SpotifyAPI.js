@@ -11,6 +11,8 @@
 // Revision: Chinh added the getAuthUrl() function to get the authentication url for the spotify login and added variables for client id/secret, redirect uri, and scopes
 // Revised on: 10/22/2023
 // Revision: Kieran added the add to queue functionality by adding a useHostAPI function for the different style of authentication that's required to be able to do those calls which affect a spotify premium user
+// Revised on: 10/25/2023
+// Revision: Kieran added the logout function to the UseHostAPI which clears the saved token states from the app
 // Preconditions: Must have client ID and client secret in client.json. These credentials are found in the Spotify Development dashboard https://developer.spotify.com/dashboard within the app settings.
 // Postconditions: Returns json data from Spotify to the react app to be parsed and then rendered as needed to the site.
 // Error conditions: If token is null or http status is anything other than the good 200 (401, 400, etc), the Spotify authentication token will be refreshed
@@ -87,6 +89,10 @@ export const useAPI = url => { // exports these functions to the other module th
 export const useHostAPI = url => { // this is needed for api calls that work with user spotify data, as the authentication process is different than for the useapi calls and requires different priveledges 
     const [hostAccessToken, setAccessToken] = React.useState(null); //storing token here
     const [refreshTokenParam, setRefreshToken] = React.useState(null); //storing refresh token here
+    const logout = () =>{ //logout function that clears the tokens stored in the states
+        setAccessToken(null); //reverts the access token save back to null
+        setRefreshToken(null); //reverts the refreshtoken parameter save back to null
+    }
 
     const createToken = async (code) => { // asyncronous function to refresh the spotify authentication function
         if(code=="empty")return; //handle edge case 
@@ -177,5 +183,5 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         return result.status;
     };
 
-    return { makeRequest }; // returns the makerequest object which contains the api response data
+    return { makeRequest, logout }; // returns the makerequest object which contains the api response data, and returns the logout function so it can be called in App.jsx
 };

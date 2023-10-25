@@ -17,6 +17,8 @@
 // Revision: Kieran added add to queue functionality by getting the code from the URL for the user's access token to add the song to their account's queue, and then calling the api function from SpotifyAPI.js
 // Revised on: 10/22/2023
 // Revision: Nicholas added styling for the background, queue list, search header, and buttons
+// Revised on: 10/25/2023
+// Revision: Kieran added a ternary switch to the login button to make it become a logout button after being pressed and having the user login. Clicking this logout button then clears the saved spotify token for the user who logged in, and returns the site back to its base address
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -41,6 +43,7 @@ function App() { // app function to wrap all the contents of the webpage
   const authUrl = getAuthUrl(); // gets the auth url from the getAuthUrl function in SpotifyAPI.js
   //add more api call types later as needed, like const { makeRequest: reqPlayer } = useAPI('https://api.spotify.com/v1/me/player'), which could then be used to do play calls reqPlayer('play') or pause reqPlayer('pause') or other functions as specified in the url appending options documented at https://developer.spotify.com/documentation/web-api under REFERENCE > Player
   const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
+  const { logout: logoutUser } = useHostAPI(''); //function call for logging out from spotify
 
   async function addToQueue(){
     if(songChoice!=null){
@@ -133,7 +136,12 @@ function App() { // app function to wrap all the contents of the webpage
         />
         
         <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
-        <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button>{/* button that redirects the user to the spotify login page */}
+        {
+          !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+          <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+          : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+          <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+        }
 
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
