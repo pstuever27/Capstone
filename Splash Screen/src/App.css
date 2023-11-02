@@ -25,6 +25,18 @@ html
     font-family: proxima-nova, Helvetica, Arial, sans-serif;
 }
 
+#hidden-logo
+{
+    position: absolute;
+    top: -100px;
+}
+
+img {
+    -webkit-filter: invert(1);
+    filter: invert(1);
+    pointer-events: none; /* disable mouse events on the image */
+}
+
 #main-container 
 {
     display: flex; /* flexboxing */
