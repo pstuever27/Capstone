@@ -28,7 +28,9 @@ html
 #hidden-logo
 {
     position: absolute;
-    top: -100px;
+    align-items: center; /* horizontally centered */
+    justify-content: center; /* vertically centered */
+    z-index: -1;
 }
 
 img {
