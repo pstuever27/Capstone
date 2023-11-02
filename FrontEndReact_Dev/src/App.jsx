@@ -19,6 +19,10 @@
 // Revision: Nicholas added styling for the background, queue list, search header, and buttons
 // Revised on: 10/25/2023
 // Revision: Kieran added a ternary switch to the login button to make it become a logout button after being pressed and having the user login. Clicking this logout button then clears the saved spotify token for the user who logged in, and returns the site back to its base address
+// Revised on: 11/01/2023
+// Revision: Kieran rewrote the queue to render using a single column dynamic MUI grid to render the songs top down as they're added to the queue
+// Revised on: 11/02/2023
+// Revision: Kieran ported the MUI grid to be a Mantine grid, as team has decided to change our UI system from MUI to Mantine
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -153,14 +157,14 @@ function App() { // app function to wrap all the contents of the webpage
               width: '400px', //400px wide
               fontSize: '20px', //font size is 20px
               margin: '20px',  //margins around queue render are 20px
-              borderRadius: '5px'
+              borderRadius: '5px' //rounded corners
           }}
           >
           {songQueue.map((song) => { //maps each song of the queue to a div rendering of the song name
             return ( //beings return statement that for arrow function
             <Grid.Col 
               span={12} //this makes it so the grid is a single column
-              key={song.name} 
+              key={song.name} //used for iterating of map from SongQueue
               style={{  //specifies the styling of these song bubble divs
                 padding: "5px", // padding is 5px between the text and the background bubble
                 background: "#1189bd", //specifies the color of the background of the song bubble
@@ -169,7 +173,7 @@ function App() { // app function to wrap all the contents of the webpage
                 textAlign: "left", //the song name is in the center of the bubble
               }}
             >
-              {song.name} {/* rendering the song name for the contents of the grid row */}
+              {song.name} {/* rendering the song name as the contents of the grid row */}
             </Grid.Col>
           );})}
         </Grid>
