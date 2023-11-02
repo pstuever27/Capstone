@@ -19,7 +19,7 @@
 
   color-scheme: light dark; /* color sceme allows for light and dark mode */
   color: rgba(255, 255, 255, 0.87); /* color of text is defaulted to white */
-  background-color: #a0aaba; /* background color of webpage is set to light blue */
+  background-color: #17DE92; /* background color of webpage is set to spotify green */
 
   font-synthesis: none; /* font synthesis is disabled */
   text-rendering: optimizeLegibility; /* text is rendered to optimize legibility, making it easier to read */
@@ -71,7 +71,7 @@ button:focus, button:focus-visible { /* styling for when a button is focused on 
 @media (prefers-color-scheme: light) { /* applies media query rules when user prefers light color scheme */
   :root { /* overwrites root text color and background colors to fit their lightmode preferences */
     color: #213547; /* text color set to darker blue */
-    background-color: #17DE92; /* background color set to pure white */
+    background-color: #17DE92; /* background color set to green */
   }
   a:hover { /* overwrites link hovering style */
     color: #747bff; /* color is different hue of blue */
