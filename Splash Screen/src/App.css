@@ -1,0 +1,90 @@
+/**
+ * Prolouge
+ * File: app.js
+ * Description: styles splashscreen components
+ *              
+ * Programmer's Name: Nicholas Nguyen
+ * Date Created: 11/1/2023
+ * Date Revised: 11/1/2023 - Nicholas Nguyen - Began Splashscreen UI Integration
+ *  Revision: 11/1/2023 - Nicholas Nguyen - Began Splashscreen UI Integration
+ * Preconditions: 
+ *  @inputs : None
+ * Postconditions:
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
+/* import for proxima nova, DO NOT use outside of this project. */ 
+@import url("https://use.typekit.net/wwk0mzk.css"); 
+
+html
+{
+    font-family: proxima-nova, Helvetica, Arial, sans-serif;
+}
+
+#main-container 
+{
+    display: flex; /* flexboxing */
+    align-items: center; /* horizontally centered */
+    justify-content: center; /* vertically centered */ 
+    background-color: #17DE92; /* main SongSync UI Color */
+    height: 100vh;
+}
+
+#input-container
+{
+    display: flex; /* flexboxing */
+    align-items: center; /* horizontally centered */
+    margin: 2px; /* set 5px margin on all sides so input
+                    boxes aren't touching each other */
+}
+
+.sync-button
+{
+    background: none;
+    border: none;
+    font-size: 60px;
+    margin: 0;
+    padding: 0;
+    font-family: proxima-nova, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.blackBackground
+{
+    background-color: black;
+    color: #17DE92;
+}
+
+.tealBackground
+{
+    background-color: #12B476;
+    color: #FFFFFF;
+}
+
+.blackText
+{
+    color: #000000;
+}
+
+.tealText
+{
+    background: none;
+    color: #12B476; 
+}
+
+.code-input 
+{
+    width: 50px;
+    height: 65px;
+    margin: 2px;
+    font-size: 50px;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 7.5px;
+    border-style: none;
+    font-family: proxima-nova, Helvetica, Arial, sans-serif;
+}
