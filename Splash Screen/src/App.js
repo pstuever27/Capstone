@@ -15,11 +15,11 @@
  * Error conditions: None
  * Side effects: None
  * Invariants: None
- * Known Faults: 
+ * Known Faults: must integrate PHP backend
  * **/
 
 import React from 'react';
-import Splash from './Splash';
+import Splash from './Splash'; 
 
 function App() 
 {
