@@ -3,10 +3,12 @@
  * File: Splash.js
  * Description: represents functionality for the input fields
  *              
- * Programmer's Name: Nicholas Nguyen
+ * Programmer(s): Nicholas Nguyen, Chinh Nguyen
  * Date Created: 11/1/2023
- * Date Revised: 11/1/2023 - Nicholas Nguyen - Began Splashscreen UI Integration
- *  Revision: 11/1/2023 - Nicholas Nguyen - Began Splashscreen UI Integration
+ * Date Revised: 11/1/2023 - Nicholas Nguyen
+ *  Revision: 11/1/2023 - Began Splashscreen UI Integration
+ * Date Revised: 11/2/2023 - Chinh Nguyen
+ *  Revision: Added fade out effect once user finishes input
  * Preconditions: 
  *  @inputs : None
  * Postconditions:
@@ -97,6 +99,21 @@ function Splash()
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                 } );
                 console.log( "black" );
+
+                // this block of code is for the fade out effect
+                setTimeout(() => {
+                    const mainContainer = document.getElementById("main-container"); // get the main container
+                    let opacity = 1; // set the opacity to 1
+                    const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
+                        opacity -= 0.01; // decrease the opacity by 0.01
+                        mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
+                        if (opacity <= 0) { // if the opacity is less than or equal to 0
+                            clearInterval(intervalId); // clear the interval
+                        }
+                    }, 9); // milliseconds per update
+                }, 350); // milliseconds before fade out
+
+                // do whatever else we need to do
             }
 
             else
