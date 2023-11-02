@@ -3,6 +3,8 @@
 // Description: This is the react component that does the explicit rendering of the site
 // Programmer(s): Kieran Delaney
 // Created on: 9/21/2023
+// Revised on: 11/02/2023
+// Revision: Kieran wrapped the react app root in the MantineProvider element to fix a bug with Mantine not rendering
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders entire react app to the DOM.
 // Error conditions: None
