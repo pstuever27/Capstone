@@ -120,7 +120,8 @@ function Splash()
                             // This block of code handles the fade in effect of logo!
                             setTimeout(() => {
                                 const hiddenLogo = document.getElementById("hidden-logo"); // get the main container
-                                hiddenLogo.style.top = "430px"; // moving image to center
+                                hiddenLogo.style.zIndex = 2; // set the z-index to 1
+                                inputContainer.style.zIndex = 1; // set the background color to black
                                 let opacity = 0; // variable to hold the opacity
                                 const intervalId = setInterval(() => { // set an interval to run every x milliseconds
                                     opacity += 0.01; // increase the opacity by 0.01
