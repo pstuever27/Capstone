@@ -229,11 +229,15 @@ const guestList = () => {
         var buttonText = 'Show Guest List';
         //Hide the list
         buttonElem.classList.remove('show');
+        //Hide kick menu
+        document.getElementById('kick').classList.remove('show');
     }
     else {
         var buttonText = 'Hide Guest List';
         //Show the list
         buttonElem.classList.add('show');
+        //Show kick menu
+        document.getElementById('kick').classList.add('show');
     }
     //Update the button text
     $('guest-button').innerText = buttonText;
@@ -255,6 +259,11 @@ const closeRoom = () => {
         }
     });
     location.replace('index.html');
+};
+
+//Const function to kick guest
+const kickGuest = () => {
+
 };
 
 //When load window refreshes, load localStorage information
