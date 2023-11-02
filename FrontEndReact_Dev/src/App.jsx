@@ -31,7 +31,7 @@ import { useQueueState } from "rooks"; // imports usequeuestate from available r
 import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
-import Grid from '@mui/material/Grid'; //mui grid container for dynamically rendering queue on screens of varying sizes
+import { Grid } from '@mantine/core'; //mantine grid container for dynamically rendering queue on screens of varying sizes
 import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 
 // for use when importing proxima nova
@@ -148,29 +148,29 @@ function App() { // app function to wrap all the contents of the webpage
       <div className='qDiv'> {/* queue div with qDiv css styling */}
       <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
         <div>
-          <Grid container columns={1}
+          <Grid
             style={{ //styling of the queue render
               width: '400px', //400px wide
-              height: 'auto', //60 px tall
               fontSize: '20px', //font size is 20px
               margin: '20px',  //margins around queue render are 20px
-              background: 'rgba( 0, 0, 0, 0.2 )',
               borderRadius: '5px'
           }}
           >
           {songQueue.map((song) => { //maps each song of the queue to a div rendering of the song name
             return ( //beings return statement that for arrow function
-            <Grid item key={song.name} style={{  //specifies the styling of these song bubble divs
-              width: "400px", //width is automatically set to best fit the text
-              padding: "5px", // padding is 5px between the text and the background bubble
-              height: "auto", // height of the song bubble is 30px
-              background: "#1189bd", //specifies the color of the background of the song bubble
-              borderRadius: "5px", //specifies how rounded the corners of the song bubble are
-              margin: "10px", //distance between song bubbles within the queue render is 10 px
-              textAlign: "left", //the song name is in the center of the bubble
-            }}>
-              {song.name}
-            </Grid>
+            <Grid.Col 
+              span={12} //this makes it so the grid is a single column
+              key={song.name} 
+              style={{  //specifies the styling of these song bubble divs
+                padding: "5px", // padding is 5px between the text and the background bubble
+                background: "#1189bd", //specifies the color of the background of the song bubble
+                borderRadius: "5px", //specifies how rounded the corners of the song bubble are
+                margin: "10px", //distance between song bubbles within the queue render is 10 px
+                textAlign: "left", //the song name is in the center of the bubble
+              }}
+            >
+              {song.name} {/* rendering the song name for the contents of the grid row */}
+            </Grid.Col>
           );})}
         </Grid>
         </div>
