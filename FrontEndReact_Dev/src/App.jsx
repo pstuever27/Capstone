@@ -31,6 +31,7 @@ import { useQueueState } from "rooks"; // imports usequeuestate from available r
 import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
+import Grid from '@mui/material/Grid'; //mui grid container for dynamically rendering queue on screens of varying sizes
 import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 
 // for use when importing proxima nova
@@ -113,7 +114,7 @@ function App() { // app function to wrap all the contents of the webpage
         </a>
       </div>
       <div className="searchDiv"> {/* div for search bar, using the searchDiv styling */}
-      <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
+        <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
         <Autocomplete  // autocomplete MUI component for rendering the search results under the search bar as the user types
           disablePortal  // allows for customizing the style of the popper component, which isn't possible for portal-based autocomplete components
           autoHighlight // automatically does a focused highlight on the first search result, so the user can quickly type and hit the enter key on that top result, or use the arrow keys to select a different one from the list
@@ -146,36 +147,32 @@ function App() { // app function to wrap all the contents of the webpage
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
       <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
-        <div style={{ //styling of the queue render
-            display: 'flex',  // using flex display paradigm
-            flexDirection: 'horizontal', //rendering horizontally
-            width: '400px', //400px wide
-            height: '60px', //60 px tall
-            fontSize: '20px', //font size is 20px
-            margin: '20px',  //margins around queue render are 20px
-            // borderTop: '2px solid green', //the top and bottom borders are 2px of green
-            // borderBottom: '2px solid green'
-            background: 'rgba( 0, 0, 0, 0.2 )',
-            borderRadius: '5px'
-        }}>
-            {songQueue.map((item) => { //maps each song of the queue to a div rendering of the song name
-              return ( //beings return statement that for arrow function
-                <div   //returning a div component with styling of each item from the queue
-                  style={{  //specifies the styling of these song bubble divs
-                    width: "auto", //width is automatically set to best fit the text
-                    padding: "5px", // padding is 5px between the text and the background bubble
-                    height: "30px", // height of the song bubble is 30px
-                    background: "#1189bd", //specifies the color of the background of the song bubble
-                    borderRadius: "5px", //specifies how rounded the corners of the song bubble are
-                    margin: "10px", //distance between song bubbles within the queue render is 10 px
-                    textAlign: "left", //the song name is in the center of the bubble
-                  }}
-                  key={item.name} //sets the key of the div to be the name of the item from the queue
-                >
-                  {item.name} {/* renders the name of the item from the queue, in our case the song name */}
-                </div>
-              );
-          })}
+        <div>
+          <Grid container columns={1}
+            style={{ //styling of the queue render
+              width: '400px', //400px wide
+              height: 'auto', //60 px tall
+              fontSize: '20px', //font size is 20px
+              margin: '20px',  //margins around queue render are 20px
+              background: 'rgba( 0, 0, 0, 0.2 )',
+              borderRadius: '5px'
+          }}
+          >
+          {songQueue.map((song) => { //maps each song of the queue to a div rendering of the song name
+            return ( //beings return statement that for arrow function
+            <Grid item key={song.name} style={{  //specifies the styling of these song bubble divs
+              width: "400px", //width is automatically set to best fit the text
+              padding: "5px", // padding is 5px between the text and the background bubble
+              height: "auto", // height of the song bubble is 30px
+              background: "#1189bd", //specifies the color of the background of the song bubble
+              borderRadius: "5px", //specifies how rounded the corners of the song bubble are
+              margin: "10px", //distance between song bubbles within the queue render is 10 px
+              textAlign: "left", //the song name is in the center of the bubble
+            }}>
+              {song.name}
+            </Grid>
+          );})}
+        </Grid>
         </div>
         <button style={{ //styling the remove button
             margin: '20px', //20px margins around the button
