@@ -31,19 +31,19 @@ html
     font-family: proxima-nova, Helvetica, Arial, sans-serif;
 }
 
-/* #hidden-logo */
-/* { */
-    /* position: absolute; */
-    /* align-items: center; horizontally centered */
-    /* justify-content: center; vertically centered */
-    /* z-index: -1; */
-/* }  */
+#hidden-logo
+{
+    position: absolute; /* position the logo */
+    align-items: center; /* horizontally centered */
+    justify-content: center; /* vertically centered */
+    z-index: -1; /* set z-index to -1 so it's behind the main container */
+} 
 
-/* img { */
-    /* -webkit-filter: invert(1); */
-    /* filter: invert(1); */
-    /* pointer-events: none; disable mouse events on the image */
-/* } */
+img {
+    -webkit-filter: invert(1); /* invert the image */
+    filter: invert(1); /* invert the image */
+    pointer-events: none; /* disable mouse events on the image */
+}
 
 #main-container 
 {

@@ -14,6 +14,9 @@
  *  Revision: added functionality to allow previous input boxes to be focused on once backspace is pressed
  *            added placeholder text in the input boxes
  *            removed logo fade-in animation/most of chinh's changes to allow room for backend functionality
+ * Date Revised: 11/5/2023 - Chinh Nguyen
+ *            moved placement of code comment for one div to be correctly aligned
+ *            readded logo fade-in animation for sprint submission
  * 
  * Preconditions: 
  *  @inputs : None
@@ -121,38 +124,38 @@ function Splash()
                 } );
                 console.log( "black" );
 
-                // // this block of code is for the fade out effect
-                // setTimeout(() => {
-                //     const mainContainer = document.getElementById("main-container"); // get the main container
-                //     let opacity = 1; // set the opacity to 1
-                //     const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
-                //         opacity -= 0.01; // decrease the opacity by 0.01
-                //         mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
-                //         if (opacity <= 0) { // if the opacity is less than or equal to 0
-                //             clearInterval(intervalId); // clear the interval
-                //             mainContainer.style.backgroundColor = "black"; // set the background color to black
-                //             const inputContainer = document.getElementById("input-container"); // get the main container
-                //             inputContainer.style.display = "none"; // set the background color to black
-                //             mainContainer.style.opacity = 1; // set the opacity to 1
+                // this block of code is for the fade out effect
+                setTimeout(() => {
+                    const mainContainer = document.getElementById("main-container"); // get the main container
+                    let opacity = 1; // set the opacity to 1
+                    const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
+                        opacity -= 0.01; // decrease the opacity by 0.01
+                        mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
+                        if (opacity <= 0) { // if the opacity is less than or equal to 0
+                            clearInterval(intervalId); // clear the interval
+                            mainContainer.style.backgroundColor = "black"; // set the background color to black
+                            const inputContainer = document.getElementById("input-container"); // get the main container
+                            inputContainer.style.display = "none"; // set the background color to black
+                            mainContainer.style.opacity = 1; // set the opacity to 1
 
-                //             // This block of code handles the fade in effect of logo!
-                //             setTimeout(() => {
-                //                 const hiddenLogo = document.getElementById("hidden-logo"); // get the main container
-                //                 hiddenLogo.style.zIndex = 2; // set the z-index to 1
-                //                 inputContainer.style.zIndex = 1; // set the background color to black
-                //                 let opacity = 0; // variable to hold the opacity
-                //                 const intervalId = setInterval(() => { // set an interval to run every x milliseconds
-                //                     opacity += 0.01; // increase the opacity by 0.01
-                //                     hiddenLogo.style.opacity = opacity; // set the opacity of the logo to new opacity
-                //                     if (opacity >= 1) { // if the opacity is greater than or equal to 1
-                //                         clearInterval(intervalId); // clear the interval
-                //                     }
-                //                 }, 12); // milliseconds per update FOR LOGO FADE IN
-                //             }, 50); // milliseconds before fade out FOR LOGO FADE IN
+                            // This block of code handles the fade in effect of logo!
+                            setTimeout(() => {
+                                const hiddenLogo = document.getElementById("hidden-logo"); // get the main container
+                                hiddenLogo.style.zIndex = 2; // set the z-index to 1
+                                inputContainer.style.zIndex = 1; // set the background color to black
+                                let opacity = 0; // variable to hold the opacity
+                                const intervalId = setInterval(() => { // set an interval to run every x milliseconds
+                                    opacity += 0.01; // increase the opacity by 0.01
+                                    hiddenLogo.style.opacity = opacity; // set the opacity of the logo to new opacity
+                                    if (opacity >= 1) { // if the opacity is greater than or equal to 1
+                                        clearInterval(intervalId); // clear the interval
+                                    }
+                                }, 12); // milliseconds per update FOR LOGO FADE IN
+                            }, 50); // milliseconds before fade out FOR LOGO FADE IN
 
-                //         }
-                //     }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
-                // }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
+                        }
+                    }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
+                }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
             }
 
             else
@@ -203,12 +206,12 @@ function Splash()
     return (
         // contains all the elements on the page
         <div id = "main-container">
+            <div id = "hidden-logo" style={{opacity: 0}}>
+                <img src={require('./assets/logo.png')} width="400px"/>
+            </div>
+
             {/* container holds the input boxes
             to collect user input */}
-            {/* <div id = "hidden-logo" style={{opacity: 0}}>
-                <img src={require('./assets/logo.png')} width="400px"/>
-            </div> */}
-
             <div id = "input-container">
                 {/* code.map "lays out" the input fields
                  for our code input.
