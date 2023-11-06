@@ -7,6 +7,7 @@
  * Date Created: 10/07/2023 
  * Date Revised: XX/X/XXXX - XXXX XXXX - Placeholder
  *  Revision: 10/07/2023  - Rylan DeGarmo - File created
+ *  Revision: 11/4/2023 - Rylan DeGarmo - Added Explicit Song toggle, Kick User interface
  * Preconditions: 
  *  @inputs : Takes input from main.js
  * Postconditions:
@@ -49,13 +50,19 @@
         <button id="guest-button">Show Guest List</button>
         <div id="guest-list-guests">
             <!--This is the div where guests are displayed-->
-        </div>
-        <div id="kick">
-            <!--Div contains form and button to kick guests-->
-            <input type="text" id="kick-text">
-            <button id="kick-button">Kick Guest</button>
+        
+            <div id="kick">
+                <!--Div contains form and button to kick guests-->
+                <input type="text" id="kick-text">
+                <button id="kick-button">Kick Guest</button>
+            </div>
         </div>
     </div>
+
+    <div id="explicit">
+        <button id ="toggle-explicit">Toggle Explicit Songs On</button>
+    </div>
+
     <div id="close">
         <!--Div contains the button that closes the room-->
         <button id="close-room">Close Room</button>
