@@ -124,20 +124,17 @@ function Splash()
                 // // this block of code is for the fade out effect
                 // setTimeout(() => {
                 //     const mainContainer = document.getElementById("main-container"); // get the main container
-                //     //const inputContainer = document.getElementById("input-container"); // get the main container
-                //     //const button = document.getElementById("sync-button"); // get the main container
                 //     let opacity = 1; // set the opacity to 1
                 //     const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
                 //         opacity -= 0.01; // decrease the opacity by 0.01
                 //         mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
-                //         // inputContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
-                //         // button.style.opacity = opacity; // set the opacity of the main container to the new opacity
                 //         if (opacity <= 0) { // if the opacity is less than or equal to 0
                 //             clearInterval(intervalId); // clear the interval
                 //             mainContainer.style.backgroundColor = "black"; // set the background color to black
                 //             const inputContainer = document.getElementById("input-container"); // get the main container
                 //             inputContainer.style.display = "none"; // set the background color to black
                 //             mainContainer.style.opacity = 1; // set the opacity to 1
+
                 //             // This block of code handles the fade in effect of logo!
                 //             setTimeout(() => {
                 //                 const hiddenLogo = document.getElementById("hidden-logo"); // get the main container
@@ -152,6 +149,7 @@ function Splash()
                 //                     }
                 //                 }, 12); // milliseconds per update FOR LOGO FADE IN
                 //             }, 50); // milliseconds before fade out FOR LOGO FADE IN
+
                 //         }
                 //     }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
                 // }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
