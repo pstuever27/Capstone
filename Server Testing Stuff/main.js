@@ -11,6 +11,7 @@
  *  RevusuibL 10/05/2023 - Nicholas Nguyen - Finished implementing username functionality for clients
  *  Revision: 10/07/2023 - Rylan DeGarmo - Added partial functionality for Host/Join pages
  *  Revision: 10/08/2023 - Rylan DeGarmo - Finished adding functionality for Host/Join pages
+ *  Revision: 11/04/2023 - Rylan DeGarmo - Kick User and Explicit Song functionality added
  *  
  * Preconditions:
  *  @inputs : Will take input from index.html for user input such as room code, or code generation
@@ -229,15 +230,11 @@ const guestList = () => {
         var buttonText = 'Show Guest List';
         //Hide the list
         buttonElem.classList.remove('show');
-        //Hide kick menu
-        document.getElementById('kick').classList.remove('show');
     }
     else {
         var buttonText = 'Hide Guest List';
         //Show the list
         buttonElem.classList.add('show');
-        //Show kick menu
-        document.getElementById('kick').classList.add('show');
     }
     //Update the button text
     $('guest-button').innerText = buttonText;
@@ -263,8 +260,58 @@ const closeRoom = () => {
 
 //Const function to kick guest
 const kickGuest = () => {
-
+    //Get kicked user from textbox
+    let kickName = document.getElementById('kick-text').innerText;
+    //Check if a guest was kicked
+    let GuestKicked = false
+    //Get roomCode from localstorage
+    let code = localStorage.getItem('code');
+    //Get the hostname from localstorage
+    let hostName = localStorage.getItem('hostName');
+    //call API with guest list as url
+    phpAPI('guest-list', code, hostName, (response) => {
+        //Grabs the div containing the list of guests
+        const listDiv = document.getElementById('guest-list-guests');
+        //If we have no error return from php...
+        if(response.status != 'error') {
+            //Go through the div and remove everything
+            while(listDiv.firstChild) {
+                    listDiv.removeChild(listDiv.firstChild);
+            }
+            //Now, for each userName we get back
+            response.forEach(element => {
+                //Make a new p element
+                var p = document.createElement('p');
+                var text = document.createTextNode(element.userName);
+                if (text == kickName){
+                    //kick guest
+                    //Note: Add to database, then periodically check database for each user?
+                    element.userName = null;
+                } else {
+                    //add back to guest list
+                    p.appendChild(text);
+                }
+                //Add it to the div
+                listDiv.appendChild(p);
+            });
+        }
+    });
 };
+
+//Enable or Disable explicit songs
+function ExplicitSong() {
+    //Get current state of explicit song
+    buttonText = $('toggle-explicit').innerText;
+
+    if(buttonText == "Toggle Explicit Songs On") {
+        //Set explicit songs to off
+        $('toggle-explicit').innerText = "Toggle Explicit Songs Off"
+    
+    } else {
+        //Set explicit songs to on
+        $('toggle-explicit').innerText = "Toggle Explicit Songs On"
+    }
+}
 
 //When load window refreshes, load localStorage information
 const LoadJoin = () => {
@@ -291,6 +338,7 @@ function LoadHost() {
     $('code-box-host-code').innerText = code;
     $('code-box-host-username').innerText = hostName;
     $('guest-button').addEventListener('click', guestList);
+    $('toggle-explicit').addEventListener('click', ExplicitSong);
     $('close-room').addEventListener('click', closeRoom);
 }
 
