@@ -23,6 +23,8 @@
 // Revision: Kieran rewrote the queue to render using a single column dynamic MUI grid to render the songs top down as they're added to the queue
 // Revised on: 11/02/2023
 // Revision: Kieran ported the MUI grid to be a Mantine grid, as team has decided to change our UI system from MUI to Mantine
+// Revised on: 11/09/2023
+// Revision: Chinh added a replay song button and changed the styling of the buttons to be vertically stacked
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -82,6 +84,10 @@ function App() { // app function to wrap all the contents of the webpage
     }
 
     setSongChoice(null); //resets the song choice to be empty
+  }
+
+  async function replaySong() {
+
   }
 
   async function search(){ // search function which is calls spotify api search
@@ -160,13 +166,16 @@ function App() { // app function to wrap all the contents of the webpage
           renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
         />
         
-        <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
-        {
-          !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
-          : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
-          <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
-        }
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <button onClick={() => addToQueue()} style={{margin: '10px', width: '300px'}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
+          <button onClick={() => replaySong()} style={{margin: '10px', width: '300px'}}>Replay Song</button>{/* clicking button calls the function to add song to queue */}
+          {
+            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+            <button onClick={() => window.location = authUrl} style={{margin: '10px', width: '300px'}}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{margin: '10px', width: '300px'}}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+          }
+        </div>
 
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
