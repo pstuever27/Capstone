@@ -18,7 +18,7 @@
   font-weight: 400; /* font boldness is 400 */
 
   color-scheme: light dark; /* color sceme allows for light and dark mode */
-  color: rgba(255, 255, 255, 0.87); /* color of text is defaulted to white */
+  color: rgba(0, 0, 0, 0.87); /* color of text is defaulted to white */
   background-color: #17DE92; /* background color of webpage is set to spotify green */
 
   font-synthesis: none; /* font synthesis is disabled */
@@ -35,6 +35,12 @@ a { /* styling for links */
 }
 a:hover { /* styling of links on hover */
   color: #535bf2; /* slightly changes the hue of the link */
+}
+
+img {
+  -webkit-filter: invert(0); /* invert the image */
+  filter: invert(0); /* invert the image */
+  pointer-events: none; /* disable mouse events on the image */
 }
 
 body { /* styling of the body of the webpage */
