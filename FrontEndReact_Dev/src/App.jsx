@@ -87,10 +87,10 @@ function App() { // app function to wrap all the contents of the webpage
   }
 
   async function replaySong() {
-    if (window.location.pathname === '/callback') { //if user has logged into spotify and the callback result is in the url bar
-      let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
-      let code = urlParams.get('code') || "empty"; //gets code from the url, or sets code variable to "empty" if the url doesn't contain a code
-      reqPlayer(`/currently-playing`, code) //calls the currently-playing API request
+    if (window.location.pathname === '/callback') { // if user has logged into spotify and the callback result is in the url bar
+      let urlParams = new URLSearchParams(window.location.search); // parse the elements of the url
+      let code = urlParams.get('code') || "empty"; // gets code from the url, or sets code variable to "empty" if the url doesn't contain a code
+      reqPlayer(`/currently-playing`, code) // calls the currently-playing API request
         .then((data) => {
           if (data && data.item) { // check if there is a currently playing song
             const currentSong = data.item;
@@ -108,19 +108,29 @@ function App() { // app function to wrap all the contents of the webpage
 
   const [isDarkMode, setIsDarkMode] = useState(false); // initialize state for dark mode
 
-  async function toggleDarkMode() {
+  async function toggleDarkMode() { // function to toggle dark mode
     setIsDarkMode(!isDarkMode); // toggle the state of dark mode
-    let image = document.querySelector('img'); // This assumes there is only one image element
+
+    let image = document.querySelector('img'); // image element variable 
+    let buttons = document.querySelectorAll('button'); // button elements variable
     if (isDarkMode) { // switching to light mode
       document.documentElement.style.backgroundColor = "#17DE92"; // sets the background color of :root to green
       document.documentElement.style.color = "#000000"; // sets the text color of :root to black
-      image.style.webkitFilter = 'invert(0)';
-      image.style.filter = 'invert(0)';
+      image.style.webkitFilter = 'invert(0)'; // sets the image to be inverted
+      image.style.filter = 'invert(0)'; // sets the image to be inverted
+      buttons.forEach(button => { // for each button in the buttons variable
+        button.style.backgroundColor = '#1a1a1a';  // sets the background color of buttons to black
+        button.style.color = '#FFFFFF'; // sets the text color of buttons to white
+      });
     } else { // switching to dark mode
       document.documentElement.style.backgroundColor = "#363636"; // sets the background color of :root to gray
       document.documentElement.style.color = "#FFFFFF"; // sets the text color of :root to white
-      image.style.webkitFilter = 'invert(1)';
-      image.style.filter = 'invert(1)';
+      image.style.webkitFilter = 'invert(1)'; // sets the image to be inverted
+      image.style.filter = 'invert(1)'; // sets the image to be inverted
+      buttons.forEach(button => { // for each button in the buttons variable
+        button.style.backgroundColor = '#FFFFFF'; // sets the background color of buttons to white
+        button.style.color = '#000000'; // sets the text color of buttons to black
+      });
     }
   }
 
@@ -252,7 +262,6 @@ function App() { // app function to wrap all the contents of the webpage
             Remove {/* the text rendered on the button is "Remove" */}
         </button>
         <p style={{ //styling for the "Up Next" text and the song name next in the queue
-            color: '#000000', //color is black
             fontSize: '20px', //font size is 20px
             margin: '20px'   //sets margin around this to be 20px
         }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
@@ -275,7 +284,7 @@ function App() { // app function to wrap all the contents of the webpage
           </div>
           </div>
           : 
-          <h3 style={{color:'black'}}>Login first.</h3>
+          <h3 style={{}}>Login first.</h3>
         }
       </div>
 

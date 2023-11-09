@@ -64,6 +64,7 @@ button { /* button styling */
   font-weight: 500; /* font boldness is 500 */
   font-family: inherit; /* font style is inherited from the parent element */
   background-color: #1a1a1a; /* background color is dark */
+  color: #ffffff; /* text color is white */
   cursor: pointer; /* cursor will become a pointer hand when over the button */
   transition: border-color 0.25s; /* there is a .25 second transition to the new border color when hovering over the button */
 }
