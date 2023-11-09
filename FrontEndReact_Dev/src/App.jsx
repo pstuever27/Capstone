@@ -23,6 +23,10 @@
 // Revision: Kieran rewrote the queue to render using a single column dynamic MUI grid to render the songs top down as they're added to the queue
 // Revised on: 11/02/2023
 // Revision: Kieran ported the MUI grid to be a Mantine grid, as team has decided to change our UI system from MUI to Mantine
+// Revised on: 11/09/2023
+// Revision: Chinh added a replay song button and changed the styling of the buttons to be vertically stacked
+// Revised on: 11/09/2023
+// Revision: Chinh added a dark mode toggle and adjusted styling to be more uniform with dark/light mode respectively.
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -50,6 +54,25 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
   const { logout: logoutUser } = useHostAPI(''); //function call for logging out from spotify
 
+  
+  // useEffect(() => {
+  //   async function fetchData(code){
+  //     reqPlayer(`/currently-playing`, code) // calling the search api call, appending the search query with with search bar field input as the track name being requested
+  //     .then( // after the asyncronous promise of the api call is fulfilled, we'll perform the callback function below
+  //      data => { // take the json 'data' variable from the SpotifyAPI.js makeRequest return statement as the parameter of the function
+  //     console.log(data); // print spotify request json data to the browser's console. useful for navigating through the json structure with the gui dropdowns as a reference on how to access certain data you need within it
+  //     //  setCurrentSong(data);
+  //   }
+  // )
+  //   }
+  //   if(window.location.pathname === '/callback'){
+  //     let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
+  //     let code = urlParams.get('code') || "empty";
+      
+  //     fetchData(code);
+  //   }
+  // },[reqPlayer]);
+
   async function addToQueue(){
     if(songChoice!=null){
       enqueue(songChoice); //adds valid song to queue on screen
@@ -65,6 +88,56 @@ function App() { // app function to wrap all the contents of the webpage
     setSongChoice(null); //resets the song choice to be empty
   }
 
+  async function replaySong() {
+    if (window.location.pathname === '/callback') { // if user has logged into spotify and the callback result is in the url bar
+      let urlParams = new URLSearchParams(window.location.search); // parse the elements of the url
+      let code = urlParams.get('code') || "empty"; // gets code from the url, or sets code variable to "empty" if the url doesn't contain a code
+      reqPlayer(`/currently-playing`, code) // calls the currently-playing API request
+        .then((data) => {
+          if (data && data.item) { // check if there is a currently playing song
+            const currentSong = data.item;
+            enqueue(currentSong); // adds the current song to the queue on screen
+            reqPlayer(`/queue?uri=${encodeURIComponent(currentSong.uri)}`, code) // calls the add to queue API request
+              .then(() => {}) // nothing to return
+          } else {
+            alert("No song is currently playing on Spotify."); // if there is no currently playing song, show an alert
+          }
+        })
+    } else {
+      alert("Must login to replay song from Spotify."); // if the user is not logged in, show an alert
+    }
+  }
+
+  const [isDarkMode, setIsDarkMode] = useState(false); // initialize state for dark mode
+
+  async function toggleDarkMode() { // function to toggle dark mode
+    setIsDarkMode(!isDarkMode); // toggle the state of dark mode
+
+    let image = document.querySelector('img'); // image element variable 
+    let buttons = document.querySelectorAll('button'); // button elements variable
+    if (isDarkMode) { // switching to light mode
+      document.documentElement.style.backgroundColor = "#17DE92"; // sets the background color of :root to green
+      document.documentElement.style.color = "#000000"; // sets the text color of :root to black
+      image.style.webkitFilter = 'invert(0)'; // sets the image to be inverted
+      image.style.filter = 'invert(0)'; // sets the image to be inverted
+      buttons.forEach(button => { // for each button in the buttons variable
+        button.style.backgroundColor = '#1a1a1a';  // sets the background color of buttons to black
+        button.style.color = '#FFFFFF'; // sets the text color of buttons to white
+      });
+    } else { // switching to dark mode
+      document.documentElement.style.backgroundColor = "#363636"; // sets the background color of :root to gray
+      document.documentElement.style.color = "#FFFFFF"; // sets the text color of :root to white
+      image.style.webkitFilter = 'invert(1)'; // sets the image to be inverted
+      image.style.filter = 'invert(1)'; // sets the image to be inverted
+      buttons.forEach(button => { // for each button in the buttons variable
+        button.style.backgroundColor = '#FFFFFF'; // sets the background color of buttons to white
+        button.style.color = '#000000'; // sets the text color of buttons to black
+      });
+    }
+  }
+
+  const buttonText = isDarkMode ? "Light" : "Dark"; // set the button text based on the current state of dark mode
+  
   async function search(){ // search function which is calls spotify api search
     if(inputVal.length==0){ return; } // if the search bar is empty, don't try to do api calls and simply return to skip
     reqSearch(`?q=${inputVal}&type=track`) // calling the search api call, appending the search query with with search bar field input as the track name being requested
@@ -82,6 +155,7 @@ function App() { // app function to wrap all the contents of the webpage
   const [songChoice, setSongChoice] = useState(null); // uses a null-initialized save state to set the song that the user selects from the search results to memory for being inserted into the queue
   const [inputVal, setInputValue] = useState(""); // uses a save state to set the text that the user is typing into the search bar to a variable for passing into the api calls and other uses throughout the program
   const [songQueue, { enqueue, dequeue, peek }] = useQueueState([]); // uses the queuestate react save state to maintain the state of the queue over render cycles, and includes the enqueue, dequeue, and peek queue methods for the songQueue alias
+  //const [currentSong, setCurrentSong] = useState(null);
 
   // this will allow us to override the typography in mui
   // const font_override = createTheme({
@@ -140,13 +214,16 @@ function App() { // app function to wrap all the contents of the webpage
           renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
         />
         
-        <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
-        {
-          !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
-          : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
-          <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
-        }
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <button onClick={() => addToQueue()} style={{margin: '10px', width: '300px'}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
+          <button onClick={() => replaySong()} style={{margin: '10px', width: '300px'}}>Replay Song</button>{/* clicking button calls the function to add song to queue */}
+          {
+            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+            <button onClick={() => window.location = authUrl} style={{margin: '10px', width: '300px'}}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{margin: '10px', width: '300px'}}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+          }
+        </div>
 
       </div>
       <div className='qDiv'> {/* queue div with qDiv css styling */}
@@ -170,10 +247,10 @@ function App() { // app function to wrap all the contents of the webpage
                 background: "#1189bd", //specifies the color of the background of the song bubble
                 borderRadius: "5px", //specifies how rounded the corners of the song bubble are
                 margin: "10px", //distance between song bubbles within the queue render is 10 px
-                textAlign: "left", //the song name is in the center of the bubble
+                textAlign: "center", //the song name is in the center of the bubble
               }}
             >
-              {song.name} {/* rendering the song name as the contents of the grid row */}
+              {song.name} - {song.artists[0].name} {/* rendering the song name as the contents of the grid row */}
             </Grid.Col>
           );})}
         </Grid>
@@ -187,15 +264,36 @@ function App() { // app function to wrap all the contents of the webpage
             Remove {/* the text rendered on the button is "Remove" */}
         </button>
         <p style={{ //styling for the "Up Next" text and the song name next in the queue
-            color: '#000000', //color is black
             fontSize: '20px', //font size is 20px
             margin: '20px'   //sets margin around this to be 20px
         }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
       </div>
-      <p className="read-the-docs"> {/* uses the "read-the-docs" styling on this text */}
-        Dev Build [React + Vite + MaterialUI] {/* specifies what tools are being used to render this page */}
-      </p>
-    </>
+      <div style={{
+        width: '500px'
+      }}
+      >
+        <h1>Now Playing</h1>
+        {
+          (window.location.pathname === '/callback') ? 
+          <div>
+          <a href={songChoice?.external_urls.spotify} target='_blank' rel="noreferrer">
+            <img src={songChoice?.album.images[1].url}></img>
+          </a>
+          <div>
+          <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}>
+            <span style={{color:'black'}}>{songChoice?.name}</span><br></br><span style={{color:'grey'}}>{songChoice?.artists[0].name}</span>
+          </p>
+          </div>
+          </div>
+          : 
+          <h3 style={{}}>Login first.</h3>
+        }
+      </div>
+
+        <button onClick={() => toggleDarkMode()} style={{position: 'absolute', top: '10px', right: '10px', margin: '10px', width: '100px'}}>
+          {isDarkMode ? 'Light' : 'Dark'}
+        </button>
+      </>
   )
 }
 

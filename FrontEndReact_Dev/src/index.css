@@ -1,7 +1,7 @@
 /*
  File: index.css
  Description: Styling of index.html page
- Programmer(s): Kieran Delaney, Nicholas Nguyen
+ Programmer(s): Kieran Delaney, Nicholas Nguyen, Chinh Nguyen
  Created on: 9/21/2023
  Preconditions: None
  Postconditions: Sets styling specifications for rendering webpage content
@@ -18,7 +18,7 @@
   font-weight: 400; /* font boldness is 400 */
 
   color-scheme: light dark; /* color sceme allows for light and dark mode */
-  color: rgba(255, 255, 255, 0.87); /* color of text is defaulted to white */
+  color: rgba(0, 0, 0, 0.87); /* color of text is defaulted to white */
   background-color: #17DE92; /* background color of webpage is set to spotify green */
 
   font-synthesis: none; /* font synthesis is disabled */
@@ -35,6 +35,12 @@ a { /* styling for links */
 }
 a:hover { /* styling of links on hover */
   color: #535bf2; /* slightly changes the hue of the link */
+}
+
+img {
+  -webkit-filter: invert(0); /* invert the image */
+  filter: invert(0); /* invert the image */
+  pointer-events: none; /* disable mouse events on the image */
 }
 
 body { /* styling of the body of the webpage */
@@ -58,6 +64,7 @@ button { /* button styling */
   font-weight: 500; /* font boldness is 500 */
   font-family: inherit; /* font style is inherited from the parent element */
   background-color: #1a1a1a; /* background color is dark */
+  color: #ffffff; /* text color is white */
   cursor: pointer; /* cursor will become a pointer hand when over the button */
   transition: border-color 0.25s; /* there is a .25 second transition to the new border color when hovering over the button */
 }
