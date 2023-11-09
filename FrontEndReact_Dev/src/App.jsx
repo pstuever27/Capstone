@@ -41,6 +41,7 @@ import TextField from '@mui/material/TextField'; // imports textfield component 
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
 import { Grid } from '@mantine/core'; //mantine grid container for dynamically rendering queue on screens of varying sizes
 import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import Host from './pages/host'
 
 // for use when importing proxima nova
 // import Proxima_Nova from 'https://use.typekit.net/wwk0mzk.css';
@@ -180,120 +181,99 @@ function App() { // app function to wrap all the contents of the webpage
   // });
 
   return ( // this is what is returned to the webpage to be rendered
-    <> {/* parent element to wrap all divs together in return statement */}
-      {/* <ThemeProvider theme={font_override}>
-        <CssBaseline /> 
-      </ThemeProvider> */}
-      {/* in use for overriding mui font */}
+    <>
+      <Host />
+    </>
+    // <> {/* parent element to wrap all divs together in return statement */}
+    //   {/* <ThemeProvider theme={font_override}>
+    //     <CssBaseline /> 
+    //   </ThemeProvider> */}
+    //   {/* in use for overriding mui font */}
 
-      <div> {/* div for site logo */}
-        <a href="https://songsync.live" target="_blank" rel="noreferrer"> {/* when clicking on the Songsync logo, it will redirect to our website */}
-          <img src="./src/assets/logo.png" className="logo" alt="Songsync logo" /> {/* renders our songsync logo to the webpage */}
-        </a>
-      </div>
-      <div className="searchDiv"> {/* div for search bar, using the searchDiv styling */}
-        <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
-        <Autocomplete  // autocomplete MUI component for rendering the search results under the search bar as the user types
-          disablePortal  // allows for customizing the style of the popper component, which isn't possible for portal-based autocomplete components
-          autoHighlight // automatically does a focused highlight on the first search result, so the user can quickly type and hit the enter key on that top result, or use the arrow keys to select a different one from the list
-          noOptionsText={'Oops! Nothing :('} // this makes it so that when there are no search options for the inputted text, it will just be a blank empty space below ' ' or it will say 'Oops! Nothing :(' depending on what's in this parameter, rather than showing the "No options" default. This looks more streamlined.
-          id="search-box" //sets the html id of this autocomplete tag to be search-box
-          value={songChoice} // sets the song that the user selected from the search results list to the songChoice save state
-          inputValue={inputVal} // saves the text inputted to the search bar by the user to the inputVal save state
-          onInputChange={(event, newInputValue) => { //when the user is typing in the search bar, the new text is passed in through the newInputValue argument. the event arguement can be used later if needed, but is required to be listed for the function to work.
-            setInputValue(newInputValue); // saves the new text typed in the search bar to the inputvalue state
-            if(newInputValue!="") search(); // runs the search function to get the spotify search results based off the text the user inputted
-          }}
-          onChange={(event, newValue) => { // when the user selects a different search result, the new selected value is passed into this function
-            setSongChoice(newValue); // the new song is saved in the songChoice state
-          }}
-          isOptionEqualToValue={(option,value)=>`${option.name} - ${option.artists[0].name}`===`${value.name} - ${value.artists[0].name}`} //used to eliminate a warning
-          getOptionLabel={searchResult => `${searchResult.name} - ${searchResult.artists[0].name}`} //renders the song option text in the dropdown in the format "Track - Artist"
-          options={searchResults} // the "options" prop takes an array of what will be shown as the listed options that the user can search through. These are set to the searchResults array filled with spotify search results from the search() function
-          sx={{ width: 'max-width', fontFamily: 'proxima-nova' }} // sets the width of the search box to be 300 px, font family to proxima-nova
-          renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
-        />
+    //   <div> {/* div for site logo */}
+    //     <a href="https://songsync.live" target="_blank" rel="noreferrer"> {/* when clicking on the Songsync logo, it will redirect to our website */}
+    //       <img src="./src/assets/logo.png" className="logo" alt="Songsync logo" /> {/* renders our songsync logo to the webpage */}
+    //     </a>
+    //   </div>
+    //   <div className="searchDiv"> {/* div for search bar, using the searchDiv styling */}
+    //     <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
+    //     <Autocomplete  // autocomplete MUI component for rendering the search results under the search bar as the user types
+    //       disablePortal  // allows for customizing the style of the popper component, which isn't possible for portal-based autocomplete components
+    //       autoHighlight // automatically does a focused highlight on the first search result, so the user can quickly type and hit the enter key on that top result, or use the arrow keys to select a different one from the list
+    //       noOptionsText={'Oops! Nothing :('} // this makes it so that when there are no search options for the inputted text, it will just be a blank empty space below ' ' or it will say 'Oops! Nothing :(' depending on what's in this parameter, rather than showing the "No options" default. This looks more streamlined.
+    //       id="search-box" //sets the html id of this autocomplete tag to be search-box
+    //       value={songChoice} // sets the song that the user selected from the search results list to the songChoice save state
+    //       inputValue={inputVal} // saves the text inputted to the search bar by the user to the inputVal save state
+    //       onInputChange={(event, newInputValue) => { //when the user is typing in the search bar, the new text is passed in through the newInputValue argument. the event arguement can be used later if needed, but is required to be listed for the function to work.
+    //         setInputValue(newInputValue); // saves the new text typed in the search bar to the inputvalue state
+    //         if(newInputValue!="") search(); // runs the search function to get the spotify search results based off the text the user inputted
+    //       }}
+    //       onChange={(event, newValue) => { // when the user selects a different search result, the new selected value is passed into this function
+    //         setSongChoice(newValue); // the new song is saved in the songChoice state
+    //       }}
+    //       isOptionEqualToValue={(option,value)=>`${option.name} - ${option.artists[0].name}`===`${value.name} - ${value.artists[0].name}`} //used to eliminate a warning
+    //       getOptionLabel={searchResult => `${searchResult.name} - ${searchResult.artists[0].name}`} //renders the song option text in the dropdown in the format "Track - Artist"
+    //       options={searchResults} // the "options" prop takes an array of what will be shown as the listed options that the user can search through. These are set to the searchResults array filled with spotify search results from the search() function
+    //       sx={{ width: 'max-width', fontFamily: 'proxima-nova' }} // sets the width of the search box to be 300 px, font family to proxima-nova
+    //       renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
+    //     />
         
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <button onClick={() => addToQueue()} style={{margin: '10px', width: '300px'}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
-          <button onClick={() => replaySong()} style={{margin: '10px', width: '300px'}}>Replay Song</button>{/* clicking button calls the function to add song to queue */}
-          {
-            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-            <button onClick={() => window.location = authUrl} style={{margin: '10px', width: '300px'}}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
-            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
-            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{margin: '10px', width: '300px'}}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
-          }
-        </div>
+    //     <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
+    //     {
+    //       !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+    //       <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+    //       : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+    //       <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+    //     }
 
-      </div>
-      <div className='qDiv'> {/* queue div with qDiv css styling */}
-      <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
-        <div>
-          <Grid
-            style={{ //styling of the queue render
-              width: '400px', //400px wide
-              fontSize: '20px', //font size is 20px
-              margin: '20px',  //margins around queue render are 20px
-              borderRadius: '5px' //rounded corners
-          }}
-          >
-          {songQueue.map((song) => { //maps each song of the queue to a div rendering of the song name
-            return ( //beings return statement that for arrow function
-            <Grid.Col 
-              span={12} //this makes it so the grid is a single column
-              key={song.name} //used for iterating of map from SongQueue
-              style={{  //specifies the styling of these song bubble divs
-                padding: "5px", // padding is 5px between the text and the background bubble
-                background: "#1189bd", //specifies the color of the background of the song bubble
-                borderRadius: "5px", //specifies how rounded the corners of the song bubble are
-                margin: "10px", //distance between song bubbles within the queue render is 10 px
-                textAlign: "center", //the song name is in the center of the bubble
-              }}
-            >
-              {song.name} - {song.artists[0].name} {/* rendering the song name as the contents of the grid row */}
-            </Grid.Col>
-          );})}
-        </Grid>
-        </div>
-        <button style={{ //styling the remove button
-            margin: '20px', //20px margins around the button
-            width: '200px', //width of the remove button is 200px
-            borderRadius: '5px' //corners of the remove button are rounded to 5px radius
-        }}
-            onClick={dequeue}> {/* when clicking the remove button, the dequeue function runs, removing the first element from the queue */}
-            Remove {/* the text rendered on the button is "Remove" */}
-        </button>
-        <p style={{ //styling for the "Up Next" text and the song name next in the queue
-            fontSize: '20px', //font size is 20px
-            margin: '20px'   //sets margin around this to be 20px
-        }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
-      </div>
-      <div style={{
-        width: '500px'
-      }}
-      >
-        <h1>Now Playing</h1>
-        {
-          (window.location.pathname === '/callback') ? 
-          <div>
-          <a href={songChoice?.external_urls.spotify} target='_blank' rel="noreferrer">
-            <img src={songChoice?.album.images[1].url}></img>
-          </a>
-          <div>
-          <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}>
-            <span style={{color:'black'}}>{songChoice?.name}</span><br></br><span style={{color:'grey'}}>{songChoice?.artists[0].name}</span>
-          </p>
-          </div>
-          </div>
-          : 
-          <h3 style={{}}>Login first.</h3>
-        }
-      </div>
-
-        <button onClick={() => toggleDarkMode()} style={{position: 'absolute', top: '10px', right: '10px', margin: '10px', width: '100px'}}>
-          {isDarkMode ? 'Light' : 'Dark'}
-        </button>
-      </>
+    //   </div>
+    //   <div className='qDiv'> {/* queue div with qDiv css styling */}
+    //   <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
+    //     <div>
+    //       <Grid
+    //         style={{ //styling of the queue render
+    //           width: '400px', //400px wide
+    //           fontSize: '20px', //font size is 20px
+    //           margin: '20px',  //margins around queue render are 20px
+    //           borderRadius: '5px' //rounded corners
+    //       }}
+    //       >
+    //       {songQueue.map((song) => { //maps each song of the queue to a div rendering of the song name
+    //         return ( //beings return statement that for arrow function
+    //         <Grid.Col 
+    //           span={12} //this makes it so the grid is a single column
+    //           key={song.name} //used for iterating of map from SongQueue
+    //           style={{  //specifies the styling of these song bubble divs
+    //             padding: "5px", // padding is 5px between the text and the background bubble
+    //             background: "#1189bd", //specifies the color of the background of the song bubble
+    //             borderRadius: "5px", //specifies how rounded the corners of the song bubble are
+    //             margin: "10px", //distance between song bubbles within the queue render is 10 px
+    //             textAlign: "left", //the song name is in the center of the bubble
+    //           }}
+    //         >
+    //           {song.name} {/* rendering the song name as the contents of the grid row */}
+    //         </Grid.Col>
+    //       );})}
+    //     </Grid>
+    //     </div>
+    //     <button style={{ //styling the remove button
+    //         margin: '20px', //20px margins around the button
+    //         width: '200px', //width of the remove button is 200px
+    //         borderRadius: '5px' //corners of the remove button are rounded to 5px radius
+    //     }}
+    //         onClick={dequeue}> {/* when clicking the remove button, the dequeue function runs, removing the first element from the queue */}
+    //         Remove {/* the text rendered on the button is "Remove" */}
+    //     </button>
+    //     <p style={{ //styling for the "Up Next" text and the song name next in the queue
+    //         color: '#000000', //color is black
+    //         fontSize: '20px', //font size is 20px
+    //         margin: '20px'   //sets margin around this to be 20px
+    //     }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
+    //   </div>
+    //   <p className="read-the-docs"> {/* uses the "read-the-docs" styling on this text */}
+    //     Dev Build [React + Vite + MaterialUI] {/* specifies what tools are being used to render this page */}
+    //   </p>
+    // </>
   )
 }
 

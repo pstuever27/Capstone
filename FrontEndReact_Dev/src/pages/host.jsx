@@ -19,28 +19,27 @@ import React from "react";
 import phpAPI from '../phpApi'
 import { useState, useEffect } from 'react'
 
-function getRoomInfo() {
-    //Will use localStorage to get the roomCode from the login screen. For now, I am just going to load in dummy data
-    let roomCode = "ABCD";
-    let roomName = "dummy";
-    let response;
-
-    const { makeRequest } = phpAPI("host"); 
-    useEffect(() => {
-        response = makeRequest()
-    }, [])
-
-    return;
-}
-
 const Host = () => {
 
-    const response = getRoomInfo();
-    console.log(response);
+    let roomCode = "ABCD";
+    let roomName = "dummy";
+
+    const { makeRequest, phpResponse } = phpAPI("host", roomCode, roomName);
+    useEffect(() => {
+        makeRequest();
+    }, []);
+    
+    let finalResponse;
+    if(phpResponse != null) {
+        finalResponse = phpResponse.roomName;
+    }
+    else {
+        finalResponse = '----';
+    }
     return(
         <div>{}
-            <p>RoomCode: </p>
-            <p>Room Name: </p>
+            <p>RoomCode: ABCD</p>
+            <p>Room Name: {finalResponse.roomName}</p>
         </div>
     );
 

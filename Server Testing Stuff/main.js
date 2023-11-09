@@ -106,7 +106,6 @@ const phpAPI = (url, roomCode, username, callBack) => {
             throwError(err);
         }
     }
-    };
     //Send the roomcode and username to PHP file
     xhr.send('roomCode=' + roomCode + '&username=' + username);
 };
