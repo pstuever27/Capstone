@@ -34,10 +34,16 @@ const phpAPI = (phpUrl, roomCode, username) => {
     const [phpResponse, setResponse] = useState(null);
 
     //Const which actually makes the request
-    const makeRequest = async () => {
+    const makeRequest = () => {
         //Make a new xhr object
+        setUrl(phpUrl);
+        setCode(roomCode);
+        setName(username);
+
+        let locUrl = url;
+
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://localhost:8000/Server/${url}.php`, true);
+        xhr.open('POST', `http://localhost:8000/Server/${phpUrl}.php`, true);
         //Open the PHP file
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         //When the PHP file is done, this will get called
@@ -59,7 +65,8 @@ const phpAPI = (phpUrl, roomCode, username) => {
                     }
                     //Else, set the callback to the JSON response and return
                     else {
-                        return response;
+                        console.log(response);
+                        setResponse(response);
                     }
                 }
                 catch (err) {
@@ -69,11 +76,12 @@ const phpAPI = (phpUrl, roomCode, username) => {
                 }
             }
         };
-    //Send the roomcode and username to PHP file
+        //Send the roomcode and username to PHP file
+        xhr.send('roomCode=' + roomCode + '&username=' + username);
     }
 
     //May need to be changed later, but return the function and the state variables
-    return { makeRequest, setUrl, setCode, setName};
+    return { makeRequest, phpResponse };
 }
 
 export default phpAPI

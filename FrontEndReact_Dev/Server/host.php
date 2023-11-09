@@ -20,7 +20,7 @@
  * Known Faults: Requires more error handling for edge cases
  * **/
 
-header('Access-Control-Allow-Origin: http://localhost:3000'); //Uncomment for local testing
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
  //Use the sql.php file
 require_once('./require/sql.php');
@@ -42,11 +42,11 @@ $stmt->execute();
 //Get the SQL result
 $result = $stmt->get_result();
 //Get the SQL result row
-$row = mysqli_fetch_row($result);
+$row = $result->fetch_assoc();
 
 $response = [
     'status' => 'ok',
-    'roomName' => $row[0]
+    'roomName' => $row
 ];
 
 echo json_encode($response);  
