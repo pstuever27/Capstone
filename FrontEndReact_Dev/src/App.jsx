@@ -50,6 +50,25 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
   const { logout: logoutUser } = useHostAPI(''); //function call for logging out from spotify
 
+  
+  // useEffect(() => {
+  //   async function fetchData(code){
+  //     reqPlayer(`/currently-playing`, code) // calling the search api call, appending the search query with with search bar field input as the track name being requested
+  //     .then( // after the asyncronous promise of the api call is fulfilled, we'll perform the callback function below
+  //      data => { // take the json 'data' variable from the SpotifyAPI.js makeRequest return statement as the parameter of the function
+  //     console.log(data); // print spotify request json data to the browser's console. useful for navigating through the json structure with the gui dropdowns as a reference on how to access certain data you need within it
+  //     //  setCurrentSong(data);
+  //   }
+  // )
+  //   }
+  //   if(window.location.pathname === '/callback'){
+  //     let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
+  //     let code = urlParams.get('code') || "empty";
+      
+  //     fetchData(code);
+  //   }
+  // },[reqPlayer]);
+
   async function addToQueue(){
     if(songChoice!=null){
       enqueue(songChoice); //adds valid song to queue on screen
@@ -82,6 +101,7 @@ function App() { // app function to wrap all the contents of the webpage
   const [songChoice, setSongChoice] = useState(null); // uses a null-initialized save state to set the song that the user selects from the search results to memory for being inserted into the queue
   const [inputVal, setInputValue] = useState(""); // uses a save state to set the text that the user is typing into the search bar to a variable for passing into the api calls and other uses throughout the program
   const [songQueue, { enqueue, dequeue, peek }] = useQueueState([]); // uses the queuestate react save state to maintain the state of the queue over render cycles, and includes the enqueue, dequeue, and peek queue methods for the songQueue alias
+  //const [currentSong, setCurrentSong] = useState(null);
 
   // this will allow us to override the typography in mui
   // const font_override = createTheme({
@@ -192,9 +212,27 @@ function App() { // app function to wrap all the contents of the webpage
             margin: '20px'   //sets margin around this to be 20px
         }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
       </div>
-      <p className="read-the-docs"> {/* uses the "read-the-docs" styling on this text */}
-        Dev Build [React + Vite + MaterialUI] {/* specifies what tools are being used to render this page */}
-      </p>
+      <div style={{
+        width: '500px'
+      }}
+      >
+        <h1>Now Playing</h1>
+        {
+          (window.location.pathname === '/callback') ? 
+          <div>
+          <a href={songChoice?.external_urls.spotify} target='_blank' rel="noreferrer">
+            <img src={songChoice?.album.images[1].url}></img>
+          </a>
+          <div>
+          <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}>
+            <span style={{color:'black'}}>{songChoice?.name}</span><br></br><span style={{color:'grey'}}>{songChoice?.artists[0].name}</span>
+          </p>
+          </div>
+          </div>
+          : 
+          <h3 style={{color:'black'}}>Login first.</h3>
+        }
+      </div>
     </>
   )
 }
