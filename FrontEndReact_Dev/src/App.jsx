@@ -106,6 +106,26 @@ function App() { // app function to wrap all the contents of the webpage
     }
   }
 
+  const [isDarkMode, setIsDarkMode] = useState(false); // initialize state for dark mode
+
+  async function toggleDarkMode() {
+    setIsDarkMode(!isDarkMode); // toggle the state of dark mode
+    let image = document.querySelector('img'); // This assumes there is only one image element
+    if (isDarkMode) { // switching to light mode
+      document.documentElement.style.backgroundColor = "#17DE92"; // sets the background color of :root to green
+      document.documentElement.style.color = "#000000"; // sets the text color of :root to black
+      image.style.webkitFilter = 'invert(0)';
+      image.style.filter = 'invert(0)';
+    } else { // switching to dark mode
+      document.documentElement.style.backgroundColor = "#363636"; // sets the background color of :root to gray
+      document.documentElement.style.color = "#FFFFFF"; // sets the text color of :root to white
+      image.style.webkitFilter = 'invert(1)';
+      image.style.filter = 'invert(1)';
+    }
+  }
+
+  const buttonText = isDarkMode ? "Light" : "Dark"; // set the button text based on the current state of dark mode
+  
   async function search(){ // search function which is calls spotify api search
     if(inputVal.length==0){ return; } // if the search bar is empty, don't try to do api calls and simply return to skip
     reqSearch(`?q=${inputVal}&type=track`) // calling the search api call, appending the search query with with search bar field input as the track name being requested
@@ -215,10 +235,10 @@ function App() { // app function to wrap all the contents of the webpage
                 background: "#1189bd", //specifies the color of the background of the song bubble
                 borderRadius: "5px", //specifies how rounded the corners of the song bubble are
                 margin: "10px", //distance between song bubbles within the queue render is 10 px
-                textAlign: "left", //the song name is in the center of the bubble
+                textAlign: "center", //the song name is in the center of the bubble
               }}
             >
-              {song.name} {/* rendering the song name as the contents of the grid row */}
+              {song.name} - {song.artists[0].name} {/* rendering the song name as the contents of the grid row */}
             </Grid.Col>
           );})}
         </Grid>
@@ -258,7 +278,11 @@ function App() { // app function to wrap all the contents of the webpage
           <h3 style={{color:'black'}}>Login first.</h3>
         }
       </div>
-    </>
+
+        <button onClick={() => toggleDarkMode()} style={{position: 'absolute', top: '10px', right: '10px', margin: '10px', width: '100px'}}>
+          {isDarkMode ? 'Light' : 'Dark'}
+        </button>
+      </>
   )
 }
 
