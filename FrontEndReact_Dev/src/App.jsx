@@ -87,7 +87,23 @@ function App() { // app function to wrap all the contents of the webpage
   }
 
   async function replaySong() {
-
+    if (window.location.pathname === '/callback') { //if user has logged into spotify and the callback result is in the url bar
+      let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
+      let code = urlParams.get('code') || "empty"; //gets code from the url, or sets code variable to "empty" if the url doesn't contain a code
+      reqPlayer(`/currently-playing`, code) //calls the currently-playing API request
+        .then((data) => {
+          if (data && data.item) { // check if there is a currently playing song
+            const currentSong = data.item;
+            enqueue(currentSong); // adds the current song to the queue on screen
+            reqPlayer(`/queue?uri=${encodeURIComponent(currentSong.uri)}`, code) // calls the add to queue API request
+              .then(() => {}) // nothing to return
+          } else {
+            alert("No song is currently playing on Spotify."); // if there is no currently playing song, show an alert
+          }
+        })
+    } else {
+      alert("Must login to replay song from Spotify."); // if the user is not logged in, show an alert
+    }
   }
 
   async function search(){ // search function which is calls spotify api search
