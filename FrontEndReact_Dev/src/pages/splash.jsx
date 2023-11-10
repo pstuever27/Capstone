@@ -28,10 +28,11 @@
  * Known Faults: must integrate PHP backend
  * **/
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import phpAPI from '../phpApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCode } from '../redux/roomCodeSlice'
+import { setName } from '../redux/usernameSlice';
 
 function Splash()
 {
@@ -66,7 +67,9 @@ function Splash()
     // placeholderCode is the placeholder used in the input boxes
     // setPlaceHolderCode sets the placeholder text to "SONG" if the input boxes
     //  are completely empty
-    const [ placeholderCode, setPlaceHolderCode ] = useState( [ 'S', 'O', 'N', 'G' ] );
+    const [placeholderCode, setPlaceHolderCode] = useState(['S', 'O', 'N', 'G']);
+    
+    const [phpAddress, setPhpAddress] = useState("join");
 
     // boxRefs uses useRef to focus the next input after each input 
     const boxRefs = [ useRef( null ), useRef( null ), useRef( null ), useRef( null ) ];
@@ -144,37 +147,6 @@ function Splash()
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                 } );
                 console.log( "black" );
-
-                // this block of code is for the fade out effect
-                setTimeout(() => {
-                    const mainContainer = document.getElementById("main-container"); // get the main container
-                    let opacity = 1; // set the opacity to 1
-                    const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
-                        opacity -= 0.01; // decrease the opacity by 0.01
-                        mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
-                        if (opacity <= 0) { // if the opacity is less than or equal to 0
-                            clearInterval(intervalId); // clear the interval
-                            const inputContainer = document.getElementById("code-input-container"); // get the main container
-                            inputContainer.style.display = "none"; // set the background color to black
-                            mainContainer.style.opacity = 1; // set the opacity to 1
-
-                            // This block of code handles the fade in effect of logo!
-                            setTimeout(() => {
-                                const hiddenLogo = document.getElementById("hidden-name"); // get the main container
-                                hiddenLogo.style.zIndex = 2; // set the z-index to 1
-                                let opacity = 0; // variable to hold the opacity
-                                const intervalId = setInterval(() => { // set an interval to run every x milliseconds
-                                    opacity += 0.01; // increase the opacity by 0.01
-                                    hiddenLogo.style.opacity = opacity; // set the opacity of the logo to new opacity
-                                    if (opacity >= 1) { // if the opacity is greater than or equal to 1
-                                        clearInterval(intervalId); // clear the interval
-                                    }
-                                }, 12); // milliseconds per update FOR LOGO FADE IN
-                            }, 50); // milliseconds before fade out FOR LOGO FADE IN
-
-                        }
-                    }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
-                }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
             }
 
             else
@@ -209,6 +181,43 @@ function Splash()
         
     };
 
+    const fadeOut = () => {
+        // this block of code is for the fade out effect
+        setTimeout(() => {
+            const mainContainer = document.getElementById("main-container"); // get the main container
+            let opacity = 1; // set the opacity to 1
+            const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
+                opacity -= 0.01; // decrease the opacity by 0.01
+                mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
+                if (opacity <= 0) { // if the opacity is less than or equal to 0
+                    clearInterval(intervalId); // clear the interval
+                    const inputContainer = document.getElementById("code-input-container"); // get the main container
+                    inputContainer.style.display = "none"; // set the background color to black
+                    mainContainer.style.opacity = 1; // set the opacity to 1
+
+                    // This block of code handles the fade in effect of logo!
+                    setTimeout(() => {
+                        const hiddenName = document.getElementById("hidden-name"); // get the main container
+                        const button = document.getElementById("sync-button");
+                        button.style.left = "125%";
+                        hiddenName.style.zIndex = 2; // set the z-index to 1
+                        let opacity = 0; // variable to hold the opacity
+                        const intervalId = setInterval(() => { // set an interval to run every x milliseconds
+                            opacity += 0.01; // increase the opacity by 0.01
+                            hiddenName.style.opacity = opacity; // set the opacity of the logo to new opacity
+                            button.style.opacity = opacity;
+                            if (opacity >= 1) { // if the opacity is greater than or equal to 1
+                                clearInterval(intervalId); // clear the interval
+                            }
+                        }, 12); // milliseconds per update FOR LOGO FADE IN
+                        setPhpAddress("join-name");
+                    }, 50); // milliseconds before fade out FOR LOGO FADE IN
+
+                }
+            }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
+        }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
+    }
+
     // handle backspace, focus on previous input box
     const handleBackTrack = ( e, index ) => {
         // if not on the first box, go backward on focus
@@ -221,27 +230,39 @@ function Splash()
 
     const handleNameChange = (name) => {
         console.log(name.target.value);
-
-
+        dispatch(setName(name.target.value));
 
     }
 
     const sync = () => {
-        console.log( roomCode.join( '' ) );
-        makeRequest();
-        if(phpResponse) {
-            if(phpResponse.status == 'ok') {
-                console.log("good!");
-            }
-            else {
-                console.log("invalid roomcode! (make error box)");
-            }
+        if (!phpResponse || phpResponse.error == "Room Doesn't Exist!") {
+            makeRequest();
+        }
+        else {
+            makeRequest();
         }
     };
 
-    const { roomCode } = useSelector( state => state.roomCode );
+    const { roomCode } = useSelector(state => state.roomCode);
 
-    const { makeRequest, phpResponse } = phpAPI("join", roomCode.join( "" ), "client");
+    const { username } = useSelector(state => state.username);
+
+    const { makeRequest, phpResponse } = phpAPI( phpAddress, roomCode.join(""), username);
+    
+    useEffect(() => {
+        if (phpResponse) {
+            if (phpResponse.status == 'ok') {
+                console.log("good!");
+                fadeOut();
+            }
+            else if(phpResponse.status == 'error'){
+                console.log(phpResponse.error);
+            }
+            else if (phpResponse.status == "good_name") {
+                console.log("moving on!");
+            }
+        }
+    }, [phpResponse])
 
     console.log(roomCode);
 
@@ -252,6 +273,7 @@ function Splash()
                 <input type="text" 
                     className="name-input"
                     minLength={3}
+                    placeholder="Name"
                     onChange={ e => handleNameChange( e ) }/>
             </div>
 

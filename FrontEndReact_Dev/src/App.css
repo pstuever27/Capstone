@@ -88,12 +88,12 @@ html {
   font-family: proxima-nova, Helvetica, Arial, sans-serif;
 }
 
-#hidden-logo {
+#hidden-name {
   position: absolute;
   /* position the logo */
-  align-items: center;
+  align-items: left;
   /* horizontally centered */
-  justify-content: center;
+  justify-content: left;
   /* vertically centered */
   z-index: -1;
   /* set z-index to -1 so it's behind the main container */
@@ -135,6 +135,7 @@ img {
   background: none;
   border: none;
   font-size: 60px;
+  z-index: 2;
   margin: 0;
   padding: 0;
   font-family: proxima-nova, Arial, Helvetica, sans-serif;
@@ -188,15 +189,21 @@ img {
 }
 
 .name-input {
-    position: absolute;
-    z-index: 1;
-    width: 25%;
+    position: relative;
+    z-index: 0;
+    width: 200px;
     height: 65px;
     margin: 2px;
     font-size: 50px;
+    float: left;
     text-align: center;
     border-radius: 7.5px;
     border-style: none;
     font-family: proxima-nova, Helvetica, Arial, sans-serif;
     caret-color: transparent;
+}
+
+.name-input::placeholder {
+    font-family: proxima-nova, Helvetica, Arial, sans-serif;
+    color: #17DE92;
 }
