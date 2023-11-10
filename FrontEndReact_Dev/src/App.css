@@ -55,3 +55,148 @@
 .read-the-docs { /* class for showing what tools we're using in its own style */
   color: #888; /* sets specific color for these words */
 }
+
+/**
+ * Prolouge
+ * File: app.js
+ * Description: styles splashscreen components
+ *              
+ * Programmer's Name: Nicholas Nguyen
+ * Date Created: 11/1/2023
+ * 
+ * Date Revised: 11/1/2023 - Nicholas Nguyen
+ *  Revision: Created styling for splashscreen react components
+ * Date Revised: 11/2/2023 - Nicholas Nguyen
+ *  Revision: updated placeholder text stylings, input focus stylings
+ *            removed Chinh's changes to the logo and its styling
+ *            to allow room for other functionality (mainly backend)
+ *
+ * Preconditions: 
+ *  @inputs : None
+ * Postconditions:
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
+/* import for proxima nova, DO NOT use outside of this project. */
+@import url("https://use.typekit.net/wwk0mzk.css");
+
+html {
+  font-family: proxima-nova, Helvetica, Arial, sans-serif;
+}
+
+#hidden-logo {
+  position: absolute;
+  /* position the logo */
+  align-items: center;
+  /* horizontally centered */
+  justify-content: center;
+  /* vertically centered */
+  z-index: -1;
+  /* set z-index to -1 so it's behind the main container */
+}
+
+img {
+  -webkit-filter: invert(1);
+  /* invert the image */
+  filter: invert(1);
+  /* invert the image */
+  pointer-events: none;
+  /* disable mouse events on the image */
+}
+
+#main-container {
+  display: flex;
+  /* flexboxing */
+  align-items: center;
+  /* horizontally centered */
+  justify-content: center;
+  /* vertically centered */
+  background-color: #17DE92;
+  /* main SongSync UI Color */
+  height: 100vh;
+}
+
+#input-container {
+  display: flex;
+  /* flexboxing */
+  align-items: center;
+  /* horizontally centered */
+  margin: 2px;
+  /* set 2px margin on all sides so input
+                    boxes aren't touching each other */
+}
+
+.sync-button {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 60px;
+  margin: 0;
+  padding: 0;
+  font-family: proxima-nova, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.blackBackground {
+  background-color: black;
+  color: #17DE92;
+}
+
+.tealBackground {
+  background-color: #12B476;
+  color: #FFFFFF;
+}
+
+.blackText {
+  color: #000000;
+}
+
+.tealText {
+  background: none;
+  color: #12B476;
+}
+
+.code-input-container {
+  position: absolute;
+}
+
+.code-input {
+  width: 50px;
+  height: 65px;
+  margin: 2px;
+  font-size: 50px;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 7.5px;
+  border-style: none;
+  font-family: proxima-nova, Helvetica, Arial, sans-serif;
+  caret-color: transparent;
+}
+
+.code-input::placeholder {
+  font-family: proxima-nova, Helvetica, Arial, sans-serif;
+  color: #17DE92;
+}
+
+.code-input:focus {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.name-input {
+    position: absolute;
+    z-index: 1;
+    width: 25%;
+    height: 65px;
+    margin: 2px;
+    font-size: 50px;
+    text-align: center;
+    border-radius: 7.5px;
+    border-style: none;
+    font-family: proxima-nova, Helvetica, Arial, sans-serif;
+    caret-color: transparent;
+}

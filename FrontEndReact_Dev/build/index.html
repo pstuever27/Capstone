@@ -1,0 +1,31 @@
+<!-- 
+//--------------------------------
+// File: index.html
+// Description: Starter page of react app. Specifies the basic webpage attributes and leaves the rest to the react src modules, starting at mainl.jsx
+// Programmer(s): Kieran Delaney
+// Created on: 9/21/2023
+// Revised on: 10/07/2023
+// Revision: Kieran added Songsync name as the site title.
+// Preconditions: Must have npm and node installed. Must have an internet browser installed. 
+// Postconditions: Renders site tab title and icon, and pulls webpages from react jsx modules.
+// Error conditions: None
+// Side effects: No known side effects
+// Invariants: None
+// Faults: None
+//--------------------------------
+ -->
+<!doctype html> <!-- specifies the webpage is in html -->
+<html lang="en"> <!-- specifies the language of the site to be english and opens the html tag that holds the site data -->
+  <head> <!-- opens the head section which contains icon, title, etc-->
+    <meta charset="UTF-8" /> <!-- sets the character set that the site renders in to be UTF-8 -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" /> <!-- sets the site icon for the tab to be the vite logo. this can be changed to the songsync logo once we have a square logo designed and rendered -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- sets the viewport of the site to be the width of the device that's rendering it, with no increased/decreased scaling applied -->
+    <title>Songsync</title> <!-- sets title of site tab to be "Songsync"-->
+    <script type="module" crossorigin src="/assets/index-e72f90fd.js"></script>
+    <link rel="stylesheet" href="/assets/index-ad54176e.css">
+  </head> <!-- closes site header-->
+  <body> <!-- begins site body-->
+    <div id="root"></div> <!-- creates a root dev which can be used in the future if needed-->
+     <!-- pulls in the webpage content written in the react modules, starting with main.jsx-->
+  </body> <!-- closes the body-->
+</html> <!-- closes the html. end of site rendering-->

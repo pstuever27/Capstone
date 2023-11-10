@@ -23,6 +23,10 @@ import { useState, useEffect } from 'react'
     //const makeRequest = async () => { … } // func to do da server request. 
     //return { makeRequest, … all the state vars you want };   }
 
+function throwError(error) {
+    console.log(error);
+}
+
 //This sets up the state variables and returns the makeRequest function which executes the php call
 const phpAPI = (phpUrl, roomCode, username) => {
     //Set up state variables
