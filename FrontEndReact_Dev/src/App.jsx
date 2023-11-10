@@ -42,6 +42,7 @@ import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete c
 import { Grid } from '@mantine/core'; //mantine grid container for dynamically rendering queue on screens of varying sizes
 import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 import Host from './pages/host'
+import Splash from './pages/splash'
 
 // for use when importing proxima nova
 // import Proxima_Nova from 'https://use.typekit.net/wwk0mzk.css';
@@ -182,7 +183,7 @@ function App() { // app function to wrap all the contents of the webpage
 
   return ( // this is what is returned to the webpage to be rendered
     <>
-      <Host />
+      <Splash />
     </>
     // <> {/* parent element to wrap all divs together in return statement */}
     //   {/* <ThemeProvider theme={font_override}>

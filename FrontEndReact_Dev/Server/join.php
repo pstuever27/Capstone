@@ -20,6 +20,9 @@
  * Known Faults: Requires more error handling for edge cases
  * **/
 //Require error handling
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
+
+
 require_once('require/error.php');
 
 //Require mySQL php file
@@ -111,9 +114,6 @@ else {
             'username' => $username
         ];
 
-        //Close SQL connection
-        $result->free_result();
-        $mysql->close();
     }
 
     //otherwise, the username is already taken (prompt for a new one)
@@ -127,8 +127,6 @@ else {
                      'error' => "username already taken" ];
     }
     //Send response
-    $result->free_result();
-    $mysql->close();
     echo json_encode($response);
 }
 
