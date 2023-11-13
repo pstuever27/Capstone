@@ -6,13 +6,13 @@ export const loadingSlice = createSlice({
     'loading' : false,
   },
   reducers: {
-    setCode(state, { payload: code }){
+    setLoading(state, { payload: code }){
         state.loading = code
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setCode } = roomCodeSlice.actions
+export const { setLoading } = loadingSlice.actions
 
-export default roomCodeSlice.reducer
+export default loadingSlice.reducer
