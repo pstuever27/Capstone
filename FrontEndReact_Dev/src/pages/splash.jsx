@@ -33,6 +33,8 @@ import phpAPI from '../phpApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
+import { setLoading } from '../redux/loadingSlice';
+// import { useNavigate } from "react-router-dom";
 
 function Splash()
 {
@@ -82,6 +84,8 @@ function Splash()
     //  in our case, the event is a change in input
     // index is the position of the input within the array
     const dispatch = useDispatch();
+
+    // const navigate = useNavigate();
 
     const handleCodeChange = ( e, index ) => {
         // input validation
@@ -260,6 +264,8 @@ function Splash()
             }
             else if (phpResponse.status == "good_name") {
                 console.log("moving on!");
+                dispatch(setLoading(true));
+                // navigate(path);
             }
         }
     }, [phpResponse])
