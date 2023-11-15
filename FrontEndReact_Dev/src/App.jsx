@@ -34,7 +34,7 @@
 // Invariants: None
 // Faults: None
 //--------------------------------
-import { useState } from 'react' // imports useState from react to allow saving of the search results (and other future variables as needed) across the webpage over render cycles
+import { useState, useEffect } from 'react' // imports useState from react to allow saving of the search results (and other future variables as needed) across the webpage over render cycles
 import { useQueueState } from "rooks"; // imports usequeuestate from available react hooks for the queue data structure rendering 
 import './App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
@@ -54,24 +54,24 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
   const { logout: logoutUser } = useHostAPI(''); //function call for logging out from spotify
 
+  const [nowPlayingSong, setNowPlayingSong] = useState(null);
   
-  // useEffect(() => {
-  //   async function fetchData(code){
-  //     reqPlayer(`/currently-playing`, code) // calling the search api call, appending the search query with with search bar field input as the track name being requested
-  //     .then( // after the asyncronous promise of the api call is fulfilled, we'll perform the callback function below
-  //      data => { // take the json 'data' variable from the SpotifyAPI.js makeRequest return statement as the parameter of the function
-  //     console.log(data); // print spotify request json data to the browser's console. useful for navigating through the json structure with the gui dropdowns as a reference on how to access certain data you need within it
-  //     //  setCurrentSong(data);
-  //   }
-  // )
-  //   }
-  //   if(window.location.pathname === '/callback'){
-  //     let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
-  //     let code = urlParams.get('code') || "empty";
+  useEffect(() => {
+    async function fetchData(code){
+      reqPlayer(`/currently-playing`, code) // calls the currently-playing API request
+        .then((data) => {
+          if (data && data.item) { // check if there is a currently playing song
+            setNowPlayingSong(data.item);
+          } 
+        })
+    }
+    if(window.location.pathname === '/callback'){
+      let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
+      let code = urlParams.get('code') || "empty";
       
-  //     fetchData(code);
-  //   }
-  // },[reqPlayer]);
+      fetchData(code);
+    }
+  },[reqPlayer]);
 
   async function addToQueue(){
     if(songChoice!=null){
@@ -135,8 +135,6 @@ function App() { // app function to wrap all the contents of the webpage
       });
     }
   }
-
-  const buttonText = isDarkMode ? "Light" : "Dark"; // set the button text based on the current state of dark mode
   
   async function search(){ // search function which is calls spotify api search
     if(inputVal.length==0){ return; } // if the search bar is empty, don't try to do api calls and simply return to skip
@@ -276,12 +274,12 @@ function App() { // app function to wrap all the contents of the webpage
         {
           (window.location.pathname === '/callback') ? 
           <div>
-          <a href={songChoice?.external_urls.spotify} target='_blank' rel="noreferrer">
-            <img src={songChoice?.album.images[1].url}></img>
+          <a href={nowPlayingSong?.external_urls.spotify} target='_blank' rel="noreferrer">
+            <img src={nowPlayingSong?.album.images[1].url}></img>
           </a>
           <div>
           <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}>
-            <span style={{color:'black'}}>{songChoice?.name}</span><br></br><span style={{color:'grey'}}>{songChoice?.artists[0].name}</span>
+            <span style={{color:'black'}}>{nowPlayingSong?.name}</span><br></br><span style={{color:'grey'}}>{nowPlayingSong?.artists[0].name}</span>
           </p>
           </div>
           </div>
