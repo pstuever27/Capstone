@@ -149,6 +149,17 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
           return await fetch(url,param); // returns the response of the spotify data we're requesting by passing in the request url and our request parameters
     };
 
+    const nowPlaying = async (url, hostAccessToken) => {
+        const param = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'applications/json',
+                'Authorization': `Bearer ${hostAccessToken}`
+            }
+        };
+        return await fetch(url,param);
+    }
+
     const makeRequest = async (urlOptions, code) => { // makerequest function which is the "main" of this api calling system. It takes in an append portion for the base url specified in the useAPI() call, and this append portion urloptions allows for different search requests or other data requests under the same base request type
         if(CLIENT_ID=="add_client_id_locally___Dont_push_to_github_for_security_concerns" || CLIENT_SECRET=="add_client_secret_locally___Dont_push_to_github_for_security_concerns"){
             console.warn("EASY FIX: Don't forget to add the Client ID and Client Secret locally to client.json for this to work!");// added this for testing purposes
@@ -160,6 +171,16 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         let token = hostAccessToken; //sets to local variable so it updates in this render cycle
         if(token == null){ // check if token is the initial null state
             token = await createToken(code); // if so, set it to a new token
+        }
+
+        if(urlOptions=='/currently-playing'){
+            let result = await nowPlaying(url+urlOptions,token);
+            if (result.status != 200){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token
+                token = await refreshToken(); // overwrites the existing token with a new token
+                result = await nowPlaying(url+urlOptions,token); // makes the call again with the now valid token
+            }
+            const data = await result.json();
+            return data;
         }
 
 

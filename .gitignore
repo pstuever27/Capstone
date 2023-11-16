@@ -53,3 +53,16 @@ client.json
 FrontEndReact_Dev/client.json
 FrontEndReact_Dev/client.json
 FrontEndReact_Dev/package-lock.json
+package-lock.json
+Splash Screen/Old/host.html.old.html
+Splash Screen/Old/index.html.old.html
+Splash Screen/Old/join.html.old.html
+Splash Screen/Old/main.js.old.js
+Splash Screen/Old/style.css.old.css
+Splash Screen/Old/TABLES.sql
+Splash Screen/Server/close-room.php
+Splash Screen/Server/guest-list.php
+Splash Screen/Server/host.php
+Splash Screen/Server/join.php
+Splash Screen/Server/require/error.php
+Splash Screen/Server/require/sql.php
