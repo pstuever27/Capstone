@@ -212,15 +212,9 @@ function App() { // app function to wrap all the contents of the webpage
           renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
         />
         
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}> { /* this is the button stack below search bar */ }
           <button onClick={() => addToQueue()} style={{margin: '10px', width: '300px'}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
           <button onClick={() => replaySong()} style={{margin: '10px', width: '300px'}}>Replay Song</button>{/* clicking button calls the function to add song to queue */}
-          {
-            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-            <button onClick={() => window.location = authUrl} style={{margin: '10px', width: '300px'}}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
-            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
-            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{margin: '10px', width: '300px'}}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
-          }
         </div>
 
       </div>
@@ -284,13 +278,20 @@ function App() { // app function to wrap all the contents of the webpage
           </div>
           </div>
           : 
-          <h3 style={{}}>Login first.</h3>
+          <h3 style={{}}>Login first (top right)</h3>
         }
       </div>
-
-        <button onClick={() => toggleDarkMode()} style={{position: 'absolute', top: '10px', right: '10px', margin: '10px', width: '100px'}}>
-          {isDarkMode ? 'Light' : 'Dark'}
+      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', top: '10px', right: '10px', margin: '10px'}}> { /* this is the button stack in top right */ }
+        <button onClick={() => toggleDarkMode()} style={{margin: '10px', width: '175px'}}>
+          {isDarkMode ? 'Switch to Light' : 'Switch to Dark'}
         </button>
+        {   
+            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+            <button onClick={() => window.location = authUrl} style={{width: '175px'}}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{width: '175px'}}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+        }
+        </div>
       </>
   )
 }
