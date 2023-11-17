@@ -23,10 +23,14 @@
 // Revision: Kieran rewrote the queue to render using a single column dynamic MUI grid to render the songs top down as they're added to the queue
 // Revised on: 11/02/2023
 // Revision: Kieran ported the MUI grid to be a Mantine grid, as team has decided to change our UI system from MUI to Mantine
+// Revised on: 11/08/2023
+// Revision: Kieran added a screen to show the album art, name, and artist of a selected song from the search bar as a placeholder while developing the now playing screen
 // Revised on: 11/09/2023
 // Revision: Chinh added a replay song button and changed the styling of the buttons to be vertically stacked
 // Revised on: 11/09/2023
 // Revision: Chinh added a dark mode toggle and adjusted styling to be more uniform with dark/light mode respectively.
+// Revised on: 11/15/2023
+// Revision: Kieran fixed the Now Playing section to correctly show the song art, name, and artist for the song currently playing in spotify.
 // Revision on: 11/17/2023
 // Revision: Paul moved all queue screen functionality to separate component (queue.jsx) and made changes to allow for routing and displaying basic components
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
