@@ -23,10 +23,14 @@
 // Revision: Kieran rewrote the queue to render using a single column dynamic MUI grid to render the songs top down as they're added to the queue
 // Revised on: 11/02/2023
 // Revision: Kieran ported the MUI grid to be a Mantine grid, as team has decided to change our UI system from MUI to Mantine
+// Revised on: 11/08/2023
+// Revision: Kieran added a screen to show the album art, name, and artist of a selected song from the search bar as a placeholder while developing the now playing screen
 // Revised on: 11/09/2023
 // Revision: Chinh added a replay song button and changed the styling of the buttons to be vertically stacked
 // Revised on: 11/09/2023
 // Revision: Chinh added a dark mode toggle and adjusted styling to be more uniform with dark/light mode respectively.
+// Revised on: 11/15/2023
+// Revision: Kieran fixed the Now Playing section to correctly show the song art, name, and artist for the song currently playing in spotify.
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -54,24 +58,24 @@ function App() { // app function to wrap all the contents of the webpage
   const { makeRequest: reqPlayer } = useHostAPI('https://api.spotify.com/v1/me/player'); //must use the useHostAPI since this call needs the token from the user who logged in 
   const { logout: logoutUser } = useHostAPI(''); //function call for logging out from spotify
 
-  const [nowPlayingSong, setNowPlayingSong] = useState(null);
+  const [nowPlayingSong, setNowPlayingSong] = useState(null); //state to hold the song object of the currently playing song
   
-  useEffect(() => {
-    async function fetchData(code){
+  useEffect(() => { //use effect for grabbing the now playing song
+    async function fetchData(code){ //async function to make the call
       reqPlayer(`/currently-playing`, code) // calls the currently-playing API request
         .then((data) => {
           if (data && data.item) { // check if there is a currently playing song
-            setNowPlayingSong(data.item);
+            setNowPlayingSong(data.item); //sets song object to now playing save state
           } 
         })
     }
-    if(window.location.pathname === '/callback'){
+    if(window.location.pathname === '/callback'){ //if user is logged into spotify 
       let urlParams = new URLSearchParams(window.location.search); //parse the elements of the url
-      let code = urlParams.get('code') || "empty";
+      let code = urlParams.get('code') || "empty"; //get the code from the url
       
-      fetchData(code);
+      fetchData(code); //run the function above to get and set the now playing song 
     }
-  },[reqPlayer]);
+  },[reqPlayer]); //includes reqPlayer as a dependency to the useeffect
 
   async function addToQueue(){
     if(songChoice!=null){
@@ -261,23 +265,23 @@ function App() { // app function to wrap all the contents of the webpage
         }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
       </div>
       <div style={{
-        width: '500px'
+        width: '500px' //now playing div is 500px wide
       }}
       >
         <h1>Now Playing</h1>
         {
-          (window.location.pathname === '/callback') ? 
+          (window.location.pathname === '/callback') ? //if user is logged in, add the now playing song info. if not, show text saying to login
           <div>
-          <a href={nowPlayingSong?.external_urls.spotify} target='_blank' rel="noreferrer">
-            <img src={nowPlayingSong?.album.images[1].url}></img>
+          <a href={nowPlayingSong?.external_urls.spotify} target='_blank' rel="noreferrer"> {/* clicking the song image opens the song in spotify */}
+            <img src={nowPlayingSong?.album.images[1].url}></img> {/* gets the song's image from the nowplaying song object and renders it */}
           </a>
           <div>
-          <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}>
-            <span style={{color:'black'}}>{nowPlayingSong?.name}</span><br></br><span style={{color:'grey'}}>{nowPlayingSong?.artists[0].name}</span>
+          <p style={{marginLeft:'100px', textAlign:'left', fontWeight:'bold', fontSize:'15pt'}}> 
+            <span style={{color:'black'}}>{nowPlayingSong?.name}</span><br></br><span style={{color:'grey'}}>{nowPlayingSong?.artists[0].name}</span> {/* gets the song name and artist name formatted and printed under the image */}
           </p>
           </div>
           </div>
-          : 
+          : //asks user to login if they're now logged in
           <h3 style={{}}>Login first (top right)</h3>
         }
       </div>
