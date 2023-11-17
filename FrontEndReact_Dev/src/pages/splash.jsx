@@ -17,6 +17,7 @@
  * Date Revised: 11/5/2023 - Chinh Nguyen
  *            moved placement of code comment for one div to be correctly aligned
  *            readded logo fade-in animation for sprint submission
+ * Date Revised: 11/17/2023 - Paul Stuever - Refactored splash screen to allow for php integration and host/join flow
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -25,7 +26,7 @@
  * Error conditions: None
  * Side effects: None
  * Invariants: None
- * Known Faults: must integrate PHP backend
+ * Known Faults: CSS and displaying information needs to be updated to look better
  * **/
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -33,7 +34,7 @@ import phpAPI from '../phpApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
-import { setLoading } from '../redux/loadingSlice';
+import { useNavigate } from 'react-router-dom';
 // import { useNavigate } from "react-router-dom";
 
 function Splash()
@@ -71,7 +72,7 @@ function Splash()
     //  are completely empty
     const [placeholderCode, setPlaceHolderCode] = useState(['S', 'O', 'N', 'G']);
     
-    const [phpAddress, setPhpAddress] = useState("join");
+    const [hostCode, setHostCode] = useState("");
 
     // boxRefs uses useRef to focus the next input after each input 
     const boxRefs = [ useRef( null ), useRef( null ), useRef( null ), useRef( null ) ];
@@ -80,13 +81,16 @@ function Splash()
     // global variable, used to make sure user input is valid
     const regex = /^[A-Za-z0-9]+$/;
 
-    // e is the event object
-    //  in our case, the event is a change in input
-    // index is the position of the input within the array
+    //dispatch is used to get globals from redux, will use later
     const dispatch = useDispatch();
 
-    // const navigate = useNavigate();
+    //navigate is used to go between components using react router
+    const navigate = useNavigate();
 
+    // const navigate = useNavigate();
+    // e is the event object
+        //  in our case, the event is a change in input
+        // index is the position of the input within the array
     const handleCodeChange = ( e, index ) => {
         // input validation
         //
@@ -106,33 +110,13 @@ function Splash()
             //  the input is in lowercase)
             codeCopy[ index ] = e.target.value.toUpperCase();
 
-            // call the set code function with the modified copy of the 
-            //  code.
-            // this will allow the code object to have the values of 
-            //  codeCopy
-            
+            // Set the global roomCode to the current code
             dispatch(setCode(codeCopy));
 
             // if the code is not completely empty, remove placeholder text in input boxes
             if( codeCopy.join() != "" )
             {
-                console.log( "butthole 1" );
                 setPlaceHolderCode( [ '', '', '', '' ] );
-            }
-            if( codeCopy.join().length >= 4 && !codeCopy.includes(',')) 
-            {
-                console.log("hey");
-                // //If less than 4, then code isn't completely input
-                // makeRequest();
-                // if(phpResponse) {
-                //     if(phpResponse.status == 'ok') {
-                //         console.log("good!");
-                //     }
-                //     else {
-                //         console.log("invalid roomcode! (make error box)");
-                //     }
-                // }
-
             }
 
             // change the input elements to solid black if 
@@ -185,6 +169,7 @@ function Splash()
         
     };
 
+    //Const function to fade out html elements for host/join flow
     const fadeOut = () => {
         // this block of code is for the fade out effect
         setTimeout(() => {
@@ -192,16 +177,23 @@ function Splash()
             let opacity = 1; // set the opacity to 1
             const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
                 opacity -= 0.01; // decrease the opacity by 0.01
-                mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
+                if(mainContainer) {
+                    mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
+                }
                 if (opacity <= 0) { // if the opacity is less than or equal to 0
                     clearInterval(intervalId); // clear the interval
                     const inputContainer = document.getElementById("code-input-container"); // get the main container
+                    if(inputContainer){
                     inputContainer.style.display = "none"; // set the background color to black
                     mainContainer.style.opacity = 1; // set the opacity to 1
+                    }
+                    const hostContainer = document.getElementById("host-button-container"); // get the host button
+                    hostContainer.style.display = "none"; // Hide the host container when we're fading out
 
                     // This block of code handles the fade in effect of logo!
                     setTimeout(() => {
                         const hiddenName = document.getElementById("hidden-name"); // get the main container
+                        hiddenName.style.display = "block"; // show the name box
                         const button = document.getElementById("sync-button");
                         button.style.left = "125%";
                         hiddenName.style.zIndex = 2; // set the z-index to 1
@@ -214,7 +206,6 @@ function Splash()
                                 clearInterval(intervalId); // clear the interval
                             }
                         }, 12); // milliseconds per update FOR LOGO FADE IN
-                        setPhpAddress("join-name");
                     }, 50); // milliseconds before fade out FOR LOGO FADE IN
 
                 }
@@ -232,49 +223,103 @@ function Splash()
         }
     };
 
+    // handle changing the name of the room or user
     const handleNameChange = (name) => {
-        console.log(name.target.value);
-        dispatch(setName(name.target.value));
-
+        dispatch(setName(name.target.value)); // set the redux global to the name value
     }
 
+    // handle clicking the "SYNC" button
     const sync = () => {
+        // look at php response, and work accordingly
         if (!phpResponse || phpResponse.error == "Room Doesn't Exist!") {
-            makeRequest();
+            makeRequest("join", roomCode.join(""), null);
         }
         else {
-            makeRequest();
+            if(hostCode) { // If a host code has been generated, then we're in host mode and we want to use host php files
+                makeRequest("host-name", hostCode, username);
+                return;
+            }
+            makeRequest("join-name", roomCode, username); //Otherwise, we want to just use join php files
         }
     };
 
+    //Generate a roomcode by random 
+    const genCode = () => {
+        // Game Code Generation ~~~~~~~~
+        //We have opted to only use uppercase letters and numbers
+        const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+        var code = '';
+        //Random choose loop
+        for (var i = 0; i < 4; i++) {
+            code += chars[Math.floor(Math.random() * chars.length)];
+        }
+        console.log(code); //Console log for dev purposes
+        return code;
+    };
+
+    // Handle clicking the "host a room" button
+    const host = () => {
+        if( loginState ) { //loginState will be used to tell if the user is logged into spotify, it's a redux global.
+            let tempCode = genCode();
+            setHostCode(tempCode); //Generate a code and store it in the hostCode state
+            makeRequest("host-code", tempCode, null); //Make php request
+        }
+        else { //Doesn't get hit right now, after spotify integration it will be fixed.
+            console.log("Doing spotify login flow...");
+            //Call spotify login flow and store necessary info there
+        }
+    }
+
+    // These are all redux globals. They are used to track important information between files. Works as sort of a database
     const { roomCode } = useSelector(state => state.roomCode);
 
     const { username } = useSelector(state => state.username);
 
-    const { makeRequest, phpResponse } = phpAPI( phpAddress, roomCode.join(""), username);
-    
+    const { loginState } = useSelector(state => state.loginState);
+
+    // Hook that grabs the makeRequest function and phpResponse state from phpAPI
+    const { makeRequest, phpResponse } = phpAPI();
+
+    // Watches the phpResponse state and triggers when it's changed
     useEffect(() => {
         if (phpResponse) {
-            if (phpResponse.status == 'ok') {
+            // Case for good room code on join
+            if (phpResponse.status == 'ok_join') {
                 console.log("good!");
                 fadeOut();
             }
-            else if(phpResponse.status == 'error'){
-                console.log(phpResponse.error);
+            //Case for good room code generation on host 
+            if (phpResponse.status == 'ok_host') {
+                console.log("good host!");
+                dispatch(setCode(hostCode));
+                fadeOut();
             }
+            //Error handling
+            else if (phpResponse.status == 'error') {
+                console.log(phpResponse.error); // This will need to be replaced with front-end error box
+                if (phpResponse.error == 'Bad host code!') {
+                    // genCode();
+                }
+            }
+            // Case for good name entry on join
             else if (phpResponse.status == "good_name") {
                 console.log("moving on!");
-                dispatch(setLoading(true));
+                navigate("/join"); // Navigate to join.jsx
                 // navigate(path);
+            }
+            // Case for good name entry on host. Shouldn't fail unless there's server error
+            else if (phpResponse.status == "good_host_name") {
+                console.log("Host good!");
+                navigate("/host"); // Navigate to host.jsx
             }
         }
     }, [phpResponse])
 
-    console.log(roomCode);
-
+    // Finally, this component will return divs with all the necessary inputs and buttons
     return (
         // contains all the elements on the page
         <div id = "main-container">
+            {/*Contains the name entry text field*/}
             <div id = "hidden-name" style={{opacity: 0}}>
                 <input type="text" 
                     className="name-input"
@@ -289,7 +334,7 @@ function Splash()
                 {/* code.map "lays out" the input fields
                  for our code input.
                  think of it like rendering each code input box */}
-                { roomCode.map( ( code_char, index ) => (
+                { placeholderCode.map( ( code_char, index ) => (
                         <input
                             // allows dynamic className, inputColor will be either 
                             //  "code-input teal"
@@ -298,7 +343,6 @@ function Splash()
                             type = "text"
                             maxLength = "1"
                             key = { index }
-                            value = { code_char } 
                             placeholder = { placeholderCode[ index ] }
 
                             // boxRefs attached to inputs
@@ -322,8 +366,19 @@ function Splash()
                 onClick={ sync } 
                 id = "sync-button"
             >SYNC</button>
+            {/*Contains the 'host a room' button
+                On clicking this, a roomCode will be generated and name input will be requested.
+                Finally, the information will be stored in the mySQL server*/}
+            <div id="host-button-container">
+                    <button
+                        className = "tealText"
+                        onClick = { host }
+                        id = "host-button"
+                    >Host a Room</button>
+            </div>
         </div>
     );
 }
 
+// Export the component
 export default Splash;
