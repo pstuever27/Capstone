@@ -31,6 +31,8 @@
 // Revision: Chinh added a dark mode toggle and adjusted styling to be more uniform with dark/light mode respectively.
 // Revised on: 11/15/2023
 // Revision: Kieran fixed the Now Playing section to correctly show the song art, name, and artist for the song currently playing in spotify.
+// Revised on: 11/17/2023
+// Revision: This used to be under the name App.jsx, but moved it all to this new file as a react page
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
