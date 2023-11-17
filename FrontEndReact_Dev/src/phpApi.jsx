@@ -4,7 +4,8 @@
  * Description: Component that will use XMLHTTP requests to call our php files
  * Programmer's Name: Paul Stuever
  * Date Created: 11/5/2023
- * Date Revised: 11/5/2023 - Created file, won't integrate yet as things aren't working
+ * Date Revised: 11/5/2023 - Paul Stuever - Created file, won't integrate yet as things aren't working
+ * Date Revised: 11/17/2023 - Paul Stuever - Updated phpApi to return makeRequest for use in components. Working now.
  * Preconditions: 
  *  @inputs : php file name, arguments
  * Postconditions:
@@ -12,11 +13,10 @@
  * Error conditions: If SQL server connection did not succeed, error out
  * Side effects: None
  * Invariants: None
- * Known Faults: May need restructuing with state variables to ensure data is working correctly
+ * Known Faults: None
  * **/
 
-import React from "react";
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 // usePHPAPI = () => {
      // use state stuff to set up some vars, ie response, loading, etc.
@@ -28,26 +28,16 @@ function throwError(error) {
 }
 
 //This sets up the state variables and returns the makeRequest function which executes the php call
-const phpAPI = (phpUrl, roomCode, username) => {
-    //Set up state variables
-    const [url, setUrl] = useState(null);
-    const [code, setCode] = useState(null);
-    const [name, setName] = useState(null);
-
-    //May not be needed 
+const phpAPI = () => {
+    //Set up state variable
     const [phpResponse, setResponse] = useState(null);
 
     //Const which actually makes the request
-    const makeRequest = () => {
+    const makeRequest = (phpUrl, roomCode, username) => {
         //Make a new xhr object
-        setUrl(phpUrl);
-        setCode(roomCode);
-        setName(username);
-
-        let locUrl = url;
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://localhost:8000/Server/${phpUrl}.php`, true);
+        xhr.open('POST', `Server/${phpUrl}.php`, true);
         //Open the PHP file
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         //When the PHP file is done, this will get called

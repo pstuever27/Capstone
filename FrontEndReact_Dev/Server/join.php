@@ -6,6 +6,7 @@
  * Programmer's Name: Paul Stuever
  * Date Created: 9/21/2023 
  * Date Revised: 10/05/2023 – Nicholas Nguyen – added client username functionality
+ *  Revision: 11/17/2023 - Paul Stuever - Finalize php join roomCode queries
  *  Revision: 11/5/2023 - Paul Stuever - Integrate into React frontend 
  *  Revision: 10/22/2023 - Paul Stuever - Added mySQL close for debugging
  *  Revision: 9/24/2023 - Paul Stuever - Finished php set up for room codes
@@ -67,7 +68,7 @@ else {
     $roomCode = $_POST['roomCode'];
 
     //Set status to good_name
-    $status = 'ok';
+    $status = 'ok_join';
 
     //Set up JSON to respond with
     $response = [

@@ -48,6 +48,9 @@ node_modules/*
 .vite
 .vite/*
 
+# git ignores vite build folder
+FrontEndReact_Dev/build/
+
 #git ignore the client.json file to make sure spotify client ID and secret aren't uploaded to github but can be used locally when testing 
 client.json
 FrontEndReact_Dev/client.json

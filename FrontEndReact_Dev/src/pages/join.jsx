@@ -5,6 +5,7 @@
  * Programmer's Name: Paul Stuever
  * Date Created: 11/5/2023
  * Date Revised: 11/5/2023 - Paul Stuever - File created, began jsx setup
+ * Date Revised: 11/17/2023 - Paul Stuever - Refactored to better fit jsx setup and allow to be displayed from App.jsx
  * Preconditions: 
  *  @inputs : None
  * Postconditions:
@@ -12,26 +13,30 @@
  * Error conditions:
  * Side effects: None
  * Invariants: None
- * Known Faults: Needs more work to get integrated with React
+ * Known Faults: Need to integrate other components to show spotify information
  * **/
 
+
+//Imports, redux used for project 'globals'
 import React from "react";
-import phpAPI from '../phpApi'
-import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux';
 
+//Join component to return room info
 const Join = () => {
 
+    //Grab roomCode and username from redux slice
     const { roomCode } =  useSelector( state => state.roomCode );
     const { username } =  useSelector( state => state.username );
 
+    //Return div containing information
     return(
         <div>{}
             <p>RoomCode: { roomCode }</p>
-            <p>Room Name: { username }</p>
+            <p>Name: { username }</p>
         </div>
     );
 
 };
 
+//Export component
 export default Join
