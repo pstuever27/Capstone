@@ -3,10 +3,12 @@
  Description: Styling of react app
  Programmer(s): Kieran Delaney, Nicholas Nguyen
  Created on: 9/21/2023
- Revised on: 9/27/2023
+ Revised on: 11/19/2023
  Revision: Kieran added search and queue divs for styling those sections of the webpage
  Revised on: 10/22/2023
- Revosopm: Nicholas changed the font-family for the entirety of thewebpage
+ Revision: Nicholas changed the font-family for the entirety of thewebpage
+ Revision on: 11/19/2023
+ Revision: Nicholas added Blocked Songs functionality and reordered the blocked songs elements to be beneeath the queue elements
  Preconditions: None
  Postconditions: Sets styling specifications for rendering webpage content
  Error conditions: None
@@ -42,6 +44,9 @@
   margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
   width: '500px'; /* width of the div is 500px */
   height: '100px'; /* height of the div is 100px */
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
 }
 
 .qDiv { /* queue div class */
@@ -138,6 +143,12 @@ img {
   position: absolute;
 
   top: 75%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .sync-button {

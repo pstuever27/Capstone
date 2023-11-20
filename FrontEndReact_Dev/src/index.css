@@ -84,6 +84,6 @@ button:focus, button:focus-visible { /* styling for when a button is focused on 
     color: #747bff; /* color is different hue of blue */
   }
   button { /* overwrites button styling */
-    background-color: #f9f9f9; /* background color set to white for lightmode preferences */
+    background-color: black; /* background color set to white for lightmode preferences */
   }
 }
