@@ -19,6 +19,8 @@
 // Revision: Nicholas added styling for the background, queue list, search header, and buttons
 // Revised on: 10/25/2023
 // Revision: Kieran added a ternary switch to the login button to make it become a logout button after being pressed and having the user login. Clicking this logout button then clears the saved spotify token for the user who logged in, and returns the site back to its base address
+// Revision on: 11/19/2023
+// Revision: Nicholas added Blocked Songs functionality and reordered some of the <div> elements
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -119,130 +121,134 @@ function App() { // app function to wrap all the contents of the webpage
           <img src="./src/assets/logo.png" className="logo" alt="Songsync logo" /> {/* renders our songsync logo to the webpage */}
         </a>
       </div>
-      <div className="searchDiv"> {/* div for search bar, using the searchDiv styling */}
-      <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
-        <Autocomplete  // autocomplete MUI component for rendering the search results under the search bar as the user types
-          disablePortal  // allows for customizing the style of the popper component, which isn't possible for portal-based autocomplete components
-          autoHighlight // automatically does a focused highlight on the first search result, so the user can quickly type and hit the enter key on that top result, or use the arrow keys to select a different one from the list
-          noOptionsText={'Oops! Nothing :('} // this makes it so that when there are no search options for the inputted text, it will just be a blank empty space below ' ' or it will say 'Oops! Nothing :(' depending on what's in this parameter, rather than showing the "No options" default. This looks more streamlined.
-          id="search-box" //sets the html id of this autocomplete tag to be search-box
-          value={songChoice} // sets the song that the user selected from the search results list to the songChoice save state
-          inputValue={inputVal} // saves the text inputted to the search bar by the user to the inputVal save state
-          onInputChange={(event, newInputValue) => { //when the user is typing in the search bar, the new text is passed in through the newInputValue argument. the event arguement can be used later if needed, but is required to be listed for the function to work.
-            setInputValue(newInputValue); // saves the new text typed in the search bar to the inputvalue state
-            if(newInputValue!="") search(); // runs the search function to get the spotify search results based off the text the user inputted
-          }}
-          onChange={(event, newValue) => { // when the user selects a different search result, the new selected value is passed into this function
-            setSongChoice(newValue); // the new song is saved in the songChoice state
-          }}
-          isOptionEqualToValue={(option,value)=>`${option.name} - ${option.artists[0].name}`===`${value.name} - ${value.artists[0].name}`} //used to eliminate a warning
-          getOptionLabel={searchResult => `${searchResult.name} - ${searchResult.artists[0].name}`} //renders the song option text in the dropdown in the format "Track - Artist"
-          options={searchResults} // the "options" prop takes an array of what will be shown as the listed options that the user can search through. These are set to the searchResults array filled with spotify search results from the search() function
-          sx={{ width: 'max-width', fontFamily: 'proxima-nova' }} // sets the width of the search box to be 300 px, font family to proxima-nova
-          renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
-        />
-        
-        <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
-        {
-          !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
-          : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
-          <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
-        }
-
-        <button onClick={() => blockFromQueue()} style={{left:500, float:'right',}}>Block from Queue</button>{/* clicking button calls the function to black the song from queue */}
-        {
-
-        }
       
-      </div>
-      <div className='qDiv'> {/* queue div with qDiv css styling */}
-      <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
-        <div style={{ //styling of the queue render
-            display: 'flex',  // using flex display paradigm
-            flexDirection: 'horizontal', //rendering horizontally
-            width: '400px', //400px wide
-            height: '60px', //60 px tall
-            fontSize: '20px', //font size is 20px
-            margin: '20px',  //margins around queue render are 20px
-            // borderTop: '2px solid green', //the top and bottom borders are 2px of green
-            // borderBottom: '2px solid green'
-            background: 'rgba( 0, 0, 0, 0.2 )',
-            borderRadius: '5px'
-        }}>
-            {songQueue.map((item) => { //maps each song of the queue to a div rendering of the song name
-              return ( //beings return statement that for arrow function
-                <div   //returning a div component with styling of each item from the queue
-                  style={{  //specifies the styling of these song bubble divs
-                    width: "auto", //width is automatically set to best fit the text
-                    padding: "5px", // padding is 5px between the text and the background bubble
-                    height: "30px", // height of the song bubble is 30px
-                    background: "#1189bd", //specifies the color of the background of the song bubble
-                    borderRadius: "5px", //specifies how rounded the corners of the song bubble are
-                    margin: "10px", //distance between song bubbles within the queue render is 10 px
-                    textAlign: "left", //the song name is in the center of the bubble
-                  }}
-                  key={item.name} //sets the key of the div to be the name of the item from the queue
-                >
-                  {item.name} {/* renders the name of the item from the queue, in our case the song name */}
-                </div>
-              );
-          })}
-        </div>
-        <button style={{ //styling the remove button
-            margin: '20px', //20px margins around the button
-            width: '200px', //width of the remove button is 200px
-            borderRadius: '5px' //corners of the remove button are rounded to 5px radius
-        }}
-            onClick={dequeue}> {/* when clicking the remove button, the dequeue function runs, removing the first element from the queue */}
-            Remove {/* the text rendered on the button is "Remove" */}
-        </button>
-
-        
-        
-        <p style={{ //styling for the "Up Next" text and the song name next in the queue
-            color: '#000000', //color is black
-            fontSize: '20px', //font size is 20px
-            margin: '20px'   //sets margin around this to be 20px
-        }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
-      </div>
-
-      <div className='blockDiv'> {/* div for blocked songs */}
-        <h1 stlye={{margin:'20px'}}>Blocked Songs</h1> {/* renders blocked songs title with text shadow */}
-          <div style={{ //styling of the blocked songs render
-            display: 'flex',  // using flex display paradigm
-            flexDirection: 'horizontal', //rendering horizontally
-            width: '400px', //400px wide 
-            height: '60px', //60 px tall
-            fontSize: '20px', //font size is 20px
-            margin: '20px',  //margins around blocked songs render are 20px
-            background: 'rgba( 0, 0, 0, 0.2 )',
-            borderRadius: '5px'
-          }}>
-            {blockedSongs.map((item) => { //maps each song of the blocked songs to a div rendering of the song name
-              return ( //beings return statement that for arrow function
-                <div   //returning a div component with styling of each item from the blocked songs
-                  style={{  //specifies the styling of these song bubble divs
-                    width: "auto", //width is automatically set to best fit the text
-                    padding: "5px", // padding is 5px between the text and the background bubble
-                    height: "30px", // height of the song bubble is 30px
-                    background: "#1189bd", //specifies the color of the background of the song bubble
-                    borderRadius: "5px", //specifies how rounded the corners of the song bubble are
-                    margin: "10px", //distance between song bubbles within the blocked songs render is 10 px
-                    textAlign: "left", //the song name is in the center of the bubble
-                  }}
-                  key={item.name} //sets the key of the div to be the name of the item from the blocked songs
-                >
-                  {item.name} {/* renders the name of the item from the blocked songs, in our case the song name */}
-                </div>
-              );
-            })}
-        </div>
-      </div>
-
       <p className="read-the-docs"> {/* uses the "read-the-docs" styling on this text */}
         Dev Build [React + Vite + MaterialUI] {/* specifies what tools are being used to render this page */}
       </p>
+
+      <div className = "app-container">
+        <div className="searchDiv"> {/* div for search bar, using the searchDiv styling */}
+        <h1 style={{left:500, float:'left', width: 'max-width'}}>Search</h1> {/* renders search bar title with text shadow */}
+          <Autocomplete  // autocomplete MUI component for rendering the search results under the search bar as the user types
+            disablePortal  // allows for customizing the style of the popper component, which isn't possible for portal-based autocomplete components
+            autoHighlight // automatically does a focused highlight on the first search result, so the user can quickly type and hit the enter key on that top result, or use the arrow keys to select a different one from the list
+            noOptionsText={'Oops! Nothing :('} // this makes it so that when there are no search options for the inputted text, it will just be a blank empty space below ' ' or it will say 'Oops! Nothing :(' depending on what's in this parameter, rather than showing the "No options" default. This looks more streamlined.
+            id="search-box" //sets the html id of this autocomplete tag to be search-box
+            value={songChoice} // sets the song that the user selected from the search results list to the songChoice save state
+            inputValue={inputVal} // saves the text inputted to the search bar by the user to the inputVal save state
+            onInputChange={(event, newInputValue) => { //when the user is typing in the search bar, the new text is passed in through the newInputValue argument. the event arguement can be used later if needed, but is required to be listed for the function to work.
+              setInputValue(newInputValue); // saves the new text typed in the search bar to the inputvalue state
+              if(newInputValue!="") search(); // runs the search function to get the spotify search results based off the text the user inputted
+            }}
+            onChange={(event, newValue) => { // when the user selects a different search result, the new selected value is passed into this function
+              setSongChoice(newValue); // the new song is saved in the songChoice state
+            }}
+            isOptionEqualToValue={(option,value)=>`${option.name} - ${option.artists[0].name}`===`${value.name} - ${value.artists[0].name}`} //used to eliminate a warning
+            getOptionLabel={searchResult => `${searchResult.name} - ${searchResult.artists[0].name}`} //renders the song option text in the dropdown in the format "Track - Artist"
+            options={searchResults} // the "options" prop takes an array of what will be shown as the listed options that the user can search through. These are set to the searchResults array filled with spotify search results from the search() function
+            sx={{ width: 'max-width', fontFamily: 'proxima-nova' }} // sets the width of the search box to be 300 px, font family to proxima-nova
+            renderInput={(params) => <TextField {...params} label="Search Songs" sx={{ fontFamily: 'proxima-nova' }}/>} // this ties it all together, rendering the textfield and search results based off the inputted params. the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
+          />
+          
+          <button onClick={() => addToQueue()} style={{left:500, float:'right',}}>Add to Queue</button>{/* clicking button calls the function to add song to queue */}
+          {
+            !(window.location.pathname === '/callback') ? //if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+            <button onClick={() => window.location = authUrl} style={{ left: 400, float: 'left' }}>Login to Spotify</button> /* button that redirects the user to the spotify login page */
+            : //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
+            <button onClick={() => {logoutUser(); window.location.href = '/';}} style={{ left: 400, float: 'left' }}>Logout of Spotify</button> /* button that clears users spotify token from our save states and refreshes app to the base url */
+          }
+
+          <button onClick={() => blockFromQueue()} style={{left:500, float:'right',}}>Block from Queue</button>{/* clicking button calls the function to black the song from queue */}
+          {
+
+          }
+        
+        </div>
+
+        <div className='qDiv'> {/* queue div with qDiv css styling */}
+        <h1 style={{ margin: '20px' }}>Queue</h1> {/* renders queue title with text shadow */}
+          <div style={{ //styling of the queue render
+              display: 'flex',  // using flex display paradigm
+              flexDirection: 'horizontal', //rendering horizontally
+              width: '400px', //400px wide
+              height: '60px', //60 px tall
+              fontSize: '20px', //font size is 20px
+              margin: '20px',  //margins around queue render are 20px
+              // borderTop: '2px solid green', //the top and bottom borders are 2px of green
+              // borderBottom: '2px solid green'
+              background: 'rgba( 0, 0, 0, 0.2 )',
+              borderRadius: '5px'
+          }}>
+              {songQueue.map((item) => { //maps each song of the queue to a div rendering of the song name
+                return ( //beings return statement that for arrow function
+                  <div   //returning a div component with styling of each item from the queue
+                    style={{  //specifies the styling of these song bubble divs
+                      width: "auto", //width is automatically set to best fit the text
+                      padding: "5px", // padding is 5px between the text and the background bubble
+                      height: "30px", // height of the song bubble is 30px
+                      background: "#1189bd", //specifies the color of the background of the song bubble
+                      borderRadius: "5px", //specifies how rounded the corners of the song bubble are
+                      margin: "10px", //distance between song bubbles within the queue render is 10 px
+                      textAlign: "left", //the song name is in the center of the bubble
+                    }}
+                    key={item.name} //sets the key of the div to be the name of the item from the queue
+                  >
+                    {item.name} {/* renders the name of the item from the queue, in our case the song name */}
+                  </div>
+                );
+            })}
+          </div>
+          <button style={{ //styling the remove button
+              margin: '20px', //20px margins around the button
+              width: '200px', //width of the remove button is 200px
+              borderRadius: '5px' //corners of the remove button are rounded to 5px radius
+          }}
+              onClick={dequeue}> {/* when clicking the remove button, the dequeue function runs, removing the first element from the queue */}
+              Remove {/* the text rendered on the button is "Remove" */}
+          </button>
+
+          <p style={{ //styling for the "Up Next" text and the song name next in the queue
+              color: '#000000', //color is black
+              fontSize: '20px', //font size is 20px
+              margin: '20px'   //sets margin around this to be 20px
+          }}><span style={{fontSize:'15px',fontWeight:'bolder'}}>Up Next:</span>  {peek()?.name}</p> {/* overwrites the styling of the "Up Next:" portion to be smaller and bolder, and then uses the queue peek function to render the song next up in the queue. the question mark between peek and name is needed in case there is nothing in the queue so it doesn't try to call name on a lack of object */}
+        
+          <div className='blockDiv'> {/* div for blocked songs */}
+            <h1 stlye={{margin:'20px'}}>Blocked Songs</h1> {/* renders blocked songs title with text shadow */}
+              <div style={{ //styling of the blocked songs render
+                display: 'flex',  // using flex display paradigm
+                flexDirection: 'horizontal', //rendering horizontally
+                width: '400px', //400px wide 
+                height: '60px', //60 px tall
+                fontSize: '20px', //font size is 20px
+                margin: '20px',  //margins around blocked songs render are 20px
+                background: 'rgba( 0, 0, 0, 0.2 )',
+                borderRadius: '5px'
+              }}>
+                {blockedSongs.map((item) => { //maps each song of the blocked songs to a div rendering of the song name
+                  return ( //beings return statement that for arrow function
+                    <div   //returning a div component with styling of each item from the blocked songs
+                      style={{  //specifies the styling of these song bubble divs
+                        width: "auto", //width is automatically set to best fit the text
+                        padding: "5px", // padding is 5px between the text and the background bubble
+                        height: "30px", // height of the song bubble is 30px
+                        background: "#1189bd", //specifies the color of the background of the song bubble
+                        borderRadius: "5px", //specifies how rounded the corners of the song bubble are
+                        margin: "10px", //distance between song bubbles within the blocked songs render is 10 px
+                        textAlign: "left", //the song name is in the center of the bubble
+                      }}
+                      key={item.name} //sets the key of the div to be the name of the item from the blocked songs
+                    >
+                      {item.name} {/* renders the name of the item from the blocked songs, in our case the song name */}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>  
+        </div>
+
+
+      </div>
     </>
   )
 }
