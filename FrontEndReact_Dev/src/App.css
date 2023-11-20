@@ -92,6 +92,8 @@ html {
   position: absolute;
   /* position the logo */
   align-items: left;
+
+  display: "none";
   /* horizontally centered */
   justify-content: left;
   /* vertically centered */
@@ -128,6 +130,14 @@ img {
   margin: 2px;
   /* set 2px margin on all sides so input
                     boxes aren't touching each other */
+}
+
+#host-button-container {
+  display: flex;
+
+  position: absolute;
+
+  top: 75%;
 }
 
 .sync-button {

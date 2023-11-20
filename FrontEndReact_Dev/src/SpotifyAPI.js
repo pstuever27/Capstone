@@ -13,6 +13,8 @@
 // Revision: Kieran added the add to queue functionality by adding a useHostAPI function for the different style of authentication that's required to be able to do those calls which affect a spotify premium user
 // Revised on: 10/25/2023
 // Revision: Kieran added the logout function to the UseHostAPI which clears the saved token states from the app
+// Revised on: 11/08/2023
+// Revision: Kieran added code for making the spotify API call to get the user's currently playing song object
 // Preconditions: Must have client ID and client secret in client.json. These credentials are found in the Spotify Development dashboard https://developer.spotify.com/dashboard within the app settings.
 // Postconditions: Returns json data from Spotify to the react app to be parsed and then rendered as needed to the site.
 // Error conditions: If token is null or http status is anything other than the good 200 (401, 400, etc), the Spotify authentication token will be refreshed
@@ -149,15 +151,15 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
           return await fetch(url,param); // returns the response of the spotify data we're requesting by passing in the request url and our request parameters
     };
 
-    const nowPlaying = async (url, hostAccessToken) => {
+    const nowPlaying = async (url, hostAccessToken) => { //now playing API call
         const param = {
-            method: 'GET',
+            method: 'GET', //gets information
             headers: {
-                'Content-Type': 'applications/json',
-                'Authorization': `Bearer ${hostAccessToken}`
+                'Content-Type': 'applications/json', //in json object format
+                'Authorization': `Bearer ${hostAccessToken}` //needs to use hostaccesstoken since this is info from user's spotify account
             }
         };
-        return await fetch(url,param);
+        return await fetch(url,param); //gets the object from the url
     }
 
     const makeRequest = async (urlOptions, code) => { // makerequest function which is the "main" of this api calling system. It takes in an append portion for the base url specified in the useAPI() call, and this append portion urloptions allows for different search requests or other data requests under the same base request type
@@ -173,14 +175,14 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
             token = await createToken(code); // if so, set it to a new token
         }
 
-        if(urlOptions=='/currently-playing'){
-            let result = await nowPlaying(url+urlOptions,token);
+        if(urlOptions=='/currently-playing'){ //now playing call
+            let result = await nowPlaying(url+urlOptions,token); //tries to make call for now playing song object
             if (result.status != 200){ //if status isn't a success, this likely is due to the token being expired, so it will refresh the token
                 token = await refreshToken(); // overwrites the existing token with a new token
                 result = await nowPlaying(url+urlOptions,token); // makes the call again with the now valid token
             }
-            const data = await result.json();
-            return data;
+            const data = await result.json(); //gets the json object from the response
+            return data; //returns it
         }
 
 
