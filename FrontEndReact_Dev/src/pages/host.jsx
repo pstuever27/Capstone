@@ -7,6 +7,7 @@
  * Date Created: 11/17/2023
  * 
  * Date Revised: 11/17/2023 - File created and working with php backend for room codes
+ * Date Revised: 11/28/2023 - Rylan DeGarmo - Guestl List, Toggle Explicit, Close Room
  * 
  * Preconditions: 
  *  @inputs : None 
