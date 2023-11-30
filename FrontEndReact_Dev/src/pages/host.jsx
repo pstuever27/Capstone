@@ -35,6 +35,12 @@ const Host = () => {
         <div>{ }
             <p>RoomCode: {roomCode}</p>
             <p>Room Name: {username}</p>
+
+            <button onClick={GuestList}> Guest List: </button>
+
+            <button onClick={ExplicitToggle}>Toggle Explicit Songs On</button>
+
+            <button onClick={CloseRoom}>Close Room</button>
         </div>
     );
 
