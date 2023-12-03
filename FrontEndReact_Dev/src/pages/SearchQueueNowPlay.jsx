@@ -42,16 +42,16 @@
 //--------------------------------
 import { useState, useEffect } from 'react' // imports useState from react to allow saving of the search results (and other future variables as needed) across the webpage over render cycles
 import { useQueueState } from "rooks"; // imports usequeuestate from available react hooks for the queue data structure rendering 
-import './App.css' // imports styling for site
+import '../App.css' // imports styling for site
 import TextField from '@mui/material/TextField'; // imports textfield component of material UI for input field of search bar
 import Autocomplete from '@mui/material/Autocomplete'; // imports autocomplete component of material UI for dynamically rendering search results of search bar
 import { Grid } from '@mantine/core'; //mantine grid container for dynamically rendering queue on screens of varying sizes
-import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
 
 // for use when importing proxima nova
 // import Proxima_Nova from 'https://use.typekit.net/wwk0mzk.css';
 
-function App() { // app function to wrap all the contents of the webpage
+function SearchQueuePlayNow() { // app function to wrap all the contents of the webpage
   const [searchResults, setSearchRes] = useState([]); // state to save search results to be rendered in search bar
   //spotify api call initizations 
   const { makeRequest: reqSearch } = useAPI('https://api.spotify.com/v1/search'); //initializes spotify search base url api call, and sets the reqSearch alias to call makeRequest from the useAPI function definition
@@ -302,4 +302,4 @@ function App() { // app function to wrap all the contents of the webpage
   )
 }
 
-export default App // exporting the app to be imported and rendered in main.jsx
+export default SearchQueuePlayNow // exporting the app to be imported and rendered in main.jsx

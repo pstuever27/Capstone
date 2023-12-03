@@ -26,6 +26,7 @@ import roomCodeSlice from './roomCodeSlice'
 import usernameSlice from './usernameSlice';
 import loadingSlice from './loadingSlice';
 import loginStateSlice from './loginStateSlice';
+import clientAccessTokenSlice from './clientAccessTokenSlice';
 
 // Create the store using the other slices
 export const store = configureStore({
@@ -34,5 +35,6 @@ export const store = configureStore({
         username: usernameSlice,
         loading: loadingSlice,
         loginState: loginStateSlice,
+        clientAccessToken: clientAccessTokenSlice,
     },
 });

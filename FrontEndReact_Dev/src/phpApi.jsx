@@ -37,7 +37,7 @@ const phpAPI = () => {
         //Make a new xhr object
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `Server/${phpUrl}.php`, true);
+        xhr.open('POST', `http://localhost:8000/Server/${phpUrl}.php`, true);
         //Open the PHP file
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         //When the PHP file is done, this will get called
@@ -50,6 +50,7 @@ const phpAPI = () => {
                     // console.log(xhr.responseText);
                     //Response should have a JSON in it, if not, this will error out
                     response = JSON.parse(xhr.responseText);
+
                     //If error, then throw an error
                     if (response.status === 'error') {
                         throwError(response.error);
@@ -68,11 +69,13 @@ const phpAPI = () => {
                     console.log(err);
                     throwError(err);
                 }
+ 
             }
         };
         //Send the roomcode and username to PHP file
         xhr.send('roomCode=' + roomCode + '&username=' + username);
     }
+
 
     //May need to be changed later, but return the function and the state variables
     return { makeRequest, phpResponse };
