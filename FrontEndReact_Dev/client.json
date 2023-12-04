@@ -1,4 +1,5 @@
 {
-    "CLIENT_ID": "8dc1522f50e34d7d8a5d4a2c0daae8b4",
-    "CLIENT_SECRET": "be8dd5266da54a048d7b04c3ef9fbcc0"
+    "CLIENT_ID": "INSERT_HERE",
+    "CLIENT_SECRET": "INSERT_HERE",
+    "REDIRECT_URI": "http://localhost:3000/callback"
 }
