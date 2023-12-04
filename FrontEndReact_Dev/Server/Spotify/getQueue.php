@@ -1,4 +1,19 @@
 <?php
+/**
+ * Prolouge
+ * File: getQueue.php
+ * Description: Handles getting the host's full queue from backend
+ * Programmer's Name: Paul Stuever, Kieran Delaney
+ * Date Created: 12/3/2023 
+ * Preconditions: 
+ *  Requires Spotify PHP API from vendor and client_ID and client_secret to be set to the appropriate credentials from our Spotify Dev app. Also, the authCreds.php should've ran to send the user to the login screen.
+ * Postconditions:
+ *  Returns spotify queue in json format or error
+ * Error conditions: Returns error message if error occurs when trying to call getspotifyqueue vendor function
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: None
+ * **/
 require '../../vendor/autoload.php';
 require '../require/sql.php';
 
@@ -31,10 +46,8 @@ $options = [
 $api = new SpotifyWebAPI\SpotifyWebAPI($options, $session);
 
 try {
-  $api->getMyQueue();
-  $response = [
-    'status' => 'ok',
-  ];
+  $response = $api->getMyQueue();
+  
 } catch (SpotifyWebAPI\SpotifyWebAPIException $e) {
   $response = [
     'status' => 'error',
