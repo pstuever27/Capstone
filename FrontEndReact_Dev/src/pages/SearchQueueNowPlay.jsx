@@ -170,7 +170,7 @@ function App() {
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
-  
+
   // The reqPlayer object is taken from makeRequest function to perform Playback Control API cals. 
   // Example usage: reqPlayer('play') or pause reqPlayer('pause') 
   //
@@ -785,6 +785,5 @@ function App() {
     </>
   )
 }
-
 // exporting the app to be imported and rendered in main.jsx
 export default App 

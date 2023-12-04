@@ -35,6 +35,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
 import { useNavigate } from 'react-router-dom';
+import clientAPI from '../spotifyApi';
 // import { useNavigate } from "react-router-dom";
 
 function Splash()
@@ -270,6 +271,10 @@ function Splash()
         }
     }
 
+    const refresh = () => {
+        clientToken();
+    }
+
     // These are all redux globals. They are used to track important information between files. Works as sort of a database
     const { roomCode } = useSelector(state => state.roomCode);
 
@@ -279,6 +284,8 @@ function Splash()
 
     // Hook that grabs the makeRequest function and phpResponse state from phpAPI
     const { makeRequest, phpResponse } = phpAPI();
+
+    const { makeRequest: clientToken } = clientAPI();
 
     // Watches the phpResponse state and triggers when it's changed
     useEffect(() => {
@@ -376,6 +383,7 @@ function Splash()
                         id = "host-button"
                     >Host a Room</button>
             </div>
+            <button onClick= { refresh }>Test</button>
         </div>
     );
 }
