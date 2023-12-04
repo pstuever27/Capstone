@@ -21,8 +21,8 @@ require '../require/error.php';
 header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
 $session = new SpotifyWebAPI\Session(
-    'CLIENT_ID', //CLIENT_ID
-    'CLIENT_SECRET', //CLIENT_SECRET 
+    '8dc1522f50e34d7d8a5d4a2c0daae8b4', //CLIENT_ID
+    'be8dd5266da54a048d7b04c3ef9fbcc0', //CLIENT_SECRET 
 );
 
 $session->requestCredentialsToken();

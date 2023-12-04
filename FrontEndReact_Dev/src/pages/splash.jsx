@@ -285,7 +285,7 @@ function Splash()
     // Hook that grabs the makeRequest function and phpResponse state from phpAPI
     const { makeRequest, phpResponse } = phpAPI();
 
-    const { makeRequest: clientToken } = clientAPI();
+    const { clientAccess: clientToken } = clientAPI();
 
     // Watches the phpResponse state and triggers when it's changed
     useEffect(() => {
