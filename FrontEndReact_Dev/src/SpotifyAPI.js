@@ -47,6 +47,7 @@ export const useAPI = url => { // exports these functions to the other module th
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
+        console.log( "useAPI " + data );
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
@@ -70,6 +71,7 @@ export const useAPI = url => { // exports these functions to the other module th
         }
         
         // get token if it hasn't been made yet
+        console.log( accessToken );
         let token = accessToken; //sets to local variable so it updates in this render cycle
         if(token == null){ // check if token is the initial null state
             token = await refreshToken(); // if so, set it to a new token
@@ -116,6 +118,7 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
+        // console.log( data );
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
         setRefreshToken(data.refresh_token); //sets the refresh token parameter which is used later for the refresh token requests
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
@@ -137,6 +140,7 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
+        // console.log( "useHostAPI " + data );
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
@@ -199,9 +203,11 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
                 "message": "Player command failed: No active device found",
                 "reason": "NO_ACTIVE_DEVICE"
         */
+       console.log( token );
+       console.log( result );
         if (result.status != 204)
-            if(!alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work."))
-                window.location.reload();
+            alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work. Result.status: " + result.status + ".");
+                // window.location.reload();
 
         return result.status;
     };

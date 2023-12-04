@@ -86,8 +86,8 @@
  * Known Faults: 
  * **/
 
-/* import for proxima nova, DO NOT use outside of this project. */
-@import url("https://use.typekit.net/wwk0mzk.css");
+/* import for proxima nova, DO NOT use outside of this project.
+@import url("https://use.typekit.net/wwk0mzk.css"); */
 
 html {
   font-family: proxima-nova, Helvetica, Arial, sans-serif;

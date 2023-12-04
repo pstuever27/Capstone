@@ -1,6 +1,6 @@
 /**
  * Prolouge
- * File: Splash.js
+ * File: Splash.jsx
  * Description: represents functionality for the input fields
  *              
  * Programmer(s): Nicholas Nguyen, Chinh Nguyen
