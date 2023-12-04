@@ -20,10 +20,16 @@
 // require '../../vendor/autoload.php';
 // require '../require/sql.php';
 
+// //Get spotify app information from json (gitignore)
+// $json = file_get_contents('../../../client.json');
+// $appData = json_decode($json, true);
+
+// //Create new session with our web app information
 // $session = new SpotifyWebAPI\Session(
-//   'CLIENT_ID', //CLIENT_ID
-//   'CLIENT_SECRET', //CLIENT_SECRET 
+//   $appData[0], //ClientID
+//   $appData[1], //Client Secret
 // );
+
 
 // $mysql = SQLConnect();
 
