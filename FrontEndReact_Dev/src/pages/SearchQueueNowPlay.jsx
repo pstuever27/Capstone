@@ -127,6 +127,8 @@ import TextField from '@mui/material/TextField';
 // Autocomplete renders the search results of the search bar. 
 import Autocomplete from '@mui/material/Autocomplete';
 
+import authorizationApi from '../authorizationApi';
+
 // CSS styling for the app
 import './App.css' 
 
@@ -170,6 +172,8 @@ function App() {
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
+
+  const { authAccess: authToken } = authorizationApi();
 
   // The reqPlayer object is taken from makeRequest function to perform Playback Control API cals. 
   // Example usage: reqPlayer('play') or pause reqPlayer('pause') 
@@ -758,7 +762,7 @@ function App() {
           ( window.location.pathname === '/callback') 
           ? // IF TRUE
             <button 
-              onClick = { () => window.location = authUrl } 
+              onClick = { authToken } 
               style = { { width: '175px' } }
             >
               {/* text rendering for Logging in */}

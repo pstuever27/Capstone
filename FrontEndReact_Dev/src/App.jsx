@@ -124,6 +124,11 @@ import TextField from '@mui/material/TextField';
 // Autocomplete renders the search results of the search bar. 
 import Autocomplete from '@mui/material/Autocomplete';
 
+import authorizationApi from './authorizationApi';
+
+//Use redux for grabbing room code and name stuff
+import { useSelector } from 'react-redux';
+
 // CSS styling for the app
 import './App.css' 
 
@@ -169,6 +174,8 @@ function App() {
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
   
   const [dominantColor, setDominantColor] = useState( "#ffffff");
+
+  const { roomCode } = useSelector(state => state.roomCode);
 
   // The reqPlayer object is taken from makeRequest function to perform Playback Control API cals. 
   // Example usage: reqPlayer('play') or pause reqPlayer('pause') 
@@ -811,13 +818,13 @@ function App() {
           // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
           !( window.location.pathname === '/callback') 
           ? // IF TRUE
-            <button 
-              onClick = { () => window.location = authUrl } 
-              style = { { width: '175px' } }
-            >
-              {/* text rendering for Logging in */}
-              Login to Spotify
-            </button> 
+              <button 
+                onClick= { () => {window.location.href = `http://localhost:8000/Server/Spotify/authCreds.php?roomCode=ABCD`; } }
+                style = { { width: '175px' } }
+              >
+                {/* text rendering for Logging in */}
+                Login to Spotify
+              </button> 
           : // ELSE IF FALSE
             //if callback is in the url of the app, it means the user has logged into spotify, so we render the logout button instead
             
