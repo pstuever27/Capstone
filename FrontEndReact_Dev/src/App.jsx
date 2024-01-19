@@ -190,6 +190,8 @@ function App() {
       // `data` is the resulting value of the promise by reqPlayer, 
       //   which is executed when the promise is successfully resolved
       reqPlayer( `/currently-playing`, code ).then( ( data ) => {
+          console.log( data.error.message + " " + data.error.status );
+          console.log( data.item );
           // Checks whether data and data.item exist are are truthy.
           if( data && data.item ) { 
             // Sets the value of the Now Playing save state. 
