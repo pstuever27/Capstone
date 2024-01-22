@@ -10,7 +10,7 @@ const authorizationApi = () => {
 
     const [phpResponse, setResponse] = useState(null);
 
-    const { authAccessToken } = useSelector(state => state.authorizationAccessToken);
+    const { roomCode } = useSelector(state => state.roomCode);
 
     const [phpUrl, setUrl] = useState('authCreds');
 
@@ -18,6 +18,19 @@ const authorizationApi = () => {
         setUrl('authCreds');
         let xhr = makeRequest();
         xhr.send();
+    }
+
+    const getQueue = () => {
+        setUrl('getQueue');
+        let xhr = makeRequest();
+        xhr.send('roomCode=' + roomCode);
+    }
+
+    const nowPlaying = () => {
+        setUrl('nowPlaying');
+        console.log("now playing");
+        let xhr = makeRequest();
+        xhr.send('roomCode=ABCD');
     }
 
     const makeRequest = () => {
@@ -51,7 +64,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, authAccess, phpResponse };
+    return { makeRequest, authAccess, nowPlaying, phpResponse };
 };
 
 export default authorizationApi;

@@ -16,6 +16,7 @@
  * **/
 require '../../vendor/autoload.php';
 require '../require/sql.php';
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
 //Get spotify app information from json (gitignore)
 $json = file_get_contents('../../../client.json');
@@ -23,8 +24,8 @@ $appData = json_decode($json, true);
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  $appData[0], //ClientID
-  $appData[1], //Client Secret
+  "8dc1522f50e34d7d8a5d4a2c0daae8b4", // $appData[0], //ClientID
+  "be8dd5266da54a048d7b04c3ef9fbcc0" // $appData[1], //Client Secret
 );
 
 // Open sql connection
@@ -37,6 +38,15 @@ $stmt = $mysql->prepare("SELECT accessToken, refreshToken FROM room WHERE roomCo
 $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute(); //Execute sql
 
+$result = $stmt->get_result();
+print_r($result->fetch_assoc());
+
+$tokenArray[] = $result->fetch_assoc();
+$accessToken = $tokenArray[0];
+$refreshToken = $tokenArray[1];
+
+echo $accessToken;
+echo $refreshToken;
 //If we have a token, then set that as our current 
 if ($accessToken) {
   //Set the tokens as current in our session

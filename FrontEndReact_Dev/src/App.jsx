@@ -184,6 +184,8 @@ function App() {
   // @reference https://developer.spotify.com/documentation/web-api 
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
+  const { nowPlaying } = authorizationApi();
+
   // useEffect is used to perform side effects in reqPlayer
   // [reqPlayer] syntax at the end uses redPlayer as a dependency for useEffect
   //  any action that uses reqPlayer will cause useEffect to run
@@ -290,7 +292,7 @@ function App() {
       enqueue( songChoice ); 
 
       // If the user has logged into spotify and the callback result is in the url bar
-      if ( window.location.pathname === '/callback' ) { 
+      if (window.location.pathname === 'localhost:3000/callback' ) { 
         // Parse the elements of the url, retain only the search query after `?` in the URL
         let urlParams = new URLSearchParams( window.location.search ); 
 
@@ -816,7 +818,7 @@ function App() {
         
         {   
           // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          !( window.location.pathname === '/callback') 
+          !(window.location.pathname === '/callback') 
           ? // IF TRUE
               <button 
                 onClick= { () => {window.location.href = `http://localhost:8000/Server/Spotify/authCreds.php?roomCode=ABCD`; } }
@@ -841,6 +843,11 @@ function App() {
               {/* text rendering for Logging out */}
               Logout of Spotify
             </button> 
+        }
+        {
+          // <button onClick={ () => { nowPlaying() } }>
+          //   NowPlayingTest
+          // </button>
         }
       </div>
     </>

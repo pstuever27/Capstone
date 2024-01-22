@@ -26,13 +26,15 @@ header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  "9d0e63e00c324938bc1f7e0b4563b978", // $appData[0], //ClientID
-  "c1ffff7a3ad24a6d8ba43e4c513f6d9e", // $appData[1], //Client Secret
-  "http://localhost:3000/callback" // $appData[2] // Redirect URI
+  "8dc1522f50e34d7d8a5d4a2c0daae8b4", // $appData[0], //ClientID
+  "be8dd5266da54a048d7b04c3ef9fbcc0", // $appData[1], //Client Secret
+  "http://localhost:8000/Server/Spotify/callback.php" // $appData[2] // Redirect URI
 );
 
 //Create new state to verify valid session 
 $state = $session->generateState();
+
+file_put_contents('../../data/.roomCode', $_GET['roomCode']);
 
 //Settings options to allow for spotify functions in the authorization code flow
 $options = [
@@ -58,7 +60,6 @@ $options = [
     'user-read-private',
   ],
   'state' => $state, //State gets passed to callback
-  'roomCode' => $_GET['roomCode'] //roomCode gets passed to callback
 ];
 
 header('Location: ' . $session->getAuthorizeUrl($options)); //Runs the spotify api reqest for auth code, then redirects to our callback, which is callback.php
