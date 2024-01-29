@@ -65,11 +65,16 @@ body {
   /* position: absolute; /* positioning is absolute to make it stick to the side */ /* do not do this. */
   /* left:0; /* on left side of page */
   /* margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
-  width: '500px'; /* width of the div is 500px */
-  height: '100px'; /* height of the div is 100px */
+  width: 500px; /* width of the div is 500px */
+  height: 100px; /* height of the div is 100px */
   /* display: flex;
   flex-direction: column;
   justify-content: space-between; */
+  margin: 40px;
+}
+
+#nowPlayingDiv {
+  width: 500px;
   margin: 40px;
 }
 

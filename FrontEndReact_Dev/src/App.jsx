@@ -40,6 +40,7 @@ import Search from './pages/search'
 import Queue from './pages/queue'
 
 import QueueContext from './pages/queueContext';
+import NowPlaying from './pages/nowPlaying'
 
 function App() {
   // This is the queue data structure that stores the songs to be rendered on screen.
@@ -65,6 +66,7 @@ function App() {
     <>
       <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
         <Search/>
+        <NowPlaying/>
         <Queue/>
       </QueueContext.Provider>
       <Login/>
