@@ -1,9 +1,6 @@
 //--------------------------------
-// File: SearchQueueNowPlay.jsx
-//       formerly App.jsx
-// Description: This is the react component that handles the majority of the app 
-//              frontend and functionality
-// 
+// File: SearchQueueNowPlay.jsx (fka, App.jsx)
+// Description: This is the react component that handles the majority of the app frontend and functionality
 // Programmer(s): Kieran Delaney, Chinh Nguyen, Nicholas Nguyen
 // Created on: 9/21/2023
 // 
@@ -65,6 +62,11 @@
 // Revision: Nicholas added the blocked songs functionality, reorganized the 
 //            code to improve clarity, and rewrote the comments to be more
 //            readable. 
+// Revised on: 01/19/2024 
+// Revision: Began moving aspects of our application away from App.jsx. 
+//            For now, a lot of it lies in SearchQueueNowPlay.jsx
+//            Eventually, the goal will be to have multiple components 
+//            that work together to render the application.
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -101,7 +103,7 @@
  */
 
 // useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
-import { useAPI, getAuthUrl, useHostAPI } from './SpotifyAPI'; 
+import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI'; 
 
 // useState is used to perform side effects in function components. 
 // Side effects interact outside of the component. 
@@ -117,8 +119,7 @@ import { useState, useEffect } from 'react'
 // renders queue data structure
 import { useQueueState } from "rooks"; 
 
-// matine grid containers are used for dynamically rendering 
-//  the queue on screens of varying sizes
+
 import { Grid } from '@mantine/core'; 
 
 // imports textfield component of material UI for input field of search bar
@@ -126,12 +127,6 @@ import TextField from '@mui/material/TextField';
 
 // Autocomplete renders the search results of the search bar. 
 import Autocomplete from '@mui/material/Autocomplete';
-
-import authorizationApi from '../authorizationApi';
-
-// CSS styling for the app
-import './App.css' 
-
 
 /**
  * @brief This is the main function that renders the webpage. 
@@ -172,8 +167,8 @@ function App() {
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
-
-  const { authAccess: authToken } = authorizationApi();
+  
+  const [dominantColor, setDominantColor] = useState( "#ffffff");
 
   // The reqPlayer object is taken from makeRequest function to perform Playback Control API cals. 
   // Example usage: reqPlayer('play') or pause reqPlayer('pause') 
@@ -195,12 +190,67 @@ function App() {
       // `data` is the resulting value of the promise by reqPlayer, 
       //   which is executed when the promise is successfully resolved
       reqPlayer( `/currently-playing`, code ).then( ( data ) => {
+          console.log( data.error.message + " " + data.error.status );
+          console.log( data.item );
           // Checks whether data and data.item exist are are truthy.
           if( data && data.item ) { 
             // Sets the value of the Now Playing save state. 
             setNowPlayingSong( data.item ); 
+
+            // sets the color of the webpage to the dominant color of the song
+            getDominantColor( data.item.album.images[1].url ).then( ( color ) => {
+              // sets the dominant color of the song to the dominant color of the song
+              setDominantColor( color );
+              // sets the background color of the webpage to the dominant color of the song
+              document.documentElement.style.backgroundColor = color;
+              
+              // error handling
+            } ).catch( ( error ) => {
+              // output to console 
+              console.log( error );
+            } );
           } 
         } );
+    }
+
+    async function getDominantColor( imgURL ) {
+      // return a promise because we're not actually trying to render another image
+      return new Promise( ( resolve, reject ) => {
+        // create a new image object
+        const img = new Image();
+
+        // set the source of the image to the url of the album art
+        img.src = imgURL;
+
+        // when the image loads, get the color of the top left pixel
+        img.onload = function() {
+          // create a new canvas element
+          const canvas = document.createElement( "canvas" );
+
+          // set the width and height of the canvas to the width and height of the image
+          canvas.width = img.width;
+          canvas.height = img.height;
+    
+          // draw the image onto the canvas
+          const ctx = canvas.getContext( "2d" );
+          ctx.drawImage( img, 0, 0, img.width, img.height );
+    
+          // get the pixel data from the image
+          const imageData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
+          const data = imageData.data;
+          
+          // get the rgb values of the top left pixel
+          const red = data[0];
+          const green = data[1];
+          const blue = data[2];
+    
+          // resolve the promise with the rgb values
+          resolve(`rgb(${red}, ${green}, ${blue})`);
+        };
+
+        // if the image fails to load, reject the promise
+        img.onerror = reject;
+      });
     }
 
     // Spotify applications redirect to the callback page after login
@@ -228,7 +278,7 @@ function App() {
    */
   async function addToQueue() {
     // Verifies that the user has selected a song from the search results & it isn't blocked
-    if( songChoice != null && blockedSongs.find( songChoice ) === -1 ){
+    if( songChoice != null && !blockedSongs.includes( songChoice ) ){
       // Adds songChoice to the visual queue on screen
       enqueue( songChoice ); 
 
@@ -759,7 +809,7 @@ function App() {
         
         {   
           // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          ( window.location.pathname === '/callback') 
+          !( window.location.pathname === '/callback') 
           ? // IF TRUE
             <button 
               onClick = { authToken } 
@@ -789,5 +839,6 @@ function App() {
     </>
   )
 }
+
 // exporting the app to be imported and rendered in main.jsx
-export default App 
+export default App

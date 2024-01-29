@@ -20,100 +20,76 @@
 /*Adobe Fonts import specifically for SognSync*/
 @import url("https://use.typekit.net/wwk0mzk.css"); /* proxima nova, roboto, roboto mono */
 
+html {
+  font-family: proxima-nova, Helvetica, Arial, sans-serif;
+}
+
+/***************** CSS FOR THE MAIN CLIENT/HOST SCREEN *****************/
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 #root { /* styling for root id in index.html, effectively setting the default for the whole webpage */
-  max-width: 1280px; /* the max width of the webpage is set to 1280 px */
-  margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
-  padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
-  text-align: center; /* text is centered */
+  
+  /* max-width: 1280px; /* the max width of the webpage is set to 1280 px */ /* why? - nick */
+  /* margin: 0 auto; /* margin is set to 0 for the top and bottom, and the left and right margins are set automatically */
+  /* padding: 2rem; /* padding is set to 2 units relative to the root's default font size of 16px, so 32px */
+  /* text-align: center; /* text is centered */
   font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root, proxima-nova is the main becuase it follows hte branding */
+  display: flex;
+  align-items: center; 
+  justify-content: center;
 }
 
-.logo { /* logo class */
-  height: 6em; /* height of logo is set to 6 units relative to the font size of the parent element */
-  padding: 1.5em; /* padding is 1.5 units relative to the font size of the parent element */
-  will-change: filter; /* indicating that we expect this styling to change during runtime */
-  transition: filter 300ms; /* filter transition take 300 miliseconds to complete */
-}
-.logo:hover { /* when hovering on a logo element */
-  filter: drop-shadow(0 0 2em #646cffaa); /* apply a colored shadow */
+@media ( max-width: 768px ) { /* media query for when the screen is smaller than 768px */
+  #root {
+    flex-direction: column; /* flex direction is set to column */
+  }
 }
 
-.searchDiv { /* search div class */
-  position: absolute; /* positioning is absolute to make it stick to the side */
-  left:0; /* on left side of page */
-  margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
+/* .logo { /* logo class */
+/*   height: 6em; /* height of logo is set to 6 units relative to the font size of the parent element */
+/*   padding: 1.5em; /* padding is 1.5 units relative to the font size of the parent element */
+/*   will-change: filter; /* indicating that we expect this styling to change during runtime */
+/*   transition: filter 300ms; /* filter transition take 300 miliseconds to complete */
+/* }
+/* .logo:hover { /* when hovering on a logo element */
+/*   filter: drop-shadow(0 0 2em #646cffaa); /* apply a colored shadow */
+/* } */
+
+#searchDiv { /* search div class */
+  /* position: absolute; /* positioning is absolute to make it stick to the side */ /* do not do this. */
+  /* left:0; /* on left side of page */
+  /* margin-left:5vw; /* 5% of the viewport width separates the search div from the left edge of the screen */
   width: '500px'; /* width of the div is 500px */
   height: '100px'; /* height of the div is 100px */
   /* display: flex;
   flex-direction: column;
   justify-content: space-between; */
+  margin: 40px;
 }
 
-.qDiv { /* queue div class */
-  position: absolute; /* positioning is absolute to make it stick to its side */
-  right:0; /* sticks to right side*/
-  margin-right:5vw; /* 5% of the viewport width separates the search div from the right edge of the screen  */
-  width: '400px'; /* 400px wide */
-  height: '100px'; /* 100 px tall */
+
+#queueDiv { /* queue div class */
+  /* no please, don't do this */
+  /* position: absolute; /* positioning is absolute to make it stick to its side */
+
+  /* right:0; /* sticks to right side*/
+  /* margin-right:5vw; /* 5% of the viewport width separates the search div from the right edge of the screen  */
+
+  max-width: 100%;
+  margin: 40px;
 }
 
 .read-the-docs { /* class for showing what tools we're using in its own style */
   color: #888; /* sets specific color for these words */
 }
 
-/**
- * Prolouge
- * File: app.js
- * Description: styles splashscreen components
- *              
- * Programmer's Name: Nicholas Nguyen
- * Date Created: 11/1/2023
- * 
- * Date Revised: 11/1/2023 - Nicholas Nguyen
- *  Revision: Created styling for splashscreen react components
- * Date Revised: 11/2/2023 - Nicholas Nguyen
- *  Revision: updated placeholder text stylings, input focus stylings
- *            removed Chinh's changes to the logo and its styling
- *            to allow room for other functionality (mainly backend)
- *
- * Preconditions: 
- *  @inputs : None
- * Postconditions:
- *  @returns : 
- * Error conditions: None
- * Side effects: None
- * Invariants: None
- * Known Faults: 
- * **/
-
-/* import for proxima nova, DO NOT use outside of this project.
-@import url("https://use.typekit.net/wwk0mzk.css"); */
-
-html {
-  font-family: proxima-nova, Helvetica, Arial, sans-serif;
-}
-
-#hidden-name {
-  position: absolute;
-  /* position the logo */
-  align-items: left;
-
-  display: "none";
-  /* horizontally centered */
-  justify-content: left;
-  /* vertically centered */
-  z-index: -1;
-  /* set z-index to -1 so it's behind the main container */
-}
-
-img {
-  -webkit-filter: invert(1);
-  /* invert the image */
-  filter: invert(1);
-  /* invert the image */
-  pointer-events: none;
-  /* disable mouse events on the image */
-}
+/***************** CSS FOR THE SPLASHSCREEN *****************/
 
 #main-container {
   display: flex;
@@ -134,7 +110,7 @@ img {
   /* horizontally centered */
   margin: 2px;
   /* set 2px margin on all sides so input
-                    boxes aren't touching each other */
+     boxes aren't touching each other */
 }
 
 #host-button-container {
@@ -143,6 +119,12 @@ img {
   position: absolute;
 
   top: 75%;
+}
+
+#queueButtonStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .app-container {
@@ -227,4 +209,42 @@ img {
 .name-input::placeholder {
     font-family: proxima-nova, Helvetica, Arial, sans-serif;
     color: #17DE92;
+}
+
+.queueButton {
+  width: 400px;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+  margin: 10px;
+}
+
+.queueButton:hover {
+  background-color: white;
+  color: black;
+  border: none;
+}
+
+#login {
+  width: 100px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: white;
+  color: black;
+  position: absolute;
+  margin: 50px;
+  top: 0;
+  right: 0;
+}
+
+#logout {
+  width: 100px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: black;
+  color: white;
+  position: absolute;
+  margin: 50px;
+  top: 0;
+  right: 0;
 }

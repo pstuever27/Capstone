@@ -10,30 +10,26 @@ const authorizationApi = () => {
 
     const [phpResponse, setResponse] = useState(null);
 
-    const { roomCode } = useSelector(state => state.roomCode);
+    // const { roomCode } = useSelector(state => state.roomCode);
+    const roomCode = 'ABCD';
 
-    const [phpUrl, setUrl] = useState('authCreds');
-
-    const authAccess = () => {
-        setUrl('authCreds');
-        let xhr = makeRequest();
-        xhr.send();
+    const addToQueue = (songString) => {
+        let xhr = makeRequest('addToQueue');
+        xhr.send('roomCode=' + roomCode + '&query=' + songString);
     }
 
     const getQueue = () => {
-        setUrl('getQueue');
-        let xhr = makeRequest();
+        let xhr = makeRequest('getQueue');
         xhr.send('roomCode=' + roomCode);
     }
 
     const nowPlaying = () => {
-        setUrl('nowPlaying');
         console.log("now playing");
-        let xhr = makeRequest();
+        let xhr = makeRequest('nowPlaying');
         xhr.send('roomCode=ABCD');
     }
 
-    const makeRequest = () => {
+    const makeRequest = (phpUrl) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `http://localhost:8000/Server/Spotify/${phpUrl}.php`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -64,7 +60,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, authAccess, nowPlaying, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, phpResponse };
 };
 
 export default authorizationApi;

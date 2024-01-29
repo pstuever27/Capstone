@@ -17,15 +17,17 @@
 require '../../vendor/autoload.php';
 require '../require/sql.php';
 
-// //Get spotify app information from json (gitignore)
-// $json = file_get_contents('../../../client.json');
-// $appData = json_decode($json, true);
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
+
+//Get spotify app information from json (gitignore)
+$info = file_get_contents('../../client.json');
+$json = json_decode($info);
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  "8dc1522f50e34d7d8a5d4a2c0daae8b4", // $appData[0], //ClientID
-  "be8dd5266da54a048d7b04c3ef9fbcc0", // $appData[1], //Client Secret
-  "http://localhost:8000/Server/Spotify/callback.php" // $appData[2] // Redirect URI
+  $json->CLIENT_ID, //ClientID
+  $json->CLIENT_SECRET, //Client Secret
+  $json->REDIRECT_URI // Redirect URI
 );
 
 //Get the state from authCreds.php

@@ -17,15 +17,18 @@
 require '../../vendor/autoload.php';
 require '../require/sql.php';
 
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
+
 //Get spotify app information from json (gitignore)
-$json = file_get_contents('../../../client.json');
-$appData = json_decode($json, true);
+$info = file_get_contents('../../client.json');
+$json = json_decode($info);
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  $appData[0], //ClientID
-  $appData[1], //Client Secret
+  $json->CLIENT_ID, //ClientID
+  $json->CLIENT_SECRET, //Client Secret
 );
+
 
 // Open sql connection
 $mysql = SQLConnect();
@@ -37,13 +40,18 @@ $stmt = $mysql->prepare("SELECT accessToken, refreshToken FROM room WHERE roomCo
 $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute(); //Execute sql
 
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$accessToken = $row["accessToken"];
+$refreshToken = $row["refreshToken"];
+
 //If we have a token, then set that as our current 
 if ($accessToken) {
   //Set the tokens as current in our session
   $session->setAccessToken($accessToken);
   $session->setRefreshToken($refreshToken);
 } else {
-  //Otherwise, just use the refresh token and it'll auto-refresh in the api call
+ //Otherwise, just use the refresh token and it'll auto-refresh in the api call
   $session->refreshAccessToken($refreshToken);
 }
 
