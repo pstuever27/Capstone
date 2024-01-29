@@ -3,7 +3,7 @@
  * File: Splash.jsx
  * Description: represents functionality for the input fields
  *              
- * Programmer(s): Nicholas Nguyen, Chinh Nguyen
+ * Programmer(s): Nicholas Nguyen, Chinh Nguyen, Paul Stuever
  * Date Created: 11/1/2023
  * 
  * Date Revised: 11/1/2023 - Nicholas Nguyen
@@ -15,9 +15,10 @@
  *            added placeholder text in the input boxes
  *            removed logo fade-in animation/most of chinh's changes to allow room for backend functionality
  * Date Revised: 11/5/2023 - Chinh Nguyen
- *            moved placement of code comment for one div to be correctly aligned
+ *  Revision: moved placement of code comment for one div to be correctly aligned
  *            readded logo fade-in animation for sprint submission
- * Date Revised: 11/17/2023 - Paul Stuever - Refactored splash screen to allow for php integration and host/join flow
+ * Date Revised: 11/17/2023 - Paul Stuever
+ *  Revision: Refactored splash screen to allow for php integration and host/join flow
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -35,7 +36,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
 import { useNavigate } from 'react-router-dom';
-import clientAPI from '../spotifyApi';
+import clientAPI from '../clientAPI';
 // import { useNavigate } from "react-router-dom";
 
 function Splash()
