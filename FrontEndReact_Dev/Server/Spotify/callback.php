@@ -17,21 +17,21 @@
 require '../../vendor/autoload.php';
 require '../require/sql.php';
 
-//Get spotify app information from json (gitignore)
-$json = file_get_contents('../../../client.json');
-$appData = json_decode($json, true);
+// //Get spotify app information from json (gitignore)
+// $json = file_get_contents('../../../client.json');
+// $appData = json_decode($json, true);
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  $appData[0], //ClientID
-  $appData[1], //Client Secret
-  $appData[2] // Redirect URI
+  "8dc1522f50e34d7d8a5d4a2c0daae8b4", // $appData[0], //ClientID
+  "be8dd5266da54a048d7b04c3ef9fbcc0", // $appData[1], //Client Secret
+  "http://localhost:8000/Server/Spotify/callback.php" // $appData[2] // Redirect URI
 );
 
 //Get the state from authCreds.php
 $state = $_GET['state'];
 //Get the roomCode from authCreds.php
-$roomCode = $_GET['roomCode'];
+$roomCode = file_get_contents('../../data/.roomCode');
 
 //-----Work in progress for verification
 
@@ -51,8 +51,12 @@ $session->requestAccessToken($_GET['code']);
 $accessToken = $session->getAccessToken();
 $refreshToken = $session->getRefreshToken();
 
+// error_log("RoomCode: ", $roomCode);
 // Store the access and refresh tokens somewhere. In a database for example
 $mysql = SQLConnect();
+
+file_put_contents("../../data/.accessToken", serialize($accessToken));
+file_put_contents("../../data/.refreshToken", serialize($refreshToken));
 
 $status = 'wait';
 // Prepare sql query to store our tokens in the database corresponding to our roomCode
@@ -61,7 +65,7 @@ $stmt->bind_param('sss', $accessToken, $refreshToken, $roomCode);
 $stmt->execute(); //Execute sql
 
 // Send the user along and fetch some data!
-header('Location: ' . 'localhost:3000/Host');
+header('Location: ' . 'http://localhost:3000/callback');
 die();
 
 ?>
