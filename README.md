@@ -8,6 +8,24 @@ EECS581/582 Capstone Project
 ### Overview
 `PhpAPI` is our main function call to send/receive information from our php files. This information is strictly guest, room, and host information that gets pulled from the mySQL server. 
 > Note: `PhpAPI` is only used for host/join type of info. `SpotifyAPI` is our interface to interact with our _Spotify-Specific_ php files.
+### Common Fixes
+When attempting to run our project and use php functions, you may run into any number of issues. Most of these can be narrowed down to 3 or 4 things you may need to do. Here is a list of common errors and how to fix them.
+> Note: When you run into an issue, it's always helpful to check both the browser console (F12), and the php server console window for errors.
+> ALSO: This project is best run in WSL on Windows. It is also possible to run on macOS but a homebrew installation of php is required. Windows is uncharted territory and doesn't work.
+1. **CURLUPT_CAINFO / CURL / SpotifyWebAPI\Request->send() / SpotifyWebApi\CURLOPT_CAINFO**
+   If you see an error in your Vite console similar to: `SpotifyWebAPI\Request->send()` or `SpotifyWebApi\CURLOPT_CAINFO`, you need to install curl, and not just any curl...phpCurl.
+   Run the command below to install phpCurl:
+   ```sudo apt-get install php8.1-curl```
+2. **Unable to load dynamic library MYSQL**
+   Seeing this error is similar to phpCurl in issue #1, you need to install phpMySQL.
+   Run the command below to install phpMySQL:
+   ```sudo apt-get install php8.1-mysql```
+3. **MYSQL: Access Denied**
+   This error indicates that you have not added your IP to the Hostinger mySQL whitelist. Here's how to add it:
+   1. Log into Hostinger, open your Home, and under the Hosting tab click *Manage* next to **Single Web Hosting**.
+   2. On the left-hand sidebar, dropdown the **Databases** tab and click *Remote MySQL*.
+   3. Now, keeping that window open, go to [whatsmyip.org](https://www.whatsmyip.org/) and copy your IPv4 address
+   4. Finally, put that address into the Remote MySQL input box and click *Create*
 ### JS Implementation
 Here is a small example of how one could call a php file called `test.php`. For the sake of this example, just assume that `test.php` just returns either `status == 'ok'`, or `status == 'error'`
 ```javascript
