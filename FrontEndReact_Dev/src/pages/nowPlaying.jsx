@@ -1,3 +1,26 @@
+//--------------------------------
+// File: nowPlaying.jsx (derived from App.jsx)
+// Description: This react component provides now playing logic. 
+// Programmer(s): Kieran Delaney, Nicholas Nguyen
+// Created on: 11/13/2023           
+//
+// Revised on: 11/15/2023
+// Revision: Kieran added proper now playing functionality, to pull the track they're listening to and render the data on the screen. On Nov 13 when this was first created in app.jsx, the functionality was limited to just rendering the data of the song that the user would select in the search bar. 
+// Revised on: 01/19/2024
+// Revision: Nicholas moved the now playing functional components into this separate file to be imported into app.jsx to make full use of React's compartmental abilities. 
+// Revised on: 02/04/2024
+// Revision: 
+//
+// Preconditions: Must have npm and node installed to run in dev environment. 
+//                Also see SpotifyAPI.js for its preconditions.
+// Postconditions: Renders now playing screen showing the contents of the user's currently playing song on the screen.
+// 
+// Error conditions: None
+// Side effects: No known side effects
+// Invariants: None
+// Faults: None
+//--------------------------------
+
 import { useState } from 'react' 
 import { useEffect } from 'react';
 import { useHostAPI } from '../SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
