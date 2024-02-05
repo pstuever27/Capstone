@@ -18,8 +18,6 @@ require '../../vendor/autoload.php';
 require '../require/sql.php';
 header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
-header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
-
 //Get spotify app information from json (gitignore)
 $info = file_get_contents('../../client.json');
 $json = json_decode($info);

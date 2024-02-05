@@ -1,3 +1,24 @@
+//--------------------------------
+// File: authorizationApi.jsx (derived from App.jsx)
+// Description: This react component interfaces between our react frontend components and our backend of spotify php calls. 
+// Programmer(s): Paul Stuever, Kieran Delaney
+// Created on: 01/19/2024           
+//
+// Revised on: 01/22/2023
+// Revision: Paul added nowplaying and getqueue.
+// Revised on: 01/29/2023
+// Revision: Paul added addtoqueue
+// Revised on: 02/04/2023
+// Revision: Kieran added skipSong
+//
+// Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
+// Postconditions: Route to the appropriate php calls for our frontend.
+// 
+// Error conditions: None
+// Side effects: No known side effects
+// Invariants: None
+// Faults: None
+//--------------------------------
 import React from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -26,7 +47,12 @@ const authorizationApi = () => {
     const nowPlaying = () => {
         console.log("now playing");
         let xhr = makeRequest('nowPlaying');
-        xhr.send('roomCode=ABCD');
+        xhr.send('roomCode=' + roomCode);
+    }
+
+    const skipSong = () => {
+        let xhr = makeRequest('skipSong');
+        xhr.send('roomCode=' + roomCode);
     }
 
     const makeRequest = (phpUrl) => {
@@ -60,7 +86,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, addToQueue, nowPlaying, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, phpResponse };
 };
 
 export default authorizationApi;
