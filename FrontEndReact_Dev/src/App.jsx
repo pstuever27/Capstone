@@ -21,6 +21,8 @@
 // Revision: Kieran added a ternary switch to the login button to make it become a logout button after being pressed and having the user login. Clicking this logout button then clears the saved spotify token for the user who logged in, and returns the site back to its base address
 // Revision on: 11/19/2023
 // Revision: Nicholas added Blocked Songs functionality and reordered some of the <div> elements
+// Revision on: 1/31/2024
+// Revision: Chinh added SpotifyPlaylists component to render user's Spotify playlists
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -38,6 +40,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is us
 import Login from './pages/login'
 import Search from './pages/search'
 import Queue from './pages/queue'
+import SpotifyPlaylists from './pages/playlists'
 
 import QueueContext from './pages/queueContext';
 import NowPlaying from './pages/nowPlaying'

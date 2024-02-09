@@ -40,6 +40,7 @@ import QueueContext from './queueContext';
 
 // allows usage of contexts
 import { useContext } from 'react';
+import authorizationApi from '../authorizationApi';
 
 import authorizationApi from '../authorizationApi';
 
@@ -47,6 +48,8 @@ function Search() {
   // INITIALIZING STATE VARIABLES
 
   const { enqueue } = useContext( QueueContext );
+
+  const { addToQueue: addQueue } = authorizationApi();
 
   // This is the default inputVal (blank) for the search bar. 
   const [inputVal, setInputValue] = useState( "" ); 

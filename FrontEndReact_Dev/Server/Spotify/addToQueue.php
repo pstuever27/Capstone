@@ -17,16 +17,18 @@
 require '../../vendor/autoload.php';
 require '../require/sql.php';
 
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
+
 //Get spotify app information from json (gitignore)
 $info = file_get_contents('../../client.json');
-$json = json_decode( $info );
-header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
+$json = json_decode($info);
 
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
-  $json->CLIENT_ID,
-  $json->CLIENT_SECRET,
+  $json->CLIENT_ID, //ClientID
+  $json->CLIENT_SECRET, //Client Secret
 );
+
 
 // Open sql connection
 $mysql = SQLConnect();

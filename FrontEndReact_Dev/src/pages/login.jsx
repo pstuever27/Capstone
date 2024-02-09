@@ -15,15 +15,10 @@
 //--------------------------------
 
 // useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
-import { getAuthUrl, useHostAPI } from '../SpotifyAPI'; 
 
 function Login() {
-  // authUrl variable is used to store the url for the psotify login page
-  const authUrl = getAuthUrl();
 
   // Function call for logging out from Spotify
-  const { logout: logoutUser } = useHostAPI( '' );
-
   return (
     <>
       {/* div for dark/light mode toggle */}

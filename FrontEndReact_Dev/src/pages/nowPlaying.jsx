@@ -1,6 +1,31 @@
+//--------------------------------
+// File: nowPlaying.jsx (derived from App.jsx)
+// Description: This react component provides now playing logic. 
+// Programmer(s): Kieran Delaney, Nicholas Nguyen
+// Created on: 11/13/2023           
+//
+// Revised on: 11/15/2023
+// Revision: Kieran added proper now playing functionality, to pull the track they're listening to and render the data on the screen. On Nov 13 when this was first created in app.jsx, the functionality was limited to just rendering the data of the song that the user would select in the search bar. 
+// Revised on: 01/19/2024
+// Revision: Nicholas moved the now playing functional components into this separate file to be imported into app.jsx to make full use of React's compartmental abilities. 
+// Revised on: 02/04/2024
+// Revision: Kieran fixed now playing to work under the new php call system, and a added skip button which calls the spotify skip function. this skips the currently playing track and moves to the next song in the queue. 
+// Revised on: 02/05/2024
+// Revision: Kieran added a simple delay to now playing so it doesn't overload our spotify call capacity. 
+//
+// Preconditions: Must have npm and node installed to run in dev environment. 
+//                Also see SpotifyAPI.js for its preconditions.
+// Postconditions: Renders now playing screen showing the contents of the user's currently playing song on the screen. Renders functioning skip button.
+// 
+// Error conditions: None
+// Side effects: Now Playing track content is rendered if the user has logged in
+// Invariants: None
+// Faults: None
+//--------------------------------
+
 import { useState } from 'react' 
 import { useEffect } from 'react';
-import { useHostAPI } from '../SpotifyAPI'; // imports useAPI function from SpotifyAPI.js for making spotify api calls
+import authorizationApi from '../authorizationApi';
 
 import authorizationApi from '../authorizationApi';
 
@@ -9,33 +34,28 @@ function NowPlaying() {
   // State to hod the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
 
+  const { skipSong: skip } = authorizationApi();
   const { nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
 
-  // The reqPlayer object is taken from makeRequest function to perform Playback Control API cals. 
-  // Example usage: reqPlayer('play') or pause reqPlayer('pause') 
-  //
-  // This call requires the user to login to retrieve the token, necessitating useHostAPI.
-  // @reference https://developer.spotify.com/documentation/web-api 
-  const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
-  // useEffect is used to perform side effects in reqPlayer
-  // [reqPlayer] syntax at the end uses redPlayer as a dependency for useEffect
-  //  any action that uses reqPlayer will cause useEffect to run
+  // useEffect is used to perform side effects in phpResponse
+  // [phpResponse] syntax at the end uses phpResponse as a dependency for useEffect
+  //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
-    const timer = setInterval( () => { 
-      if( window.location.pathname === '/callback' ) {
+    const timer = setInterval(() => {
+      if(window.location.pathname === '/callback'){
         getNowPlaying();
       }
-    }, 100000 );
+    }, 10000); //runs 1.66 every seconds
 
-    if( phpResponse ) {
-      if( phpResponse?.item ) {
-        setNowPlayingSong( phpResponse.item );
+    if(phpResponse){
+      if(phpResponse?.item){
+        setNowPlayingSong(phpResponse.item);
       }
     }
 
-    return () => clearInterval( timer );
-  }, [ phpResponse, getNowPlaying ] ); 
+    return () => clearInterval(timer);
+  }, [phpResponse, getNowPlaying] );
 
   /** RENDERED OUTPUT **/
   return ( 
@@ -54,8 +74,10 @@ function NowPlaying() {
                 {/* gets the song's image from the nowplaying song object and renders it */}
                 <img src={nowPlayingSong?.album.images[1].url}></img> 
               </a>
+              <button onClick = { () => {skip();} }>Skip</button>
             <div>
-              <p>{nowPlayingSong?.name} - {nowPlayingSong?.artists[0].name}</p>
+              <p>{nowPlayingSong?.name}</p>
+              <p>{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
             </div>
             </div>
           : // ELSE IF FALSE
