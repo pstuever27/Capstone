@@ -1,3 +1,24 @@
+//--------------------------------
+// File: authorizationApi.jsx (derived from App.jsx)
+// Description: This react component interfaces between our react frontend components and our backend of spotify php calls. 
+// Programmer(s): Paul Stuever, Kieran Delaney
+// Created on: 01/19/2024           
+//
+// Revised on: 01/22/2023
+// Revision: Paul added nowplaying and getqueue.
+// Revised on: 01/29/2023
+// Revision: Paul added addtoqueue
+// Revised on: 02/04/2023
+// Revision: Kieran added skipSong
+//
+// Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
+// Postconditions: Route to the appropriate php calls for our frontend.
+// 
+// Error conditions: None
+// Side effects: No known side effects
+// Invariants: None
+// Faults: None
+//--------------------------------
 import React from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,30 +31,31 @@ const authorizationApi = () => {
 
     const [phpResponse, setResponse] = useState(null);
 
-    const { roomCode } = useSelector(state => state.roomCode);
+    // const { roomCode } = useSelector(state => state.roomCode);
+    const roomCode = 'ABCD';
 
-    const [phpUrl, setUrl] = useState('authCreds');
-
-    const authAccess = () => {
-        setUrl('authCreds');
-        let xhr = makeRequest();
-        xhr.send();
+    const addToQueue = (songString) => {
+        let xhr = makeRequest('addToQueue');
+        xhr.send('roomCode=' + roomCode + '&query=' + songString);
     }
 
     const getQueue = () => {
-        setUrl('getQueue');
-        let xhr = makeRequest();
+        let xhr = makeRequest('getQueue');
         xhr.send('roomCode=' + roomCode);
     }
 
     const nowPlaying = () => {
-        setUrl('nowPlaying');
         console.log("now playing");
-        let xhr = makeRequest();
-        xhr.send('roomCode=ABCD');
+        let xhr = makeRequest('nowPlaying');
+        xhr.send('roomCode=' + roomCode);
     }
 
-    const makeRequest = () => {
+    const skipSong = () => {
+        let xhr = makeRequest('skipSong');
+        xhr.send('roomCode=' + roomCode);
+    }
+
+    const makeRequest = (phpUrl) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `http://localhost:8000/Server/Spotify/${phpUrl}.php`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -64,7 +86,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, authAccess, nowPlaying, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, phpResponse };
 };
 
 export default authorizationApi;

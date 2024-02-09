@@ -27,7 +27,7 @@ import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI';
 // The function runs after every render, including the first one. 
 // However, if you provide an array of dependencies, 
 // the function will only run when the dependencies have changed.
-import { useState } from 'react' 
+import { useState, useEffect } from 'react' 
 
 // imports textfield component of material UI for input field of search bar
 import TextField from '@mui/material/TextField'; 
@@ -35,18 +35,19 @@ import TextField from '@mui/material/TextField';
 // Autocomplete renders the search results of the search bar. 
 import Autocomplete from '@mui/material/Autocomplete';
 
+// Autocomplete renders the search results of the search bar. 
+import useAutocomplete from '@mui/material/useAutocomplete'; 
+
 // imports queue context to manipulate queue data structure across components
 import QueueContext from './queueContext';
 
 // allows usage of contexts
 import { useContext } from 'react';
 
-import authorizationApi from '../authorizationApi';
-
 function Search() {
   // INITIALIZING STATE VARIABLES
 
-  const { enqueue } = useContext( QueueContext );
+  const { songQueue, enqueue } = useContext( QueueContext );
 
   // This is the default inputVal (blank) for the search bar. 
   const [inputVal, setInputValue] = useState( "" ); 
@@ -58,8 +59,6 @@ function Search() {
   const { makeRequest: reqSearch } = useAPI( 'https://api.spotify.com/v1/search' ); 
 
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
-
-  const { addToQueue: addQueue } = authorizationApi();
 
   // An empty list state is used to store search results.
   // These search results will be rendered in the search bar dropdown. 
@@ -98,7 +97,7 @@ function Search() {
 
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
-        addQueue( songChoice.id );    
+        reqPlayer( `/queue?uri = ${ encodeURIComponent( songChoice.uri ) }`, code ).then( () => {} )    
       }
 
       // if the url doesn't contain callback, it means they didn't login to spotify first 
@@ -257,13 +256,13 @@ function Search() {
           isOptionEqualToValue = { ( option, value ) => `${ option.name } - ${ option.artists[0].name }`===`${ value.name } - ${ value.artists[0].name }`} 
 
           //renders the song option text in the dropdown in the format "Track - Artist"
-          getOptionLabel = { searchResult => `${ searchResult.name } - ${ searchResult.artists[0].name }`} 
+          getOptionLabel = { searchResult => `${ searchResult.name } - ${ searchResult.artists[0].name }` } 
 
           // the "options" prop takes an array of what will be shown as the listed options 
           //  that the user can search through. 
           // These are set to the searchResults array filled with spotify search results 
           //  from the search() function
-          options = { searchResults} 
+          options = { searchResults } 
 
           // sets the width of the search box to be 300 px, font family to proxima-nova
           // sx = { { 
@@ -276,27 +275,8 @@ function Search() {
 
           // this ties it all together, rendering the textfield and search results based off the inputted params. 
           // the label "Search Songs" is the ghost placeholder text that renders in the text field when empty.
-          renderInput = { ( params ) => ( 
-            <TextField { ...params } 
-              // placeholder text
-              label = "Search Songs" 
-              // mui style override
-              // sx = { { 
-              //   width: 'max-width', fontFamily: 'proxima-nova',
-              //   height: '40px',
-              //   margin: '20px',
-              //   marginBottom: '10px',
-              //   borderRadius: '50px',
-              // } } 
-              /> 
-          ) } 
+          renderInput = { ( params ) => ( <TextField { ...params } label = "Search"/> ) } 
         />
-
-        <input 
-          autoComplete = "on" 
-          type = "text" 
-          list = { searchResults } 
-          placeholder = {'Oops! Nothing :('} />
         
         { /* this is the button stack below search bar */ }
         <div id = "queueButtonStack"> 

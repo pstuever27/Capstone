@@ -31,7 +31,7 @@ function Login() {
         {   
           // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
           !( window.location.pathname === '/callback') 
-          ? <button id = "login" onClick = { () => window.location = authUrl } >Login</button> 
+          ? <button id = "login" onClick = { () => { window.location.href = `http://localhost:8000/Server/Spotify/authCreds.php?roomCode=ABCD`; } } >Login</button> 
           : <button id = "logout" onClick = { () => { logoutUser(); window.location.href = '/'; } } >Logout</button> 
         }
       </div>

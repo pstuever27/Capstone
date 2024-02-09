@@ -20,30 +20,16 @@ import QueueContext from './queueContext';
 // imports useContext hook from react
 import { useContext } from 'react'; 
 
-// renders queue data structure
-import { useQueueState } from "rooks"; 
-
-// useState is used to perform side effects in function components. 
-// Side effects interact outside of the component. 
-// 
-// The `useEffect` hook takes two arguments: 
-//  a function that contains the side-effect logic, 
-//  and an array of dependencies. 
-// The function runs after every render, including the first one. 
-// However, if you provide an array of dependencies, 
-// the function will only run when the dependencies have changed.
-import { useState, useEffect } from 'react' 
-
-// imports grid component of material UI for queue list
-import { Grid } from '@mui/material'; 
+import authorizationApi from '../authorizationApi';
 
 function Queue() {
   const { songQueue, dequeue } = useContext( QueueContext );
+  const { addToQueue } = authorizationApi();
 
   return (
     <>
         <div id = "queueDiv"> 
-          <h1>Queue</h1>
+          {/* <h1>Queue</h1> */}
           <div id = "queueGrid">       
             {/* maps through the songQueue array and renders each song in the queue as a grid row */}
             { songQueue?.map( ( song ) => { 

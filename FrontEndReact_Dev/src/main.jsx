@@ -15,16 +15,12 @@
 import React from 'react' //imports react dependencies
 import ReactDOM from 'react-dom/client' //imports reactDOM for rendering webpage
 import App from './App.jsx' //imports App function from App.jsx to specify what is being rendered
-import './index.css' //imports styling specifications
+// import './index.css' //imports styling specifications
 import { MantineProvider } from '@mantine/core';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js'
 ReactDOM.createRoot(document.getElementById('root')).render( //creates a react root for the root DOM element and uses the render method to display the react app inside the root
   <React.StrictMode> {/* strict mode for more checks and warnings while in dev mode */}
-  <Provider store={store}>
-  <MantineProvider> {/* necessary for mantine to work, and can be used to apply themes over the entire app using the theme attribute */}
-    <App /> {/* inserts our react app contents into the react DOM root to be rendered on webpage */}
-  </MantineProvider>
-  </Provider>
+  <App /> {/* inserts our react app contents into the react DOM root to be rendered on webpage */}
   </React.StrictMode>,
 )

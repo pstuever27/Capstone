@@ -65,9 +65,20 @@ function App() {
     // <SearchQueuePlayNow />
     <>
       <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
-        <Search/>
-        <NowPlaying/>
-        <Queue/>
+        <div className="third" id = "panel-1">
+          <h1>Now Playing</h1>
+          <NowPlaying/>
+        </div>
+
+        <div className="third" id = "panel-2">
+          <h1>Your Room</h1>
+          <Queue/>
+        </div>
+
+        <div className="third" id = "panel-3">
+          <h1>Search</h1>
+          <Search/>
+        </div>
       </QueueContext.Provider>
       <Login/>
     </>
