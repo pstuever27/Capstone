@@ -38,30 +38,40 @@ import Host from "./pages/host" // Host component
 import { useSelector } from 'react-redux'; // Redux selector for information
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is used to switch between pages
 import Login from './pages/login'
-import Home from './pages/home'
+import Search from './pages/search'
+import Queue from './pages/queue'
+import SpotifyPlaylists from './pages/playlists'
 
+import QueueContext from './pages/queueContext';
+import NowPlaying from './pages/nowPlaying'
 
 function App() {
+  // This is the queue data structure that stores the songs to be rendered on screen.
+  // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
+  const [ songQueue, modQueue ] = useState( [] );
+
+  const enqueue = ( song ) => {
+    modQueue( [ ...songQueue, song ] );
+  }
+
+  const dequeue = () => {
+    modQueue( songQueue.slice( 1 ) );
+  }
+
+  const peek = () => {
+    return songQueue[ 0 ];
+  }
+
 
 
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
     <>
       <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
-        <div className="third" id = "panel-1">
-          <h1>Now Playing</h1>
-          <NowPlaying/>
-        </div>
-
-        <div className="third" id = "panel-2">
-          <h1>Your Room</h1>
-          <Queue/>
-        </div>
-
-        <div className="third" id = "panel-3">
-          <h1>Search</h1>
-          <Search/>
-        </div>
+        <Search/>
+        <NowPlaying/>
+        <Queue/>
+        <SpotifyPlaylists/>
       </QueueContext.Provider>
       <Login/>
     </>
