@@ -384,7 +384,6 @@ function Splash()
                         id = "host-button"
                     >Host a Room</button>
             </div>
-            <button onClick= { refresh }>Test</button>
         </div>
     );
 }
