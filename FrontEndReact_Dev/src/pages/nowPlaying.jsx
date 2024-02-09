@@ -27,15 +27,13 @@ import { useState } from 'react'
 import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
 
-import authorizationApi from '../authorizationApi';
 
 function NowPlaying() { 
 
   // State to hod the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
 
-  const { skipSong: skip } = authorizationApi();
-  const { nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
+  const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
 
 
   // useEffect is used to perform side effects in phpResponse
