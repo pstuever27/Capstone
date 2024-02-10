@@ -12,6 +12,8 @@
 // Revision: Kieran fixed now playing to work under the new php call system, and a added skip button which calls the spotify skip function. this skips the currently playing track and moves to the next song in the queue. 
 // Revised on: 02/05/2024
 // Revision: Kieran added a simple delay to now playing so it doesn't overload our spotify call capacity. 
+// Revised on: 02/09/2024
+// Revision: Nicholas added color extraction from the album art to change the background color of the now playing screen, also modified the skip button. skip button is an image now!
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -26,6 +28,10 @@
 import { useState } from 'react' 
 import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
+import { ColorExtractor } from 'react-color-extractor'
+import QueueContext from './queueContext'; 
+import { useContext } from 'react'; 
+import PaletteContext from './paletteContext';
 
 
 function NowPlaying() { 
@@ -35,6 +41,9 @@ function NowPlaying() {
 
   const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
 
+  const { palette, update } = useContext( PaletteContext );
+
+  const { songQueue, dequeue } = useContext( QueueContext );
 
   // useEffect is used to perform side effects in phpResponse
   // [phpResponse] syntax at the end uses phpResponse as a dependency for useEffect
@@ -44,13 +53,18 @@ function NowPlaying() {
       if(window.location.pathname === '/callback'){
         getNowPlaying();
       }
-    }, 10000); //runs 1.66 every seconds
+    }, 10000); //runs every 10.6 seconds
 
     if(phpResponse){
       if(phpResponse?.item){
-        setNowPlayingSong(phpResponse.item);
+        if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
+          setNowPlayingSong(phpResponse.item);
+          dequeue();
+        }
       }
     }
+
+    document.body.style.background = `linear-gradient(to bottom right, ${palette[0]}, #000000)`;
 
     return () => clearInterval(timer);
   }, [phpResponse, getNowPlaying] );
@@ -60,29 +74,30 @@ function NowPlaying() {
     // This parent element to wrap all divs together in return statement
     <> 
       {/* NOW PLAYING PANEL */}
-      <div id = "nowPlayingDiv">
+      
         {/* <h1>Now Playing</h1> */}
         {
           // CONDITION: if user is logged in, add the now playing song info. if not, show text saying to login
           ( window.location.pathname === '/callback' ) 
           ? // IF TRUE
-            <div>
+            <div id = "nowPlayingDiv">
               {/* clicking the song image opens the song in spotify */}
-              <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer"> 
-                {/* gets the song's image from the nowplaying song object and renders it */}
-                <img src={nowPlayingSong?.album.images[1].url}></img> 
-              </a>
-              <button onClick = { () => {skip();} }>Skip</button>
-            <div>
-              <p>{nowPlayingSong?.name}</p>
-              <p>{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
-            </div>
+              <ColorExtractor getColors={colors => update( colors )}>
+                <img id = "albumArt" src={ nowPlayingSong?.album.images[1].url } crossOrigin="anonymous"/>
+              </ColorExtractor>
+              <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer" id = "breadcrumb" style={{ backgroundColor: palette[1] }}>Open in Spotify <b>&#9758;</b></a>
+              <div id = "playback_info">
+                <div id = "track_info">
+                  <p id = "title">{nowPlayingSong?.name}</p>
+                  <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
+                </div>
+                <img id = "skip" onClick = { () => {skip(); getNowPlaying();} } src = "/src/assets/skip.svg"/>
+              </div>
             </div>
           : // ELSE IF FALSE
             // asks user to login if they're now logged in
             <h3 style={{}}>Login first (top right)</h3>
         }
-      </div>
     </>
   )
 }

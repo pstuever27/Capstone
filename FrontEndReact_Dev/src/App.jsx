@@ -23,6 +23,8 @@
 // Revision: Nicholas added Blocked Songs functionality and reordered some of the <div> elements
 // Revision on: 1/31/2024
 // Revision: Chinh added SpotifyPlaylists component to render user's Spotify playlists
+// Revised on: 02/09/2024
+// Revision: Nicholas added PaletteContext and added CSS for mobile UI and general desktop UI. added darken function so white text looks consistently good.
 // Preconditions: Must have npm and node installed to run in dev environment. Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar and queue screen which allows searching songs from spotify and adding / removing them from a queue data structure on screen.
 // Error conditions: data.tracks is false, inputval.length is 0.
@@ -40,10 +42,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is us
 import Login from './pages/login'
 import Search from './pages/search'
 import Queue from './pages/queue'
-import SpotifyPlaylists from './pages/playlists'
+import Playlists from './pages/playlists'
+
 
 import QueueContext from './pages/queueContext';
 import NowPlaying from './pages/nowPlaying'
+import PaletteContext from './pages/paletteContext'
 
 function App() {
   // This is the queue data structure that stores the songs to be rendered on screen.
@@ -58,22 +62,60 @@ function App() {
     modQueue( songQueue.slice( 1 ) );
   }
 
-  const peek = () => {
-    return songQueue[ 0 ];
+  const [ palette, setPalette ] = useState( [] );
+
+  const darken = ( hex ) => {   
+    if( hex?.length === 7 ) {
+      hex = hex.replace(`#`, ``);
+      const toDecimal = parseInt( hex, 16 );
+
+      let r = ( toDecimal >> 16 ) - 40;
+      if( r > 255 ) r = 255;
+      if( r < 0 ) r = 0;
+
+      let g = ( toDecimal & 0x0000ff ) - 40;
+      if( g > 255 ) g = 255;
+      if( g < 0 ) g = 0;
+
+      let b = ( ( toDecimal >> 8 ) & 0x00ff ) - 40;
+      if( b > 255 ) b = 255;
+      if( b < 0 ) b = 0;
+
+      return `#${ ( g | ( b << 8 ) | ( r << 16 ) ).toString( 16 ) }`;
+    }
+    
+    else {
+      return hex;
+    }
+  };
+
+  const update = ( colors ) => {
+    const darkened = colors.map( ( color ) => darken( color ) );
+    setPalette( darkened );
   }
-
-
 
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
     <>
-      <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
-        <Search/>
-        <NowPlaying/>
-        <Queue/>
-        <SpotifyPlaylists/>
-      </QueueContext.Provider>
-      <Login/>
+      <PaletteContext.Provider value={{ palette, update }}>
+        <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
+          <div className="third" id = "panel-1">
+            <h1>Now Playing</h1>
+            <NowPlaying/>
+          </div>
+
+          <div className="third" id = "panel-2">
+            <h1>Your Room</h1>
+            <Queue/>
+          </div>
+
+          <div className="third" id = "panel-3">
+            <h1>Search</h1>
+            <Search/>
+          </div>
+        </QueueContext.Provider>
+        <Login/>
+      </PaletteContext.Provider>
     </>
   )
 }

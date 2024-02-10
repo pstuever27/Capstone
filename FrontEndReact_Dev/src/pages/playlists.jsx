@@ -1,8 +1,12 @@
 //--------------------------------
 // File: spotifyPlaylists.jsx
 // Description: This react component fetches user's Spotify playlists using spotify-web-api-js library and renders them in a dropdown element.
-// Programmer(s): Chinh Nguyen
+// Programmer(s): Chinh Nguyen, Nicholas Nguyen
 // Created on: 01/31/2024
+//
+// Revised on: 02/09/2024
+// Revision: Nicholas added PaletteContext to the component and made the button have a dynamic background color
+//
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -16,13 +20,15 @@
 import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI';
 import { useState, useEffect } from 'react'
 // imports textfield component of material UI for input field of search bar
-import TextField from '@mui/material/TextField'; 
-import Autocomplete from '@mui/material/Autocomplete';
+
 // allows usage of contexts
 import { useContext } from 'react';
+import PaletteContext from './paletteContext';
 import authorizationApi from '../authorizationApi';
 
-const SpotifyPlaylists = () => {
+const Playlists = () => {
+    const { palette } = useContext( PaletteContext );
+
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchPlaylists = () => {
@@ -41,12 +47,10 @@ const SpotifyPlaylists = () => {
     };
 
     return (
-        <div>
-            <button onClick={fetchPlaylists} disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'Get Playlists'}
-            </button>
-        </div>
+        <button className = "queueButton" onClick={fetchPlaylists} style = {{backgroundColor: palette[1]}} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Get Playlists'}
+        </button>
     );
 }
 
-export default SpotifyPlaylists;
+export default Playlists;

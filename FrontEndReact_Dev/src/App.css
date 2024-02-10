@@ -7,9 +7,12 @@
  Revision: Kieran added search and queue divs for styling those sections of the webpage
  Revised on: 10/22/2023
  Revision: Nicholas changed the font-family for the entirety of thewebpage
- Revision on: 11/19/2023
+ Revised on: 11/19/2023
  Revision: Nicholas added Blocked Songs functionality and reordered the blocked songs elements to be beneeath the queue elements
  Preconditions: None
+ Revision on: 02/10/24
+ Revision: Nicholas Added CSS for new component elements and added media queries for mobile ui
+            further added styling to more closely follow UI mockups, 
  Postconditions: Sets styling specifications for rendering webpage content
  Error conditions: None
  Side effects: No known side effects
@@ -22,6 +25,9 @@
 
 html {
   font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root, proxima-nova is the main becuase it follows hte branding */
+  color: white;
+  background: black;
+  overflow-y: scroll; 
 }
 
 button {
@@ -39,6 +45,9 @@ body {
   place-items: top;
   min-height: 100vh;
   margin: 0;
+  overflow-y: auto; /* Allows vertical scrolling */
+
+  background: linear-gradient(to bottom right, #12a46c, #000000);
 }
 
 /***************** CSS FOR THE MAIN CLIENT/HOST SCREEN *****************/
@@ -53,36 +62,247 @@ body {
   height: 100vh;
 }
 
-@media ( max-width: 768px ) { /* media query for when the screen is smaller than 768px */
-  #root {
-    flex-direction: column; /* flex direction is set to column */
-  }
-}
-
 #searchDiv { 
   max-width: 100%;
   max-height: 100%; 
-  margin: 40px;
+}
+
+#searchResults {
+  width: 304px;
+  height: 282px;
+  margin: 0;
+  padding: 5px;
+  z-index: 2;
+  position: absolute;
+  list-style: none;
+  background-color: white;
+  text-align: left;
+  overflow: auto;
+  border-radius: 7px;
+  transform: translateY( 50px );
+}
+
+#searchItem {
+  padding: 8px;
+  font-size: 14px;
+  color: black;
+}
+
+#searchBox {
+  width: 300px;
+  border: none;
+  height: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-left: 12px;
+  font-size: 14px;
+  border-radius: 7px;
+  outline: none;
+  background-color: white;
 }
 
 #nowPlayingDiv {
   max-width: 100%;
-  margin: 40px;
   max-height: 100%;
 }
 
+#albumArt {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
+  z-index: 2;
+
+  filter: drop-shadow(0 5px 0.3rem rgba( 0, 0, 0, 0.7 ));
+}
+
+#panel-1 {
+  max-width: 500px;
+}
+
 #panel-2 {
-  width: 340px;
+  width: 300px;
 }
 
 #queueDiv { 
   max-width: 100%;
   max-height: 100%;
-  margin: 40px;
 }
 
-.read-the-docs { 
-  color: #888; /* sets specific color for these words */
+#queueGridCol {
+  text-align: left;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+#qname {
+  font-size: 24px;
+  margin: 0;
+}
+
+#qartists {
+  margin: 0;
+}
+
+#playback_info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+#track_info {
+  width: 300px;
+}
+
+#title {
+  text-align: left;
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0;
+}
+
+#artists {
+  text-align: left;
+  margin: 0;
+}
+
+#skip {
+  height: 24px;
+  margin: 0;
+}
+
+#dequeue {
+  height: 50px;
+  width: 100%;
+  border-radius: 7px;
+  border: none;
+  background-color: grey;
+  color: white;
+}
+
+.queueButton {
+  width: 100%;
+  height: 50px;
+  border-radius: 7px;
+  border: none;
+  margin: 10px;
+  background-color: grey;
+  color: white;
+}
+
+.third {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* min-width: 200px; */
+  justify-content: space-between;
+  padding-bottom: 0;
+  position: relative;
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.third > div {
+  flex-grow: 1; /* Make the div take up the available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  text-align: center; /* If you want to center the content horizontally */
+}
+
+h1 {
+  position: absolute;
+  padding-top: 200px;
+}
+
+#breadcrumb {
+  width: 170px;
+  margin: 0;
+  padding: 0;
+  border-radius: 7px;
+  transform: translateY( -13px );
+  z-index: 1;
+  border-style: none;
+  background-color: grey;
+  text-decoration: none;
+  color: white;
+  filter: drop-shadow(0 5px 0.3rem rgba( 0, 0, 0, 0.3 ));
+}
+
+#breadcrumb > b {
+  position: relative;
+  top: 7px;
+  font-size: 32px;
+  padding-top: -7px;
+  margin: 0;
+}
+
+#login {
+  width: 100px;
+  height: 50px;
+  border-radius: 50px;
+  border: none;
+  background-color: white;
+  color: black;
+  position: absolute;
+  margin: 50px;
+  top: 0;
+  right: 0;
+}
+
+#logout {
+  width: 100px;
+  height: 50px;
+  border-radius: 50px;
+  border: none;
+  background-color: black;
+  color: white;
+  position: absolute;
+  margin: 50px;
+  top: 0;
+  right: 0;
+}
+
+#login:hover {
+  background-color: black;
+  color: white;
+}
+
+#logout:hover {
+  background-color: white;
+  color: black;
+}
+
+/***************** MEDIA QUERIES *****************/
+
+@media ( max-width: 768px ) { /* media query for when the screen is smaller than 768px */
+  #root {
+    flex-direction: column; /* flex direction is set to column */
+  }
+
+  h1 { 
+    position: relative;
+    padding-top: 0;
+  }
+
+  .third > div {
+    height: 100vh;
+  }
+  
+  #searchBox {
+    width: 80vw;
+  }
+
+  #searchResults {
+    width: 81vw;
+  }
+}
+
+@media ( max-height: 1080px ) {
+  h1 {
+    position: relative;
+  }
 }
 
 /***************** CSS FOR THE SPLASHSCREEN *****************/
@@ -204,77 +424,4 @@ body {
 .name-input::placeholder {
     font-family: proxima-nova, Helvetica, Arial, sans-serif;
     color: #17DE92;
-}
-
-.queueButton {
-  width: 200px;
-  height: 50px;
-  border-radius: 25px;
-  border: none;
-  margin: 10px;
-}
-
-.queueButton:hover {
-  background-color: white;
-  color: black;
-  border: none;
-}
-
-.third {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
-  padding-bottom: 0;
-  position: relative;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-.third > div {
-  flex-grow: 1; /* Make the div take up the available space */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  text-align: center; /* If you want to center the content horizontally */
-}
-
-h1 {
-  padding-top: 200px;
-}
-
-#login {
-  width: 100px;
-  height: 50px;
-  border-radius: 50px;
-  border: none;
-  background-color: white;
-  color: black;
-  position: absolute;
-  margin: 50px;
-  top: 0;
-  right: 0;
-}
-
-#logout {
-  width: 100px;
-  height: 50px;
-  border-radius: 50px;
-  border: none;
-  background-color: black;
-  color: white;
-  position: absolute;
-  margin: 50px;
-  top: 0;
-  right: 0;
-}
-
-#login:hover {
-  background-color: black;
-  color: white;
-}
-
-#logout:hover {
-  background-color: white;
-  color: black;
 }

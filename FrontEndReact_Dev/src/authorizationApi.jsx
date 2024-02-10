@@ -10,6 +10,8 @@
 // Revision: Paul added addtoqueue
 // Revised on: 02/04/2023
 // Revision: Kieran added skipSong
+// Revised on: 02/09/2023
+// Revision: Nicholas removed nowPlaying console.log debugger, it's annoying
 //
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
@@ -45,7 +47,7 @@ const authorizationApi = () => {
     }
 
     const nowPlaying = () => {
-        console.log("now playing");
+        // console.log("now playing");
         let xhr = makeRequest('nowPlaying');
         xhr.send('roomCode=' + roomCode);
     }
