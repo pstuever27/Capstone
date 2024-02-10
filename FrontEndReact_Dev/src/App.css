@@ -27,7 +27,7 @@ html {
   font-family: proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; /* font style for root, proxima-nova is the main becuase it follows hte branding */
   color: white;
   background: black;
-  overflow-y: scroll; 
+  overflow-y: auto; 
 }
 
 button {
@@ -278,7 +278,7 @@ h1 {
 
 @media ( max-width: 768px ) { /* media query for when the screen is smaller than 768px */
   #root {
-    flex-direction: column; /* flex direction is set to column */
+    display: block;
   }
 
   h1 { 
