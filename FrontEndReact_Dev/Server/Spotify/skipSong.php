@@ -67,7 +67,7 @@ try {
   //Try skipping to the next song
   $api->next();
   $response = [
-    'status' => 'ok',
+    'status' => 'ok skip',
   ];
 } catch (SpotifyWebAPI\SpotifyWebAPIException $e) { //If there's an error, send error response
   $response = [
