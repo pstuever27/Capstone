@@ -21,12 +21,15 @@
 
 // imports useContext hook from react
 import { useContext } from 'react'; 
+import authorizationApi from '../authorizationApi';
 
 // imports palette context to manipulate color palette across components
 import PaletteContext from './paletteContext';
 
 function Login() {
-  const { palette } = useContext( PaletteContext );
+  const { palette } = useContext(PaletteContext);
+
+  const { logout: logoutUser } = authorizationApi();
 
   // Function call for logging out from Spotify
   return (
@@ -35,9 +38,9 @@ function Login() {
       <div> 
         {   
           // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          !( window.location.pathname === '/callback') 
+          !(window.location.pathname === "/host/callback") 
           ? <button id = "login" onClick = { () => { window.location.href = `http://localhost:8000/Server/Spotify/authCreds.php?roomCode=ABCD`; } } >Login</button> 
-          : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/'; } } >Logout</button> 
+          : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/host'; } } >Logout</button> 
         }
       </div>
     </>

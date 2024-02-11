@@ -62,6 +62,10 @@ $options = [
   'state' => $state, //State gets passed to callback
 ];
 
-header('Location: ' . $session->getAuthorizeUrl($options)); //Runs the spotify api reqest for auth code, then redirects to our callback, which is callback.php
-die();
+error_log($session->getAuthorizeUrl($options));
+
+$path = $session->getAuthorizeUrl($options);
+
+echo "<script>location.href='$path';</script>";
+
 ?>

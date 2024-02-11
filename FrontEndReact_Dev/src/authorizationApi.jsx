@@ -57,6 +57,11 @@ const authorizationApi = () => {
         xhr.send('roomCode=' + roomCode);
     }
 
+    const logout = () => {
+        let xhr = makeRequest('logout');
+        xhr.send('roomCode=' + roomCode);
+    }
+
     const makeRequest = (phpUrl) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `http://localhost:8000/Server/Spotify/${phpUrl}.php`, true);
@@ -88,7 +93,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, addToQueue, nowPlaying, skipSong, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, phpResponse };
 };
 
 export default authorizationApi;

@@ -117,7 +117,7 @@ function Search() {
       enqueue( songChoice ); 
 
       // If the user has logged into spotify and the callback result is in the url bar
-      if ( window.location.pathname === '/callback' ) { 
+      if ( window.location.pathname === '/host/callback' ) { 
         // Parse the elements of the url, retain only the search query after `?` in the URL
         let urlParams = new URLSearchParams( window.location.search ); 
 
@@ -182,7 +182,7 @@ function Search() {
    */
   async function replaySong() {
     // If the user has logged into spotify and the callback result is in the url bar
-    if (window.location.pathname === '/callback') {
+    if (window.location.pathname === '/host/callback') {
       // Parse the elements of the url, retain only the search query after `?` in the URL
       let urlParams = new URLSearchParams(window.location.search);
 
