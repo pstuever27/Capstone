@@ -6,6 +6,8 @@
 //
 // Revised on: 02/09/2024
 // Revision: Nicholas added PaletteContext to the component and made the button have a dynamic background color
+// Revised on: 2/10/2024
+// Revision: Chinh ... ... [TODO]
 //
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
@@ -16,6 +18,30 @@
 // Faults: None
 //--------------------------------
 
+import { useState } from 'react' 
+import authorizationApi from '../authorizationApi';
+
+function SpotifyPlaylists() {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { getPlaylists } = authorizationApi();
+
+    const fetchPlaylists = () => {
+        setIsLoading(true);
+        getPlaylists();
+        setIsLoading(false);
+    };
+
+    return (
+        <button className = "queueButton" onClick={fetchPlaylists} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Get Playlists'}
+        </button>
+    );
+}
+
+export default SpotifyPlaylists;
+
+/* THIS IS THE OLD FILE. IT IS NO LONGER USED.
 // useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
 import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI';
 import { useState, useEffect } from 'react'
@@ -54,3 +80,5 @@ const Playlists = () => {
 }
 
 export default Playlists;
+
+*/
