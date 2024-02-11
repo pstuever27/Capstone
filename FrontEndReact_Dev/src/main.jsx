@@ -21,6 +21,8 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store.js'
 ReactDOM.createRoot(document.getElementById('root')).render( //creates a react root for the root DOM element and uses the render method to display the react app inside the root
   <React.StrictMode> {/* strict mode for more checks and warnings while in dev mode */}
-  <App /> {/* inserts our react app contents into the react DOM root to be rendered on webpage */}
+  <Provider store={store}>
+    <App /> {/* inserts our react app contents into the react DOM root to be rendered on webpage */}
+  </Provider>
   </React.StrictMode>,
 )

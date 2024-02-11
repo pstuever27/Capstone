@@ -78,7 +78,7 @@ function NowPlaying() {
         {/* <h1>Now Playing</h1> */}
         {
           // CONDITION: if user is logged in, add the now playing song info. if not, show text saying to login
-          ( window.location.pathname === '/callback' ) 
+          ( window.location.pathname === '/host/callback' ) 
           ? // IF TRUE
             <div id = "nowPlayingDiv">
               {/* clicking the song image opens the song in spotify */}

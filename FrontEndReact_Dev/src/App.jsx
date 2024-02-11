@@ -43,6 +43,7 @@ import Login from './pages/login'
 import Search from './pages/search'
 import Queue from './pages/queue'
 import Playlists from './pages/playlists'
+import Home from './pages/home'
 
 
 import QueueContext from './pages/queueContext';
@@ -50,73 +51,19 @@ import NowPlaying from './pages/nowPlaying'
 import PaletteContext from './pages/paletteContext'
 
 function App() {
-  // This is the queue data structure that stores the songs to be rendered on screen.
-  // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
-  const [ songQueue, modQueue ] = useState( [] );
-
-  const enqueue = ( song ) => {
-    modQueue( [ ...songQueue, song ] );
-  }
-
-  const dequeue = () => {
-    modQueue( songQueue.slice( 1 ) );
-  }
-
-  const [ palette, setPalette ] = useState( [] );
-
-  const darken = ( hex ) => {   
-    if( hex?.length === 7 ) {
-      hex = hex.replace(`#`, ``);
-      const toDecimal = parseInt( hex, 16 );
-
-      let r = ( toDecimal >> 16 ) - 40;
-      if( r > 255 ) r = 255;
-      if( r < 0 ) r = 0;
-
-      let g = ( toDecimal & 0x0000ff ) - 40;
-      if( g > 255 ) g = 255;
-      if( g < 0 ) g = 0;
-
-      let b = ( ( toDecimal >> 8 ) & 0x00ff ) - 40;
-      if( b > 255 ) b = 255;
-      if( b < 0 ) b = 0;
-
-      return `#${ ( g | ( b << 8 ) | ( r << 16 ) ).toString( 16 ) }`;
-    }
-    
-    else {
-      return hex;
-    }
-  };
-
-  const update = ( colors ) => {
-    const darkened = colors.map( ( color ) => darken( color ) );
-    setPalette( darkened );
-  }
 
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
-    <>
-      <PaletteContext.Provider value={{ palette, update }}>
-        <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
-          <div className="third" id = "panel-1">
-            <h1>Now Playing</h1>
-            <NowPlaying/>
-          </div>
-
-          <div className="third" id = "panel-2">
-            <h1>Your Room</h1>
-            <Queue/>
-          </div>
-
-          <div className="third" id = "panel-3">
-            <h1>Search</h1>
-            <Search/>
-          </div>
-        </QueueContext.Provider>
-        <Login/>
-      </PaletteContext.Provider>
-    </>
+    <BrowserRouter> {/*Browserrouter used for react routing*/}
+      <Routes> {/*Create routes*/}
+        <Route path="/">
+          <Route index element={<Splash />} /> {/*Index element is the splash screen, will route to others from there*/}
+          <Route path="join" element={<Home />} /> {/*Join element gets routed to when joining a room*/}
+          <Route path="host" element={<Home />} /> {/*Host element gets routed to when hosting a room*/}
+          <Route path="host/callback" element={<Home /> } />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 export default App // exporting the app to be imported and rendered in main.jsx

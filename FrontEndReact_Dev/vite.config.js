@@ -14,6 +14,7 @@
 //--------------------------------
 import { defineConfig } from 'vite' // imports vite config dependencies
 import react from '@vitejs/plugin-react' // imports react dependencies from vite
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({ // exporting configuration to the react setup

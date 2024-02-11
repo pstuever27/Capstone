@@ -67,7 +67,7 @@ $stmt->bind_param('sss', $accessToken, $refreshToken, $roomCode);
 $stmt->execute(); //Execute sql
 
 // Send the user along and fetch some data!
-header('Location: ' . 'http://localhost:3000/callback');
+header('Location: ' . 'http://localhost:3000/host/callback');
 die();
 
 ?>

@@ -57,6 +57,11 @@ const authorizationApi = () => {
         xhr.send('roomCode=' + roomCode);
     }
 
+    const logout = () => {
+        let xhr = makeRequest('logout');
+        xhr.send('roomCode=' + roomCode);
+    }
+
     const getPlaylists = () => {
         let xhr = makeRequest('getPlaylists');
         xhr.send('roomCode=' + roomCode);
@@ -93,7 +98,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, addToQueue, nowPlaying, skipSong, getPlaylists, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, getPlaylists, phpResponse };
 };
 
 export default authorizationApi;
