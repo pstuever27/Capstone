@@ -20,10 +20,10 @@ const clientAPI = () => {
         xhr.send();
     }
 
-    const search = (query) => {
+    const search = ( query ) => {
 
-        setUrl('search');
-        if (!clientAccessToken /* || token expired*/) {
+        setUrl( 'search' );
+        if ( !clientAccessToken /* || token expired*/ ) {
             clientAccess();
         }
         let xhr = makeRequest();
