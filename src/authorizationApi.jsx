@@ -12,6 +12,8 @@
 // Revision: Kieran added skipSong
 // Revised on: 02/09/2023
 // Revision: Nicholas removed nowPlaying console.log debugger, it's annoying
+// Revised on: 2/12/2024
+// Revision: Paul added functionality to change server address based on build
 //
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
@@ -32,6 +34,9 @@ function throwError(error) {
 const authorizationApi = () => {
 
     const [phpResponse, setResponse] = useState(null);
+    
+    //Get the address of the server based on dev or prod build
+    const { serverAddress } = useSelector(state => state.serverAddress );
 
     // const { roomCode } = useSelector(state => state.roomCode);
     const roomCode = 'ABCD';
@@ -47,7 +52,6 @@ const authorizationApi = () => {
     }
 
     const nowPlaying = () => {
-        // console.log("now playing");
         let xhr = makeRequest('nowPlaying');
         xhr.send('roomCode=' + roomCode);
     }
@@ -69,7 +73,7 @@ const authorizationApi = () => {
 
     const makeRequest = (phpUrl) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://localhost:8000/Server/Spotify/${phpUrl}.php`, true);
+        xhr.open('POST', `${serverAddress}/Server/Spotify/${phpUrl}.php`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4 && xhr.status === 200) {

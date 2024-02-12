@@ -1,15 +1,28 @@
+/**
+ * Prolouge
+ * File: home.jsx
+ * Description: This page is the homepage after joining the room or hosting a room
+ *              
+ * Programmer(s): Paul Stuever
+ * Date Created: 2/10/2024
+ * 
+ * Date Revised: 2/10/2024 - Moved Nick's changes here for compartmentalization
+ * 
+ * Preconditions: 
+ *  @inputs : None 
+ * Postconditions:
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
 import React, { useState } from 'react' // Need react
 import '../App.css' // imports styling for site
-import Join from './join' // Join component
-import Splash from './splash' // Splash screen component (index)
-import Host from "./host" // Host component
-import { useSelector, Provider } from 'react-redux'; // Redux selector for information
-import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is used to switch between pages
 import Login from './login'
 import Search from './search'
 import Queue from './queue'
-import SpotifyPlaylists from './playlists'
-
 import QueueContext from './queueContext';
 import NowPlaying from './nowPlaying'
 import PaletteContext from './paletteContext'

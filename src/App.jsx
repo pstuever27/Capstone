@@ -37,20 +37,21 @@ import './App.css' // imports styling for site
 import Join from './pages/join' // Join component
 import Splash from './pages/splash' // Splash screen component (index)
 import Host from "./pages/host" // Host component
-import { useSelector } from 'react-redux'; // Redux selector for information
+import { useDispatch } from 'react-redux'; // Redux selector for information
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is used to switch between pages
-import Login from './pages/login'
-import Search from './pages/search'
-import Queue from './pages/queue'
-import Playlists from './pages/playlists'
+
 import Home from './pages/home'
 
-
-import QueueContext from './pages/queueContext';
-import NowPlaying from './pages/nowPlaying'
-import PaletteContext from './pages/paletteContext'
+import { setAddress } from './redux/serverAddressSlice'
 
 function App() {
+
+  //Setting the address of the server based on the current build type. If it's a dev build, then it's local. Otherwise it's the website
+  const dispatch = useDispatch();
+
+  //Set server address
+  const address = import.meta.env.DEV == true ? "http://localhost:8000" : "https://songsync.live";
+  dispatch(setAddress(address));
 
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />

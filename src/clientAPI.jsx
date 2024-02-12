@@ -1,3 +1,23 @@
+/**
+ * Prolouge
+ * File: clientAPI.js
+ * Description: This slice is used to interface with Spotify API php files that use client flows
+ *              
+ * Programmer(s): Paul Stuever
+ * Date Created: 2/12/2024
+ * 
+ * Date Revised: 2/12/2024 - File created and slice created
+ * 
+ * Preconditions: 
+ *  @inputs : None 
+ * Postconditions:
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
 import React from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -11,6 +31,9 @@ const clientAPI = () => {
     const [phpResponse, setResponse] = useState(null);
 
     const { clientAccessToken } = useSelector(state => state.clientAccessToken);
+
+    //Get the address of the server based on dev or prod build
+    const { serverAddress } = useSelector(state => state.serverAddress );
 
     const [phpUrl, setUrl] = useState(null);
 
@@ -33,7 +56,7 @@ const clientAPI = () => {
 
     const makeRequest = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://localhost:8000/Server/Spotify/${phpUrl}.php`, true);
+        xhr.open('POST', `${serverAddress}/Server/Spotify/${phpUrl}.php`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4 && xhr.status === 200) {

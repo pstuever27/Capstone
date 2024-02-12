@@ -17,6 +17,7 @@
  * **/
 
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 // usePHPAPI = () => {
      // use state stuff to set up some vars, ie response, loading, etc.
@@ -29,6 +30,10 @@ function throwError(error) {
 
 //This sets up the state variables and returns the makeRequest function which executes the php call
 const phpAPI = () => {
+
+    //Get server address based on build type
+    const { serverAddress } = useSelector(store => store.serverAddress );
+
     //Set up state variable
     const [phpResponse, setResponse] = useState(null);
 
@@ -37,7 +42,7 @@ const phpAPI = () => {
         //Make a new xhr object
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://localhost:8000/Server/${phpUrl}.php`, true);
+        xhr.open('POST', `${serverAddress}/Server/${phpUrl}.php`, true);
         //Open the PHP file
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         //When the PHP file is done, this will get called
