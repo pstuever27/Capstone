@@ -8,6 +8,7 @@
  * Date Created: 10/22/2023 - Paul Stuever
  * Date Revised: 10/22/2023 - Paul Stuever - Created file and worked on guest list functionality
  *     Revision: 11/5/2023 - Paul Stuever - Integrate into React frontend 
+ *     Revision: 2/11/2024 - Kieran Delaney - Added access control header for local testing
  * Preconditions: 
  *  @inputs : Requires input from Javascript to do SQL query
  * Postconditions:
@@ -19,6 +20,7 @@
  * **/
 
 require_once('./require/sql.php');
+header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 
 $mysql = SQLConnect();
 

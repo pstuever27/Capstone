@@ -14,6 +14,8 @@
 // Revision: Kieran added a simple delay to now playing so it doesn't overload our spotify call capacity. 
 // Revised on: 02/09/2024
 // Revision: Nicholas added color extraction from the album art to change the background color of the now playing screen, also modified the skip button. skip button is an image now!
+// Revised on: 2/11/2024
+// Revision: Kieran laid groundwork for skip's majority vote functionality.
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -28,6 +30,8 @@
 import { useState } from 'react' 
 import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
+import phpAPI from '../phpApi';
+import { useSelector } from 'react-redux';
 import { ColorExtractor } from 'react-color-extractor'
 import QueueContext from './queueContext'; 
 import { useContext } from 'react'; 
@@ -41,6 +45,27 @@ function NowPlaying() {
 
   const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
 
+
+  //prep for majority skip
+  const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
+  //Get the roomcode and username from our redux store
+  const { roomCode } = useSelector(state => state.roomCode);
+  const { username } = useSelector(state => state.username);
+
+  const skipCounter = () => {
+    console.log(roomCode); //there's something wrong with the way roomcode is being saved in other files. We'll investigate this further in next sprint to get the flow right
+    guestListRequest("guest-list", "ABCD", username); //Make php request to store the guest list array into "guestList" variable
+    if(guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally
+      skip();
+      getNowPlaying();
+    }
+    else{ //otherwise, majority of users must vote for skip
+      //add mechanism to add vote to user attributes in database. we'll also need an attribute of the total number of votes
+      //if(totalnumberofvotes >= guestList.length / 2){skip();}
+    }
+  }
+
+
   const { palette, update } = useContext( PaletteContext );
 
   const { songQueue, dequeue } = useContext( QueueContext );
@@ -50,7 +75,7 @@ function NowPlaying() {
   //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
     const timer = setInterval(() => {
-      if(window.location.pathname === '/callback'){
+      if(window.location.pathname === '/host/callback'){
         getNowPlaying();
       }
     }, 10000); //runs every 10.6 seconds
