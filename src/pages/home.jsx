@@ -34,15 +34,15 @@ function Home() {
       hex = hex.replace(`#`, ``);
       const toDecimal = parseInt(hex, 16);
 
-      let r = (toDecimal >> 16) - 40;
+      let r = (toDecimal >> 16) - 50;
       if (r > 255) r = 255;
       if (r < 0) r = 0;
 
-      let g = (toDecimal & 0x0000ff) - 40;
+      let g = (toDecimal & 0x0000ff) - 50;
       if (g > 255) g = 255;
       if (g < 0) g = 0;
 
-      let b = ((toDecimal >> 8) & 0x00ff) - 40;
+      let b = ((toDecimal >> 8) & 0x00ff) - 50;
       if (b > 255) b = 255;
       if (b < 0) b = 0;
 

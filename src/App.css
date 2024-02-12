@@ -99,6 +99,12 @@ body {
   border-radius: 7px;
   outline: none;
   background-color: white;
+  transition: box-shadow 0.3s ease-in-out;
+
+}
+
+#searchBox:hover {
+  box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
 }
 
 #nowPlayingDiv {
@@ -170,6 +176,14 @@ body {
 #skip {
   height: 24px;
   margin: 0;
+  cursor: pointer;
+  position: relative;
+  left: 0px;
+  transition: left ease 0.1s;
+}
+
+#skip:hover{
+  left: 5px;
 }
 
 #dequeue {
@@ -179,6 +193,13 @@ body {
   border: none;
   background-color: grey;
   color: white;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#dequeue:hover {
+  box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
 }
 
 .queueButton {
@@ -189,6 +210,13 @@ body {
   margin: 10px;
   background-color: grey;
   color: white;
+  font-weight: bold;
+  transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.queueButton:hover {
+  box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
 }
 
 .third {
@@ -233,9 +261,15 @@ h1 {
 #breadcrumb > b {
   position: relative;
   top: 7px;
+  left: 0px;
   font-size: 32px;
   padding-top: -7px;
   margin: 0;
+  transition: left ease-in-out 0.1s;
+}
+
+#breadcrumb:hover > b {
+  left: 3px;
 }
 
 #login {
@@ -249,6 +283,9 @@ h1 {
   margin: 50px;
   top: 0;
   right: 0;
+  font-weight: bold;
+  transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
+
 }
 
 #logout {
@@ -262,16 +299,21 @@ h1 {
   margin: 50px;
   top: 0;
   right: 0;
+  font-weight: bold;
+  transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
 }
 
 #login:hover {
   background-color: black;
   color: white;
+  box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
 }
 
 #logout:hover {
   background-color: white;
   color: black;
+  box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
+
 }
 
 /***************** MEDIA QUERIES *****************/

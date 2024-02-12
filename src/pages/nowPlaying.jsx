@@ -89,7 +89,7 @@ function NowPlaying() {
       }
     }
 
-    document.body.style.background = `linear-gradient(to bottom right, ${palette[0]}, #000000)`;
+    document.body.style.background = `linear-gradient(to bottom right, ${palette[0]}, #333333)`;
 
     return () => clearInterval(timer);
   }, [phpResponse, getNowPlaying] );
