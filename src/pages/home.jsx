@@ -34,9 +34,23 @@ function Home() {
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
 
+  let [code, setLocalCode] = useState("");
+
+  let links = ["../../data/.roomCode"];
+
+  React.useEffect(() => {
+    async function codeGrabber() {
+      const files = await Promise.all(
+        links.map((link) => fetch(link).then((res) => res.text()))
+      );
+      setLocalCode(files);
+    }
+    codeGrabber();
+  }, [setLocalCode]);
+
   const dispatch = useDispatch();
 
-  dispatch(setCode(text));
+  dispatch(setCode(code));
 
   const enqueue = (song) => {
     modQueue([...songQueue, song]);
