@@ -92,18 +92,6 @@ function Home() {
     setPalette(darkened);
   }
 
-  const getRoom = () => {
-    fetch("../../data/.roomCode")
-      .then((res) => res.text())
-      .then((text) => {
-        console.log(text);
-        return text;
-      })
-      .catch((e) => console.error(e));
-  }
-
-  let roomCode = getRoom();
-
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
     <>
@@ -114,7 +102,7 @@ function Home() {
               <NowPlaying />
             </div>
             <div className="third" id="panel-2">
-              <h1>Your Room: { roomCode }</h1>
+              <h1>Your Room: { code }</h1>
               <Queue />
             </div>
 
