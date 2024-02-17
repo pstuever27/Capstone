@@ -38,8 +38,7 @@ const authorizationApi = () => {
     //Get the address of the server based on dev or prod build
     const { serverAddress } = useSelector(state => state.serverAddress );
 
-    // const { roomCode } = useSelector(state => state.roomCode);
-    const roomCode = 'ABCD';
+    const { roomCode } = useSelector(state => state.roomCode);
 
     const addToQueue = (songString) => {
         let xhr = makeRequest('addToQueue');

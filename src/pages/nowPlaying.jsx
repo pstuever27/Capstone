@@ -54,7 +54,7 @@ function NowPlaying() {
 
   const skipCounter = () => {
     console.log(roomCode); //there's something wrong with the way roomcode is being saved in other files. We'll investigate this further in next sprint to get the flow right
-    guestListRequest("guest-list", "ABCD", username); //Make php request to store the guest list array into "guestList" variable
+    guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
     if(guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally
       skip();
       getNowPlaying();
@@ -94,6 +94,8 @@ function NowPlaying() {
     return () => clearInterval(timer);
   }, [phpResponse, getNowPlaying] );
 
+  var haveImg = nowPlayingSong?.album.images[1].url ? "block" : "none";
+
   /** RENDERED OUTPUT **/
   return ( 
     // This parent element to wrap all divs together in return statement
@@ -110,7 +112,7 @@ function NowPlaying() {
               <ColorExtractor getColors={colors => update( colors )}>
                 <img id = "albumArt" src={ nowPlayingSong?.album.images[1].url } crossOrigin="anonymous"/>
               </ColorExtractor>
-              <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer" id = "breadcrumb" style={{ backgroundColor: palette[1] }}>Open in Spotify <b>&#9758;</b></a>
+              <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer" id = "breadcrumb" style={{ backgroundColor: palette[1], display: haveImg }}>Open in Spotify <b>&#9758;</b></a>
               <div id = "playback_info">
                 <div id = "track_info">
                   <p id = "title">{nowPlayingSong?.name}</p>

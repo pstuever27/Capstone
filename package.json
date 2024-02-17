@@ -17,6 +17,7 @@
     "@mui/base": "^5.0.0-beta.36",
     "@reduxjs/toolkit": "^1.9.7",
     "cors": "^2.8.5",
+    "file-saver": "^2.0.5",
     "fs": "^0.0.1-security",
     "module": "^1.2.5",
     "react": "^18.2.0",

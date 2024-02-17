@@ -34,8 +34,6 @@ $session = new SpotifyWebAPI\Session(
 //Create new state to verify valid session 
 $state = $session->generateState();
 
-file_put_contents('../../data/.roomCode', $_GET['roomCode']);
-
 //Settings options to allow for spotify functions in the authorization code flow
 $options = [
   'scope' => [

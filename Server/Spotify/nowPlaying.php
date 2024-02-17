@@ -28,7 +28,6 @@ $session = new SpotifyWebAPI\Session(
   $json->CLIENT_SECRET, //Client Secret
 );
 
-
 // Open sql connection
 $mysql = SQLConnect();
 
@@ -41,6 +40,7 @@ $stmt->execute(); //Execute sql
 
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
+error_log($row["accessToken"]);
 $accessToken = $row["accessToken"];
 $refreshToken = $row["refreshToken"];
 

@@ -37,6 +37,7 @@ import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
 import { useNavigate } from 'react-router-dom';
 import clientAPI from '../clientAPI';
+import { saveAs } from 'file-saver';
 // import { useNavigate } from "react-router-dom";
 
 function Splash()
@@ -264,6 +265,7 @@ function Splash()
         if( loginState ) { //loginState will be used to tell if the user is logged into spotify, it's a redux global.
             let tempCode = genCode();
             setHostCode(tempCode); //Generate a code and store it in the hostCode state
+            saveAs(tempCode, '../../data/.roomCode');
             makeRequest("host-code", tempCode, null); //Make php request
         }
         else { //Doesn't get hit right now, after spotify integration it will be fixed.

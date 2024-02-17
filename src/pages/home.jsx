@@ -26,11 +26,17 @@ import Queue from './queue'
 import QueueContext from './queueContext';
 import NowPlaying from './nowPlaying'
 import PaletteContext from './paletteContext'
+import { useDispatch } from 'react-redux'
+import { setCode } from '../redux/roomCodeSlice'
 
 function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
+
+  const dispatch = useDispatch();
+
+  dispatch(setCode(text));
 
   const enqueue = (song) => {
     modQueue([...songQueue, song]);
