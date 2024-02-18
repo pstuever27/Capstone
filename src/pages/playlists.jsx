@@ -46,7 +46,7 @@ function SpotifyPlaylists() {
     return (
         <div>
             <button className = "queueButton" onClick={fetchPlaylists} disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'Get Playlists'}
+                {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
             </button>
 
             <select id="selectPlaylist">
@@ -61,7 +61,7 @@ function SpotifyPlaylists() {
             </select>
 
             <button className = "queueButton" onClick={fetchTracks} disabled={isLoading}>
-                Try Loading Playlists
+                Get Tracks of Selected Playlist
             </button>
 
         </div>
