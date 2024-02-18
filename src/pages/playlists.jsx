@@ -7,8 +7,9 @@
 // Revised on: 02/09/2024
 // Revision: Nicholas added PaletteContext to the component and made the button have a dynamic background color
 // Revised on: 2/10/2024
-// Revision: Chinh ... ... [TODO]
-//
+// Revision: Chinh fixed API calls to correctly call function from authorizationApi.jsx to fetch playlists
+// Revised on: 2/17/2024
+// Revision: Chinh sanitized response from getPlaylists.php and mapped the playlists to a dropdown element
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -23,19 +24,47 @@ import authorizationApi from '../authorizationApi';
 
 function SpotifyPlaylists() {
     const [isLoading, setIsLoading] = useState(false);
-
+    const [playlists, setPlaylists] = useState([]);
     const { getPlaylists } = authorizationApi();
 
-    const fetchPlaylists = () => {
+    const fetchPlaylists = async () => {
         setIsLoading(true);
-        getPlaylists();
+        //getPlaylists();
+        try {
+            const response = await getPlaylists();
+            setPlaylists(response);
+        } catch (error) {
+            console.error('Could not fetch playlists:', error);
+        };
         setIsLoading(false);
     };
 
+    const fetchTracks = async () => {
+        console.log("TODO: Fetch tracks from selected playlist.");
+    }
+
     return (
-        <button className = "queueButton" onClick={fetchPlaylists} disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Get Playlists'}
-        </button>
+        <div>
+            <button className = "queueButton" onClick={fetchPlaylists} disabled={isLoading}>
+                {isLoading ? 'Loading...' : 'Get Playlists'}
+            </button>
+
+            <select id="selectPlaylist">
+                {Array.isArray(playlists) && playlists.map((playlist, index) => {
+                    console.log("Mapping playlist:", playlist); // Log each playlist being mapped
+                    return (
+                        <option key={index} value={playlist.id}>
+                            {playlist.name}
+                        </option>
+                    );
+                })}
+            </select>
+
+            <button className = "queueButton" onClick={fetchTracks} disabled={isLoading}>
+                Try Loading Playlists
+            </button>
+
+        </div>
     );
 }
 
