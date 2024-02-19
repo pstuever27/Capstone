@@ -60,6 +60,7 @@ function NowPlaying() {
   const skipCounter = () => {
     console.log(roomCode); //there's something wrong with the way roomcode is being saved in other files. We'll investigate this further in next sprint to get the flow right
     guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
+    console.log(`guest list ${guestList}`);
     if(guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally
       skip();
       getNowPlaying();
@@ -70,6 +71,7 @@ function NowPlaying() {
     }
   }
 
+  //runs when a change occurs in the url, allowing now playing to run once immediately upon logging in
   const location = useLocation();
   useEffect( () => {
     console.log(location);
@@ -131,7 +133,7 @@ function NowPlaying() {
                   <p id = "title">{nowPlayingSong?.name}</p>
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
                 </div>
-                <img id = "skip" onClick = { () => {skip(); getNowPlaying();} } src = "/src/assets/skip.svg"/>
+                <img id = "skip" onClick = { () => {skipCounter();} } src = "/src/assets/skip.svg"/>
               </div>
             </div>
           : // ELSE IF FALSE

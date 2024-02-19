@@ -242,7 +242,7 @@ function Splash()
                 makeRequest("host-name", hostCode, username);
                 return;
             }
-            makeRequest("join-name", roomCode, username); //Otherwise, we want to just use join php files
+            makeRequest("join-name", roomCode.join(""), username); //Otherwise, we want to just use join php files
         }
     };
 
