@@ -4,17 +4,20 @@
 // Programmer(s): Paul Stuever, Kieran Delaney
 // Created on: 01/19/2024           
 //
-// Revised on: 01/22/2023
+// Revised on: 01/22/2024
 // Revision: Paul added nowplaying and getqueue.
-// Revised on: 01/29/2023
+// Revised on: 01/29/2024
 // Revision: Paul added addtoqueue
-// Revised on: 02/04/2023
+// Revised on: 02/04/2024
 // Revision: Kieran added skipSong
-// Revised on: 02/09/2023
+// Revised on: 02/09/2024
 // Revision: Nicholas removed nowPlaying console.log debugger, it's annoying
+// Revised on 2/11/2024
+// Revision: Chinh added getPlaylists
 // Revised on: 2/12/2024
 // Revision: Paul added functionality to change server address based on build
-//
+// Revised on 2/17/2024
+// Revision: Chinh adjusted getPlaylists to return a promise for async/await
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
 // 
