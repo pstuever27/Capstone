@@ -95,9 +95,28 @@ const authorizationApi = () => {
     }
 
     const getTracks = async (playlistID) => {
-        let xhr = makeRequest('getTracks');
-        // this might be a little janky, but trying to send both playlistID and roomCode in the same request
-        xhr.send(`playlistID=${encodeURIComponent(playlistID)}&roomCode=${encodeURIComponent(roomCode)}`);
+        return new Promise((resolve, reject) => { // Wrap the XHR in a Promise
+            let xhr = makeRequest('getTracks');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'error') {
+                            reject(response.error); // Reject the promise on error
+                        } else {
+                            resolve(response); // Resolve the promise with the response
+                        }
+                    } catch (err) {
+                        reject(err); // Reject the promise on JSON parsing error
+                    }
+                } else {
+                    reject(xhr.statusText); // Reject the promise on XHR error
+                }
+            };
+            xhr.onerror = () => reject(xhr.statusText); // Reject the promise on XHR network error
+            // Send both playlistID and roomCode in the request
+            xhr.send(`playlistID=${encodeURIComponent(playlistID)}&roomCode=${encodeURIComponent(roomCode)}`);
+        });
     }
 
     const makeRequest = (phpUrl) => {
