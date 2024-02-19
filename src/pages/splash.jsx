@@ -297,7 +297,7 @@ function Splash()
             // Case for good room code on join
             if (phpResponse.status == 'ok_join') {
                 console.log("good!");
-                cookie.set('roomCode', roomCode, { path: '/' });
+                cookie.set('roomCode', roomCode.join(""), { path: '/' });
                 fadeOut();
             }
             //Case for good room code generation on host 
