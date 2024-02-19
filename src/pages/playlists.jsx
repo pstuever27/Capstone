@@ -26,6 +26,7 @@ function SpotifyPlaylists() {
     const [isLoading, setIsLoading] = useState(false);
     const [playlists, setPlaylists] = useState([]);
     const { getPlaylists } = authorizationApi();
+    const { getTracks } = authorizationApi();
 
     const fetchPlaylists = async () => {
         setIsLoading(true);
@@ -40,18 +41,29 @@ function SpotifyPlaylists() {
     };
 
     const fetchTracks = async () => {
-        console.log("TODO: Fetch tracks from selected playlist.");
+        let playlistID = document.getElementById("selectPlaylist").value;
+        if (playlistID === "") {
+            alert("Please fetch playlists first and make sure a playlist is selected.")
+            return;
+        }
+
+        try {
+            const response = await getTracks(playlistID);
+            console.log("Tracks of selected playlist:", response);
+        } catch (error) {
+            console.log('Could not fetch tracks:', error);
+        };
     }
 
     return (
         <div>
-            <button className = "queueButton" onClick={fetchPlaylists} disabled={isLoading}>
+            <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
             </button>
 
             <select id="selectPlaylist">
                 {Array.isArray(playlists) && playlists.map((playlist, index) => {
-                    console.log("Mapping playlist:", playlist); // Log each playlist being mapped
+                    // console.log("Mapping playlist:", playlist); // Log each playlist being mapped
                     return (
                         <option key={index} value={playlist.id}>
                             {playlist.name}
@@ -60,7 +72,7 @@ function SpotifyPlaylists() {
                 })}
             </select>
 
-            <button className = "queueButton" onClick={fetchTracks} disabled={isLoading}>
+            <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
                 Get Tracks of Selected Playlist
             </button>
 
