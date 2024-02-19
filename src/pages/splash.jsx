@@ -37,6 +37,7 @@ import { setCode } from '../redux/roomCodeSlice'
 import { setName } from '../redux/usernameSlice';
 import { useNavigate } from 'react-router-dom';
 import clientAPI from '../clientAPI';
+import Cookies from 'universal-cookie';
 // import { useNavigate } from "react-router-dom";
 
 function Splash()
@@ -288,6 +289,8 @@ function Splash()
 
     const { clientAccess: clientToken } = clientAPI();
 
+    const cookie = new Cookies();
+
     // Watches the phpResponse state and triggers when it's changed
     useEffect(() => {
         if (phpResponse) {
@@ -318,6 +321,8 @@ function Splash()
             // Case for good name entry on host. Shouldn't fail unless there's server error
             else if (phpResponse.status == "good_host_name") {
                 console.log("Host good!");
+                cookie.set('roomCode', roomCode, { path: '/' });
+                cookie.set('username', username, { path: '/' });
                 navigate("/host"); // Navigate to host.jsx
             }
         }

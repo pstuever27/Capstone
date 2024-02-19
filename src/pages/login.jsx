@@ -43,11 +43,15 @@ function Login() {
     <>
       {/* div for dark/light mode toggle */}
       <div> 
-        {   
-          // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-          !(window.location.pathname === "/host/callback") 
-          ? <button id = "login" onClick = { () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; } } >Login</button> 
-          : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/host'; } } >Logout</button> 
+        { (window.location.pathname != '/join')
+          ?
+            // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
+            !(window.location.pathname === "/host/callback") 
+            ? <button id = "login" onClick = { () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; } } >Login</button> 
+            : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/host'; } } >Logout</button> 
+          :
+            <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { window.location.href = '/'; } } >Leave</button> 
+          
         }
       </div>
     </>

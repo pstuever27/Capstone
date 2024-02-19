@@ -32,10 +32,12 @@ import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
 import phpAPI from '../phpApi';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom'
 import { ColorExtractor } from 'react-color-extractor'
 import QueueContext from './queueContext'; 
 import { useContext } from 'react'; 
 import PaletteContext from './paletteContext';
+import Cookies from 'universal-cookie';
 
 
 function NowPlaying() { 
@@ -49,8 +51,11 @@ function NowPlaying() {
   //prep for majority skip
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
   //Get the roomcode and username from our redux store
-  const { roomCode } = useSelector(state => state.roomCode);
-  const { username } = useSelector(state => state.username);
+
+  const cookie = new Cookies();
+
+  const roomCode = cookie.get('roomCode')
+  const username = cookie.get('username');
 
   const skipCounter = () => {
     console.log(roomCode); //there's something wrong with the way roomcode is being saved in other files. We'll investigate this further in next sprint to get the flow right
@@ -65,6 +70,14 @@ function NowPlaying() {
     }
   }
 
+  const location = useLocation();
+  useEffect( () => {
+    console.log(location);
+    if(location.pathname == '/host/callback' || location == '/join') {
+      getNowPlaying()
+    }
+  }, [location.pathname]);
+
 
   const { palette, update } = useContext( PaletteContext );
 
@@ -75,7 +88,7 @@ function NowPlaying() {
   //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
     const timer = setInterval(() => {
-      if(window.location.pathname === '/host/callback'){
+      if(window.location.pathname === '/host/callback' || window.location.pathname === '/join'){
         getNowPlaying();
       }
     }, 10000); //runs every 10.6 seconds
@@ -105,7 +118,7 @@ function NowPlaying() {
         {/* <h1>Now Playing</h1> */}
         {
           // CONDITION: if user is logged in, add the now playing song info. if not, show text saying to login
-          ( window.location.pathname === '/host/callback' ) 
+          ( window.location.pathname === '/host/callback' || window.location.pathname === '/join') 
           ? // IF TRUE
             <div id = "nowPlayingDiv">
               {/* clicking the song image opens the song in spotify */}

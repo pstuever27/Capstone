@@ -28,29 +28,18 @@ import NowPlaying from './nowPlaying'
 import PaletteContext from './paletteContext'
 import { useDispatch } from 'react-redux'
 import { setCode } from '../redux/roomCodeSlice'
+import Cookies from 'universal-cookie'
 
 function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
 
-  let [code, setLocalCode] = useState("");
-
-  let links = ["../../data/.roomCode"];
-
-  React.useEffect(() => {
-    async function codeGrabber() {
-      const files = await Promise.all(
-        links.map((link) => fetch(link).then((res) => res.text()))
-      );
-      setLocalCode(files);
-    }
-    codeGrabber();
-  }, [setLocalCode]);
+  const cookie = new Cookies();
 
   const dispatch = useDispatch();
 
-  dispatch(setCode(code));
+  dispatch(setCode(cookie.get('roomCode')));
 
   const enqueue = (song) => {
     modQueue([...songQueue, song]);
@@ -102,7 +91,7 @@ function Home() {
               <NowPlaying />
             </div>
             <div className="third" id="panel-2">
-              <h1>Your Room: { code }</h1>
+              <h1>Your Room: { cookie.get('roomCode') }</h1>
               <Queue />
             </div>
 
