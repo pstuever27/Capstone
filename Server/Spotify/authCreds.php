@@ -24,6 +24,8 @@ header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
 $info = file_get_contents('../../client.json');
 $json = json_decode($info);
 
+error_log($json->REDIRECT_URI);
+
 //Create new session with our web app information
 $session = new SpotifyWebAPI\Session(
   $json->CLIENT_ID, //ClientID
@@ -33,8 +35,6 @@ $session = new SpotifyWebAPI\Session(
 
 //Create new state to verify valid session 
 $state = $session->generateState();
-
-file_put_contents('../../data/.roomCode', $_GET['roomCode']);
 
 //Settings options to allow for spotify functions in the authorization code flow
 $options = [

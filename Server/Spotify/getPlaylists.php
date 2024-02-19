@@ -75,9 +75,27 @@ try {
     $me = $api->me();
 
     // Use Spotify API PHP Wrapper to get user's playlists from display name
-    $response = $api->getUserPlaylists($me->id, [
+    $playlists = $api->getUserPlaylists($me->id, [
         'limit' => 25 // Limit to 25 playlists, temporary -- [TODO] Fetch ALL playlists
     ]);
+
+    // $id = $playlists['items'][0]['id'];
+
+    //$response = $playlists->items[0]->id;
+
+    $response = array();
+
+    foreach ($playlists->items as $playlist) {
+        // For each playlist, create an associative array with 'id' and 'name'
+        $playlist = array(
+            'id' => $playlist->id,
+            'name' => $playlist->name
+        );
+        
+        // Add this associative array to the responses array
+        $response[] = $playlist;
+    }
+    
 } catch (SpotifyWebAPI\SpotifyWebAPIException $e) { //If there's an error, send error response
     $response = [
         'status' => 'error',

@@ -4,17 +4,20 @@
 // Programmer(s): Paul Stuever, Kieran Delaney
 // Created on: 01/19/2024           
 //
-// Revised on: 01/22/2023
+// Revised on: 01/22/2024
 // Revision: Paul added nowplaying and getqueue.
-// Revised on: 01/29/2023
+// Revised on: 01/29/2024
 // Revision: Paul added addtoqueue
-// Revised on: 02/04/2023
+// Revised on: 02/04/2024
 // Revision: Kieran added skipSong
-// Revised on: 02/09/2023
+// Revised on: 02/09/2024
 // Revision: Nicholas removed nowPlaying console.log debugger, it's annoying
+// Revised on 2/11/2024
+// Revision: Chinh added getPlaylists
 // Revised on: 2/12/2024
 // Revision: Paul added functionality to change server address based on build
-//
+// Revised on 2/17/2024
+// Revision: Chinh adjusted getPlaylists to return a promise for async/await
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
 // 
@@ -38,8 +41,7 @@ const authorizationApi = () => {
     //Get the address of the server based on dev or prod build
     const { serverAddress } = useSelector(state => state.serverAddress );
 
-    // const { roomCode } = useSelector(state => state.roomCode);
-    const roomCode = 'ABCD';
+    const { roomCode } = useSelector(state => state.roomCode);
 
     const addToQueue = (songString) => {
         let xhr = makeRequest('addToQueue');
@@ -66,9 +68,55 @@ const authorizationApi = () => {
         xhr.send('roomCode=' + roomCode);
     }
 
-    const getPlaylists = () => {
-        let xhr = makeRequest('getPlaylists');
-        xhr.send('roomCode=' + roomCode);
+    const getPlaylists = async () => {
+        return new Promise((resolve, reject) => { // Wrap the XHR in a Promise
+            let xhr = makeRequest('getPlaylists');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'error') {
+                            reject(response.error); // Reject the promise on error
+                        } else {
+                            resolve(response); // Resolve the promise with the response
+                        }
+                    } catch (err) {
+                        reject(err); // Reject the promise on JSON parsing error
+                    }
+                } else {
+                    reject(xhr.statusText); // Reject the promise on XHR error
+                }
+            };
+            xhr.onerror = () => reject(xhr.statusText); // Reject the promise on XHR network error
+            xhr.send('roomCode=' + roomCode); // Send the request
+        });
+        // let xhr = makeRequest('getPlaylists');
+        // xhr.send('roomCode=' + roomCode);
+    }
+
+    const getTracks = async (playlistID) => {
+        return new Promise((resolve, reject) => { // Wrap the XHR in a Promise
+            let xhr = makeRequest('getTracks');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'error') {
+                            reject(response.error); // Reject the promise on error
+                        } else {
+                            resolve(response); // Resolve the promise with the response
+                        }
+                    } catch (err) {
+                        reject(err); // Reject the promise on JSON parsing error
+                    }
+                } else {
+                    reject(xhr.statusText); // Reject the promise on XHR error
+                }
+            };
+            xhr.onerror = () => reject(xhr.statusText); // Reject the promise on XHR network error
+            // Send both playlistID and roomCode in the request
+            xhr.send(`playlistID=${encodeURIComponent(playlistID)}&roomCode=${encodeURIComponent(roomCode)}`);
+        });
     }
 
     const makeRequest = (phpUrl) => {
@@ -102,7 +150,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, getPlaylists, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, getPlaylists, getTracks, phpResponse };
 };
 
 export default authorizationApi;

@@ -46,6 +46,8 @@ $response = [
     'status' => $status
 ];
 
+file_put_contents("../data/.roomCode", $_POST['roomCode']);
+
 //Send response
 echo json_encode($response);
 exit(200);

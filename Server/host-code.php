@@ -26,6 +26,7 @@ header('Access-Control-Allow-Origin: *'); //Uncomment for local testing
  //Use the sql.php file
 require_once('./require/sql.php');
 
+
 //Connect to SQL
 $mysql = SQLConnect();
 

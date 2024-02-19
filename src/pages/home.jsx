@@ -26,11 +26,31 @@ import Queue from './queue'
 import QueueContext from './queueContext';
 import NowPlaying from './nowPlaying'
 import PaletteContext from './paletteContext'
+import { useDispatch } from 'react-redux'
+import { setCode } from '../redux/roomCodeSlice'
 
 function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
+
+  let [code, setLocalCode] = useState("");
+
+  let links = ["../../data/.roomCode"];
+
+  React.useEffect(() => {
+    async function codeGrabber() {
+      const files = await Promise.all(
+        links.map((link) => fetch(link).then((res) => res.text()))
+      );
+      setLocalCode(files);
+    }
+    codeGrabber();
+  }, [setLocalCode]);
+
+  const dispatch = useDispatch();
+
+  dispatch(setCode(code));
 
   const enqueue = (song) => {
     modQueue([...songQueue, song]);
@@ -72,18 +92,6 @@ function Home() {
     setPalette(darkened);
   }
 
-  const getRoom = () => {
-    fetch("../../data/.roomCode")
-      .then((res) => res.text())
-      .then((text) => {
-        console.log(text);
-        return text;
-      })
-      .catch((e) => console.error(e));
-  }
-
-  let roomCode = getRoom();
-
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
     <>
@@ -94,7 +102,7 @@ function Home() {
               <NowPlaying />
             </div>
             <div className="third" id="panel-2">
-              <h1>Your Room: { roomCode }</h1>
+              <h1>Your Room: { code }</h1>
               <Queue />
             </div>
 
