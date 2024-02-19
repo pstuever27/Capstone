@@ -73,7 +73,30 @@ $options = [
 $api = new SpotifyWebAPI\SpotifyWebAPI($options, $session);
 
 try {
-    $response = "WITHIN PHP FILE: playlistID = " . $playlistID;
+    // Use Spotify API PHP Wrapper to get playlist tracks
+    $playlistTracks = $api->getPlaylistTracks($playlistID);
+
+    // Change this value to 1 to see the raw response
+    $raw = 0;
+
+    if ($raw) { // If raw, send the raw response
+        $response = $playlistTracks;
+    } else { // Otherwise, send a parsed response
+        foreach ($playlistTracks->items as $track) {
+            // For each track, create an associative arrayy with information you want from track
+            // The importants seem to be: album, artists (array), duration_ms, explicit, href, id, name, preview_url, uri
+            // but there are much more fields available
+            $track = array(
+                'name' => $track->track->name,
+                'id' => $track->track->id,
+                'uri' => $track->track->uri,
+            );
+    
+            // Add the track to the response array
+            $response[] = $track;
+        }
+    }
+
 } catch (SpotifyWebAPI\SpotifyWebAPIException $e) { //If there's an error, send error response
     $response = [
         'status' => 'error',
