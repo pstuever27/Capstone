@@ -94,6 +94,12 @@ const authorizationApi = () => {
         // xhr.send('roomCode=' + roomCode);
     }
 
+    const getTracks = async (playlistID) => {
+        let xhr = makeRequest('getTracks');
+        // this might be a little janky, but trying to send both playlistID and roomCode in the same request
+        xhr.send(`playlistID=${encodeURIComponent(playlistID)}&roomCode=${encodeURIComponent(roomCode)}`);
+    }
+
     const makeRequest = (phpUrl) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `${serverAddress}/Server/Spotify/${phpUrl}.php`, true);
@@ -125,7 +131,7 @@ const authorizationApi = () => {
         }
         return xhr;
     }
-    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, getPlaylists, phpResponse };
+    return { makeRequest, addToQueue, nowPlaying, skipSong, logout, getPlaylists, getTracks, phpResponse };
 };
 
 export default authorizationApi;
