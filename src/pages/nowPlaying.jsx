@@ -39,6 +39,8 @@ import { useContext } from 'react';
 import PaletteContext from './paletteContext';
 import Cookies from 'universal-cookie';
 
+import skipImg from '../images/skip.svg'
+
 
 function NowPlaying() { 
 
@@ -75,7 +77,7 @@ function NowPlaying() {
   const location = useLocation();
   useEffect( () => {
     console.log(location);
-    if(location.pathname == '/host/callback' || location == '/join') {
+    if(location.hash == '#/callback' || location.pathname == '/join') {
       getNowPlaying()
     }
   }, [location.pathname]);
@@ -90,7 +92,7 @@ function NowPlaying() {
   //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
     const timer = setInterval(() => {
-      if(window.location.pathname === '/host/callback' || window.location.pathname === '/join'){
+      if(location.hash === '#/callback' || location.pathname === '/join'){
         getNowPlaying();
       }
     }, 10000); //runs every 10.6 seconds
@@ -120,7 +122,7 @@ function NowPlaying() {
         {/* <h1>Now Playing</h1> */}
         {
           // CONDITION: if user is logged in, add the now playing song info. if not, show text saying to login
-          ( window.location.pathname === '/host/callback' || window.location.pathname === '/join') 
+          ( location.hash === '#/callback' || location.pathname === '/join') 
           ? // IF TRUE
             <div id = "nowPlayingDiv">
               {/* clicking the song image opens the song in spotify */}
@@ -133,7 +135,7 @@ function NowPlaying() {
                   <p id = "title">{nowPlayingSong?.name}</p>
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
                 </div>
-                <img id = "skip" onClick = { () => {skipCounter();} } src = "/src/assets/skip.svg"/>
+              <img id="skip" onClick={() => { skipCounter(); }} src={skipImg} />
               </div>
             </div>
           : // ELSE IF FALSE

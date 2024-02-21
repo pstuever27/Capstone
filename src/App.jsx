@@ -38,7 +38,7 @@ import Join from './pages/join' // Join component
 import Splash from './pages/splash' // Splash screen component (index)
 import Host from "./pages/host" // Host component
 import { useDispatch } from 'react-redux'; // Redux selector for information
-import { BrowserRouter, Routes, Route } from "react-router-dom"; // Router is used to switch between pages
+import { HashRouter, Routes, Route } from "react-router-dom"; // Router is used to switch between pages
 
 import Home from './pages/home'
 
@@ -55,16 +55,14 @@ function App() {
 
   return ( // this is what is returned to the webpage to be rendered
     // <SearchQueuePlayNow />
-    <BrowserRouter> {/*Browserrouter used for react routing*/}
+    <HashRouter> {/*Browserrouter used for react routing*/}
       <Routes> {/*Create routes*/}
-        <Route path="/">
-          <Route index element={<Splash />} /> {/*Index element is the splash screen, will route to others from there*/}
-          <Route path="join" element={<Home />} /> {/*Join element gets routed to when joining a room*/}
-          <Route path="host" element={<Home />} /> {/*Host element gets routed to when hosting a room*/}
-          <Route path="host/callback" element={<Home /> } />
-        </Route>
+          <Route path="/"             element={<Splash />}  /> {/*Index element is the splash screen, will route to others from there*/}
+          <Route path="join"          element={<Home   />}  /> {/*Join element gets routed to when joining a room*/}
+          <Route path="host"          element={<Home   />}  /> {/*Host element gets routed to when hosting a room*/}
+          <Route path="host/callback" element={<Home   /> } /> {/*Callback page will be the same as the homepage */}
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 export default App // exporting the app to be imported and rendered in main.jsx

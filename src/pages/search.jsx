@@ -43,6 +43,8 @@ import authorizationApi from '../authorizationApi';
 // imports Playlists component
 import Playlists from './playlists';
 
+import { useLocation } from 'react-router-dom'
+
 function Search() {
   // INITIALIZING STATE VARIABLES
 
@@ -72,7 +74,9 @@ function Search() {
   // An empty list state is used to store the blocked songs.
   const [blockedSongs, setBlockedSong] = useState( [] ); 
 
-  const { palette } = useContext( PaletteContext );
+  const { palette } = useContext(PaletteContext);
+  
+  const location = useLocation();
 
   const { getInputProps, getListboxProps, getOptionProps,  groupedOptions } = useAutocomplete( {
     /***************************************************************************/
@@ -117,7 +121,7 @@ function Search() {
       enqueue( songChoice ); 
 
       // If the user has logged into spotify and the callback result is in the url bar
-      if ( window.location.pathname === '/host/callback' ) { 
+      if ( location.hash === '#/callback' || location.pathname === '/join') { 
         // Parse the elements of the url, retain only the search query after `?` in the URL
         let urlParams = new URLSearchParams( window.location.search ); 
 
@@ -182,7 +186,7 @@ function Search() {
    */
   async function replaySong() {
     // If the user has logged into spotify and the callback result is in the url bar
-    if (window.location.pathname === '/host/callback') {
+    if (location.hash === '#/callback') {
       // Parse the elements of the url, retain only the search query after `?` in the URL
       let urlParams = new URLSearchParams(window.location.search);
 
@@ -255,8 +259,11 @@ function Search() {
           {/* clicking button calls the function to add song to queue */}
           <button className = "queueButton" onClick = { () => replaySong() } style={{ backgroundColor: palette[1]}}>Replay</button>
 
-          {/* clicking button calls the function to block the song from queue */}
-          <button className = "queueButton" onClick = { () => blockFromQueue() } style={{ backgroundColor: palette[1]}}>Block</button>
+          {/* clicking button calls the function to block the song from queue */
+            location.hash === '#/callback' ?
+              <button className="queueButton" onClick={() => blockFromQueue()} style={{ backgroundColor: palette[1] }}>Block</button>
+            : null
+          }
 
           <Playlists/>
         </div>

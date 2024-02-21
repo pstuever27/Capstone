@@ -23,6 +23,7 @@
 // imports useContext hook from react
 import { useContext } from 'react'; 
 import { useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import authorizationApi from '../authorizationApi';
 
 // imports palette context to manipulate color palette across components
@@ -38,17 +39,19 @@ function Login() {
 
   const { logout: logoutUser } = authorizationApi();
 
+  const location = useLocation();
+
   // Function call for logging out from Spotify
   return (
     <>
       {/* div for dark/light mode toggle */}
       <div> 
-        { (window.location.pathname != '/join')
+        { (location.pathname != '/join')
           ?
             // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-            !(window.location.pathname === "/host/callback") 
+            !(location.hash === "#/callback") 
             ? <button id = "login" onClick = { () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; } } >Login</button> 
-            : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/host'; } } >Logout</button> 
+            : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/#/host'; } } >Logout</button> 
           :
             <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { window.location.href = '/'; } } >Leave</button> 
           
