@@ -63,6 +63,9 @@ const phpAPI = () => {
                     if (response.status === 'no-guests') {
                         throwError("No Guests in the Room!");
                     }
+                    if (response.status === 'closed') {
+                        window.location.href = '/';
+                    }
                     //Else, set the callback to the JSON response and return
                     else {
                         console.log(response);

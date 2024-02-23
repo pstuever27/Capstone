@@ -4,6 +4,8 @@ import { Modal as BaseModal} from '@mui/base/Modal';
 import { styled, css } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import Cookies from 'universal-cookie'
+
 
 export default function LoginOverlay() {
 
@@ -13,6 +15,10 @@ export default function LoginOverlay() {
 
     const [open, setOpen] = React.useState(true);
     const handleClose = () => setOpen(false);
+
+    const cookie = new Cookies();
+
+    cookie.set('roomCode', roomCode, { path: "/#/host/%23/callback"});
 
     return (
     <div>
@@ -31,7 +37,7 @@ export default function LoginOverlay() {
             <p id="unstyled-modal-description" className="modal-description">
             In order to host a SongSync, you must log into Spotify
             </p>
-            <button onClick={ () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; }}>
+            <button className = "login-button" onClick={ () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; }}>
             Login
             </button>
         </ModalContent>
@@ -105,6 +111,23 @@ const ModalContent = styled('div')(
     font-weight: 400;
     color: white;
     margin-bottom: 4px;
+    }
+
+    & .login-button {
+      width: 100%;
+      height: 50px;
+      border-radius: 7px;
+      border: none;
+      background-color: white;
+      color: black;
+      font-weight: 550;
+      font-size: 16px;
+      transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
+      cursor: pointer;
+    }
+
+    & .login-button:hover {
+        box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
     }
 `,
 );

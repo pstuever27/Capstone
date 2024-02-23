@@ -276,7 +276,7 @@ function Splash()
     const refresh = () => {
         clientToken();
     }
-
+    
     // These are all redux globals. They are used to track important information between files. Works as sort of a database
     const { roomCode } = useSelector(state => state.roomCode);
 

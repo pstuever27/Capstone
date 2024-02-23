@@ -21,11 +21,12 @@
 // useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
 
 // imports useContext hook from react
-import { useContext } from 'react'; 
-import { useSelector } from 'react-redux'
+import { useContext, useEffect } from 'react'; 
+import Cookies from 'universal-cookie';
 import { useLocation } from 'react-router-dom'
 import authorizationApi from '../authorizationApi';
 import LoginOverlay from './loginOverlay';
+import phpAPI from '../phpApi';
 
 // imports palette context to manipulate color palette across components
 import PaletteContext from './paletteContext';
@@ -36,7 +37,21 @@ function Login() {
 
   const { logout: logoutUser } = authorizationApi();
 
+  const { makeRequest, phpResponse } = phpAPI();
+
   const location = useLocation();
+
+  const cookie = new Cookies();
+
+  const roomCode = cookie.get('roomCode')
+
+  useEffect(() => {
+    if (phpResponse) {
+      if (phpResponse.status == 'ok') {
+        window.location.href = '/';
+      }
+    }
+  }, [phpResponse])
 
   // Function call for logging out from Spotify
   return (
@@ -48,10 +63,13 @@ function Login() {
             // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
             !(location.hash === "#/callback") 
             ? <LoginOverlay />
-            : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/#/host'; } } >Logout</button> 
+            :
+            <>
+            <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { logoutUser(); window.location.href = '/#/host'; }} >Logout</button> 
+            <button id="close" style={{ backgroundColor: palette[1] }} onClick={() => { makeRequest("close-room", roomCode, null); }}>Close Room</button> 
+            </>
           :
-            <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { window.location.href = '/'; } } >Leave</button> 
-          
+           <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { window.location.href = '/'; }} >Leave</button> 
         }
       </div>
     </>
