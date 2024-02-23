@@ -63,6 +63,9 @@ const phpAPI = () => {
                     if (response.status === 'no-guests') {
                         throwError("No Guests in the Room!");
                     }
+                    if (response.status === 'closed') {
+                        window.location.pathname = 'https://songsync.live/';
+                    }
                     //Else, set the callback to the JSON response and return
                     else {
                         console.log(response);
