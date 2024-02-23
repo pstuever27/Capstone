@@ -4,6 +4,8 @@ import { Modal as BaseModal} from '@mui/base/Modal';
 import { styled, css } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import Cookies from 'universal-cookie'
+
 
 export default function LoginOverlay() {
 
@@ -13,6 +15,10 @@ export default function LoginOverlay() {
 
     const [open, setOpen] = React.useState(true);
     const handleClose = () => setOpen(false);
+
+    const cookie = new Cookies();
+
+    cookie.set('roomCode', roomCode, { path: "/#/host/%23/callback"});
 
     return (
     <div>

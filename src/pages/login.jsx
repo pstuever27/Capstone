@@ -21,11 +21,12 @@
 // useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
 
 // imports useContext hook from react
-import { useContext } from 'react'; 
-import { useSelector } from 'react-redux'
+import { useContext, useEffect } from 'react'; 
+import Cookies from 'universal-cookie';
 import { useLocation } from 'react-router-dom'
 import authorizationApi from '../authorizationApi';
 import LoginOverlay from './loginOverlay';
+import phpAPI from '../phpApi';
 
 // imports palette context to manipulate color palette across components
 import PaletteContext from './paletteContext';
@@ -36,7 +37,11 @@ function Login() {
 
   const { logout: logoutUser } = authorizationApi();
 
+  const { makeRequest, phpResponse } = phpApi();
+
   const location = useLocation();
+
+  const roomCode = cookie.get('roomCode')
 
   // Function call for logging out from Spotify
   return (
@@ -51,8 +56,15 @@ function Login() {
             : <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { logoutUser(); window.location.href = '/#/host'; } } >Logout</button> 
           :
             <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => { window.location.href = '/'; } } >Leave</button> 
-          
         }
+        <button id = "logout" style={{backgroundColor: palette[1] }} onClick = { () => {
+          makeRequest("close-room", roomCode, null);
+          useEffect( () => {
+            if( phpResponse.status == 'ok') {
+              window.location.href = '/';
+            }
+          }, [phpResponse])
+        } }>Close Room</button>
       </div>
     </>
   );

@@ -18,7 +18,7 @@
  * Known Faults: 
  * **/
 
-import React, { useState } from 'react' // Need react
+import React, { useState, useEffect } from 'react' // Need react
 import '../App.css' // imports styling for site
 import Login from './login'
 import Search from './search'
@@ -26,21 +26,36 @@ import Queue from './queue'
 import QueueContext from './queueContext';
 import NowPlaying from './nowPlaying'
 import PaletteContext from './paletteContext'
+import { useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCode } from '../redux/roomCodeSlice'
 import Cookies from 'universal-cookie'
+import phpAPI from '../phpApi'
 
 function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
 
+  // Hook that grabs the makeRequest function and phpResponse state from phpAPI
+  const { makeRequest } = phpAPI();
+
   const cookie = new Cookies();
 
   const dispatch = useDispatch();
 
+  const location = useLocation();
+
   dispatch(setCode(cookie.get('roomCode')));
 
+   useEffect(() => {
+    const interval = setInterval(() => {
+      makeRequest( 'room', cookie.get('roomCode'), null )
+    }, 10000);
+  
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])
+  
   const enqueue = (song) => {
     modQueue([...songQueue, song]);
   }
