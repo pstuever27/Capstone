@@ -49,8 +49,10 @@ function Home() {
   dispatch(setCode(cookie.get('roomCode')));
 
    useEffect(() => {
-    const interval = setInterval(() => {
-      makeRequest( 'room', cookie.get('roomCode'), null )
+     const interval = setInterval(() => {
+       if (location.pathname == '/join') {
+         makeRequest('room', cookie.get('roomCode'), null)
+      }
     }, 10000);
   
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
