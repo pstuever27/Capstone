@@ -40,7 +40,6 @@ $stmt->execute(); //Execute sql
 
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
-error_log($row["accessToken"]);
 $accessToken = $row["accessToken"];
 $refreshToken = $row["refreshToken"];
 

@@ -1,29 +1,59 @@
+/**
+ * Prolouge
+ * File: loginOverlay.jsx
+ * Description: Component to show overlay which tells the host they need to log into Spotify to use our app 
+ *              
+ * Programmer(s): Paul Stuever
+ * Date Created: 2/24/2024
+ * 
+ * Preconditions: 
+ *  @inputs : None 
+ * Postconditions:
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
+//Necessary imports
 import * as React from 'react';
-import clsx from 'clsx';
 import { Modal as BaseModal} from '@mui/base/Modal';
 import { styled, css } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import Cookies from 'universal-cookie'
 
+//Begin component
 export default function LoginOverlay() {
 
+    //Get current server address based on build type
     const { serverAddress } = useSelector(store => store.serverAddress);
 
+    //Get roomCode from redux
     const { roomCode } = useSelector(store => store.roomCode);
 
+    //'open' tells the overlay what state it should be in
     const [open, setOpen] = React.useState(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => setOpen(false); //Closes the overlay
 
-    return (
-    <div>
+    //Gets cookie information
+    const cookie = new Cookies();
+
+    //Sets cookie for callback, may not be necessary
+    cookie.set('roomCode', roomCode, { path: "/#/host/%23/callback"});
+
+  return (
+    <div> { /*This Modal is used to show the overlay using our mui component library.*/}
         <Modal
-        aria-labelledby="unstyled-modal-title"
+        aria-labelledby="unstyled-modal-title" 
         aria-describedby="unstyled-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: StyledBackdrop }}
         >
+        {/*ModalContent is defined further down, and shows the text/button displayed in the popup*/ }
         <ModalContent sx={style}>
             <h2 id="unstyled-modal-title" className="modal-title">
             Login to Spotify
@@ -31,7 +61,8 @@ export default function LoginOverlay() {
             <p id="unstyled-modal-description" className="modal-description">
             In order to host a SongSync, you must log into Spotify
             </p>
-            <button onClick={ () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; }}>
+            {/*This button will run the php which logs you into Spotify*/}
+            <button className = "login-button" onClick={ () => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; }}>
             Login
             </button>
         </ModalContent>
@@ -40,6 +71,7 @@ export default function LoginOverlay() {
     );
 }
 
+//This const sets up the backdrop to where it greys out the background and is clickable
 const Backdrop = React.forwardRef((props, ref) => {
     const { open, ...other } = props;
     return (
@@ -51,6 +83,7 @@ const Backdrop = React.forwardRef((props, ref) => {
     open: PropTypes.bool,
   };
 
+//Modal styling. TODO: move to css file
 const Modal = styled(BaseModal)`
   position: fixed;
   z-index: 1300;
@@ -60,6 +93,7 @@ const Modal = styled(BaseModal)`
   justify-content: center;
 `;
 
+//General style TODO: move to css file
 const style = {
     position: 'absolute',
     top: '50%',
@@ -68,6 +102,7 @@ const style = {
     width: 400,
   };
 
+//Style the backdrop. TODO: move to css file
 const StyledBackdrop = styled(Backdrop)`
   z-index: -1;
   position: fixed;
@@ -76,6 +111,7 @@ const StyledBackdrop = styled(Backdrop)`
   -webkit-tap-highlight-color: transparent;
 `;
 
+//Style the content in the modal. TODO: move to css file
 const ModalContent = styled('div')(
 ({ theme }) => css`
     font-family: 'IBM Plex Sans', sans-serif;
@@ -105,6 +141,23 @@ const ModalContent = styled('div')(
     font-weight: 400;
     color: white;
     margin-bottom: 4px;
+    }
+
+    & .login-button {
+      width: 100%;
+      height: 50px;
+      border-radius: 7px;
+      border: none;
+      background-color: white;
+      color: black;
+      font-weight: 550;
+      font-size: 16px;
+      transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
+      cursor: pointer;
+    }
+
+    & .login-button:hover {
+        box-shadow: 0px 0px 30px -5px rgba(0,0,0,1);
     }
 `,
 );
