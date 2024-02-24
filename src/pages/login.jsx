@@ -27,6 +27,8 @@ import { useLocation } from 'react-router-dom'
 import authorizationApi from '../authorizationApi';
 import LoginOverlay from './loginOverlay';
 import phpAPI from '../phpApi';
+import { useSelector } from 'react-redux';
+
 
 // imports palette context to manipulate color palette across components
 import PaletteContext from './paletteContext';
@@ -43,7 +45,10 @@ function Login() {
 
   const cookie = new Cookies();
 
-  const roomCode = cookie.get('roomCode')
+  const roomCode = cookie.get('roomCode');
+
+  const { serverAddress } = useSelector(store => store.serverAddress);
+
 
   useEffect(() => {
     if (phpResponse) {
@@ -59,14 +64,18 @@ function Login() {
       {/* div for dark/light mode toggle */}
       <div> 
         { (location.pathname != '/join')
-          ?
-            // if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button
-            !(location.hash === "#/callback") 
-            ? <LoginOverlay />
-            :
-            <>
-            <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { logoutUser(); window.location.href = '/#/host'; }} >Logout</button> 
+          ?// if callback isn't in the url, it means the user hasn't logged into spotify yet, so we render the login button 
+          <>
+            {(location.hash == '#/callback')
+              ?
+              <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { logoutUser(); window.location.href = '/#/host'; }} >Logout</button>
+              :
+              <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { window.location.href = `${serverAddress}/Server/Spotify/authCreds.php?roomCode=${roomCode}`; }} >Login</button>
+            }
             <button id="close" style={{ backgroundColor: palette[1] }} onClick={() => { makeRequest("close-room", roomCode, null); }}>Close Room</button> 
+            {!(location.hash === "#/callback")
+              ? <LoginOverlay />
+              : null}
             </>
           :
            <button id="logout" style={{ backgroundColor: palette[1] }} onClick={() => { window.location.href = '/'; }} >Leave</button> 
