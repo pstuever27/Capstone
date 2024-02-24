@@ -19,6 +19,8 @@
  *            readded logo fade-in animation for sprint submission
  * Date Revised: 11/17/2023 - Paul Stuever
  *  Revision: Refactored splash screen to allow for php integration and host/join flow
+ * Date Revised: 2/24/2024 - Paul Stuever
+ *  Revision: Added cookies for information passing
  * 
  * Preconditions: 
  *  @inputs : None 

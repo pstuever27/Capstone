@@ -7,6 +7,7 @@
  * Date Created: 2/10/2024
  * 
  * Date Revised: 2/10/2024 - Moved Nick's changes here for compartmentalization
+ * Revision: 2/24/2024 - Paul Stuever - Added support for checking room status. 
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -40,34 +41,37 @@ function Home() {
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
   const { makeRequest } = phpAPI();
 
-  const cookie = new Cookies();
+  const cookie = new Cookies(); //Using cookies for information passing
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); //Redux
 
-  const location = useLocation();
+  const location = useLocation(); //Window location in react-router
 
-  dispatch(setCode(cookie.get('roomCode')));
+  dispatch(setCode(cookie.get('roomCode'))); //Reset the roomCode in redux to the cookie's stored value
 
-   useEffect(() => {
-     const interval = setInterval(() => {
-       if (location.pathname == '/join') {
-         makeRequest('room', cookie.get('roomCode'), null)
+  //UseEffect will check if the room is currently open, but only from the guest's point of view
+  useEffect(() => {
+      const interval = setInterval(() => { //Timer component
+        if (location.pathname == '/join') {
+          makeRequest('room', cookie.get('roomCode'), null) //Runs room.php to see if the room is still open
       }
-    }, 10000);
+    }, 10000); //Runs every 10 seconds
   
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    return () => clearInterval(interval); // clearInterval prevents memory leaks
   }, [])
   
   const enqueue = (song) => {
-    modQueue([...songQueue, song]);
+    modQueue([...songQueue, song]); //Adds song to our local queue
   }
 
   const dequeue = () => {
-    modQueue(songQueue.slice(1));
+    modQueue(songQueue.slice(1)); //Removes song from our local queue
   }
 
+  //Palatte for background gradient
   const [palette, setPalette] = useState([]);
 
+  //This function gets the colors needed for buttons and the gradient background based on the album art
   const darken = (hex) => {
     if (hex?.length === 7) {
       hex = hex.replace(`#`, ``);
@@ -93,6 +97,7 @@ function Home() {
     }
   };
 
+  //Updates the background colors
   const update = (colors) => {
     const darkened = colors.map((color) => darken(color));
     setPalette(darkened);
@@ -104,20 +109,20 @@ function Home() {
         <PaletteContext.Provider value={{ palette, update }}>
           <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
             <div className="third" id="panel-1">
-              <h1>Now Playing</h1>
+            <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />
             </div>
             <div className="third" id="panel-2">
               <h1>Your Room: { cookie.get('roomCode') }</h1>
-              <Queue />
+              <Queue /> { /*Queue component shows information about current queue*/}
             </div>
 
             <div className="third" id="panel-3">
               <h1>Search</h1>
-              <Search />
+              <Search /> { /*Search component holds search bar, add to queue, and other functions*/}
             </div>
           </QueueContext.Provider>
-          <Login />
+          <Login /> { /*Login holds the login buttons*/ }
         </PaletteContext.Provider>
     </>
   )

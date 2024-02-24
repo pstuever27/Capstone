@@ -18,6 +18,8 @@
 // Revision: Paul added functionality to change server address based on build
 // Revised on 2/17/2024
 // Revision: Chinh adjusted getPlaylists to return a promise for async/await
+// Revised on: 2/24/2024
+// Revision: Paul added functionality for hosts to be able to log out of Spotify
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
 // 
@@ -43,26 +45,31 @@ const authorizationApi = () => {
 
     const { roomCode } = useSelector(state => state.roomCode);
 
+    //Adds song to Spotify queue
     const addToQueue = (songString) => {
         let xhr = makeRequest('addToQueue');
         xhr.send('roomCode=' + roomCode + '&query=' + songString);
     }
 
+    //Gets Spotify queue
     const getQueue = () => {
         let xhr = makeRequest('getQueue');
         xhr.send('roomCode=' + roomCode);
     }
 
+    //Gets nowPlaying song from Spotify
     const nowPlaying = () => {
         let xhr = makeRequest('nowPlaying');
         xhr.send('roomCode=' + roomCode);
     }
 
+    //Skips currently playing song
     const skipSong = () => {
         let xhr = makeRequest('skipSong');
         xhr.send('roomCode=' + roomCode);
     }
 
+    //Logs the host out of Spotify
     const logout = () => {
         let xhr = makeRequest('logout');
         xhr.send('roomCode=' + roomCode);
