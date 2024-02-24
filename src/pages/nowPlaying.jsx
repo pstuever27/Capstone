@@ -60,16 +60,14 @@ function NowPlaying() {
   const username = cookie.get('username');
 
   const skipCounter = () => {
-    console.log(roomCode); //there's something wrong with the way roomcode is being saved in other files. We'll investigate this further in next sprint to get the flow right
     guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
     console.log(`guest list ${guestList}`);
-    if(guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally
+    if(location.pathname=='/host/' || guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally. also hosts can always skip, from the location.pathname=='/host/' condition.
       skip();
       getNowPlaying();
     }
-    else{ //otherwise, majority of users must vote for skip
-      //add mechanism to add vote to user attributes in database. we'll also need an attribute of the total number of votes
-      //if(totalnumberofvotes >= guestList.length / 2){skip();}
+    else if(location.pathname=='/join'){ //otherwise, majority of users must vote for skip
+      console.log('joinee skipping...');
     }
   }
 
