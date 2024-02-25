@@ -52,10 +52,10 @@ function NowPlaying() {
 
   //prep for majority skip
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
-  //Get the roomcode and username from our redux store
+  const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
 
+  //Get the roomcode and username from our cookies
   const cookie = new Cookies();
-
   const roomCode = cookie.get('roomCode')
   const username = cookie.get('username');
 
@@ -67,7 +67,8 @@ function NowPlaying() {
       getNowPlaying();
     }
     else if(location.pathname=='/join'){ //otherwise, majority of users must vote for skip
-      console.log('joinee skipping...');
+      getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
+      console.log(`Skip Votes: ${SkipVotes.skipVotes[0]}`);
     }
   }
 
