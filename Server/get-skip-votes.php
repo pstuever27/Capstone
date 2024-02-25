@@ -1,7 +1,7 @@
 <?php
 /**
  * Prolouge
- * File: room.php
+ * File: get-skip-votes.php
  * Description: Handles PHP server functionality needed for getting the current skip vote value from the SQL table
  * Programmer's Name: Kieran Delaney
  * Date Created: 2/24/2024

@@ -53,6 +53,7 @@ function NowPlaying() {
   //prep for majority skip
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
   const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
+  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI();
 
   //Get the roomcode and username from our cookies
   const cookie = new Cookies();
@@ -68,7 +69,14 @@ function NowPlaying() {
     }
     else if(location.pathname=='/join'){ //otherwise, majority of users must vote for skip
       getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
-      console.log(`Skip Votes: ${SkipVotes.skipVotes[0]}`);
+      console.log(`Skip Votes (pre): ${SkipVotes?.skipVotes[0]}`);
+
+      voteSkip("vote-skip", roomCode, username); //submit vote for skipping track
+
+      
+      getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
+      console.log(`Skip Votes (post): ${SkipVotes?.skipVotes[0]}`);
+
     }
   }
 
