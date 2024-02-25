@@ -16,6 +16,8 @@
 // Revision: Nicholas added color extraction from the album art to change the background color of the now playing screen, also modified the skip button. skip button is an image now!
 // Revised on: 2/11/2024
 // Revision: Kieran laid groundwork for skip's majority vote functionality.
+// Revised on: 2/24/2024
+// Revision: Kieran added skip voting functionality (votes are added to the database when clients click skip, votes reset when track changes).
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -53,7 +55,7 @@ function NowPlaying() {
   //prep for majority skip
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
   const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
-  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI();
+  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI(); //used for editing the skipVotes counter value, either incrementing it or resetting it to 0 depending on the path argument
 
   //Get the roomcode and username from our cookies
   const cookie = new Cookies();
@@ -85,7 +87,8 @@ function NowPlaying() {
   useEffect( () => {
     console.log(location);
     if(location.hash == '#/callback' || location.pathname == '/join') {
-      getNowPlaying()
+      getNowPlaying();
+      voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
     }
   }, [location.pathname]);
 
@@ -104,11 +107,12 @@ function NowPlaying() {
       }
     }, 10000); //runs every 10.6 seconds
 
-    if(phpResponse){
+    if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes
       if(phpResponse?.item){
         if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
-          setNowPlayingSong(phpResponse.item);
-          dequeue();
+          voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
+          setNowPlayingSong(phpResponse.item); //sets our current track save state to the new track, so we can render the track's content on the screen as the track changes in spotify
+          dequeue();   //removes the previous track from our ui queue
         }
       }
     }
