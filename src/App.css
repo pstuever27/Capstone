@@ -13,6 +13,9 @@
  Revision on: 02/10/24
  Revision: Nicholas Added CSS for new component elements and added media queries for mobile ui
             further added styling to more closely follow UI mockups, 
+ Revision on: 02/25/24
+ Revision: Kieran added CSS code for styling skip button when it's locked to make it apparent to end-user that their skip vote went through 
+            (the skip button fades in opacity, doesn't have click cursor or movement on hover)
  Postconditions: Sets styling specifications for rendering webpage content
  Error conditions: None
  Side effects: No known side effects
@@ -180,6 +183,15 @@ body {
   position: relative;
   left: 0px;
   transition: left ease 0.1s;
+}
+
+.skiplock {
+  opacity:0.4;
+  filter:alpha(opacity=40);
+  cursor:default !important;
+}
+.skiplock:hover{
+  left:0px !important;
 }
 
 #skip:hover{

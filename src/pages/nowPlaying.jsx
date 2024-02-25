@@ -18,6 +18,8 @@
 // Revision: Kieran laid groundwork for skip's majority vote functionality.
 // Revised on: 2/24/2024
 // Revision: Kieran added skip voting functionality (votes are added to the database when clients click skip, votes reset when track changes).
+// Revised on: 2/25/2024
+// Revision: Kieran added the skiplock mechanism and further developed the skip voting functionality, syncronization, and made some minor optimizations. Also added the majority voting mechanism using the guest list size.
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -46,39 +48,62 @@ import skipImg from '../images/skip.svg'
 
 function NowPlaying() { 
 
-  // State to hod the song object of the currently playing song
-  const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
-
-  const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
-
-
-  //prep for majority skip
-  const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
-  const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
-  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI(); //used for editing the skipVotes counter value, either incrementing it or resetting it to 0 depending on the path argument
-
   //Get the roomcode and username from our cookies
   const cookie = new Cookies();
   const roomCode = cookie.get('roomCode')
   const username = cookie.get('username');
 
+  // State to hold the song object of the currently playing song
+  const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
+
+  //API call handles for skipping to next track and getting currently playing track
+  const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
+
+
+  //API call handles & other prep work for majority skip
+  const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
+  const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
+  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI(); //used for editing the skipVotes counter value, either incrementing it or resetting it to 0 depending on the path argument
+
+  const [ skipLocked, setSkipped ] = useState( false );  //boolean save state for ensuring that a user can only submit one vote towards skipping the current track
+
+  /* 
+    SKIP_USE_EFFECT : unlocks guests' skiplocks, executes majority skip via host
+  */ 
+  useEffect( () => { //this is very important useEffect for unlocking guests' skiplocks after a song has changed AND performing majority skip voting
+    if(location.hash == '#/callback' || location.pathname == '/join') {
+      if(SkipVotes?.skipVotes[0] == 0){//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
+        setSkipped(false); //unlock skiplock
+      }
+    }
+    //we need this to only happen for host, so that duplicate skips aren't made by all the guests at once. doesn't run if guestList is null
+    if(location.hash == '#/callback' && !skipLocked){
+      if((SkipVotes?.skipVotes[0] * 2) > (guestList?.length)){ //if we hit majority vote (more than half of guests vote), we can skip
+        skip();
+        getNowPlaying();
+        console.log("Executing majority skip...");
+        setSkipped(true); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+      }
+    }
+  }, [SkipVotes, guestList]);
+  
+  const resetSkipVotes = () => {
+    if(location.pathname=='/host/'){ //this is done to prevent the reset from occuring every time a new user joins the room or when someone refreshes their page
+      voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
+    }
+  }
+
   const skipCounter = () => {
-    guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
-    console.log(`guest list ${guestList}`);
-    if(location.pathname=='/host/' || guestList==null || guestList.length==1){ //if only the host or one guest is joined, then it'll skip normally. also hosts can always skip, from the location.pathname=='/host/' condition.
+    console.log(`Current number of guests: ${guestList?.length}`);
+    if(location.pathname=='/host/'){ //hosts can always skip, from the location.pathname=='/host/' condition.
       skip();
       getNowPlaying();
     }
-    else if(location.pathname=='/join'){ //otherwise, majority of users must vote for skip
-      getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
-      console.log(`Skip Votes (pre): ${SkipVotes?.skipVotes[0]}`);
-
+    if(location.pathname=='/join' && !skipLocked){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
       voteSkip("vote-skip", roomCode, username); //submit vote for skipping track
-
+      setSkipped(true); //locks the user's voting priveledges since they've submitted their vote
       
       getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
-      console.log(`Skip Votes (post): ${SkipVotes?.skipVotes[0]}`);
-
     }
   }
 
@@ -88,7 +113,6 @@ function NowPlaying() {
     console.log(location);
     if(location.hash == '#/callback' || location.pathname == '/join') {
       getNowPlaying();
-      voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
     }
   }, [location.pathname]);
 
@@ -104,13 +128,17 @@ function NowPlaying() {
     const timer = setInterval(() => {
       if(location.hash === '#/callback' || location.pathname === '/join'){
         getNowPlaying();
+        getSkipVotes("get-skip-votes", roomCode, username); //needed to be known for both host and guests. host needs it for automatic majority skip; guests need it for having their skip buttons unlock when the track changes (see SKIP_USE_EFFECT above)
+      }
+      if(location.hash === '#/callback'){ //optimization to only make these calls on host end, since only the host will be computing whether there is majority vote for skip in the SKIP_USE_EFFECT side effect above
+        guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
       }
     }, 10000); //runs every 10.6 seconds
 
-    if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes
+    if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes.
       if(phpResponse?.item){
         if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
-          voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
+          resetSkipVotes();
           setNowPlayingSong(phpResponse.item); //sets our current track save state to the new track, so we can render the track's content on the screen as the track changes in spotify
           dequeue();   //removes the previous track from our ui queue
         }
@@ -146,7 +174,10 @@ function NowPlaying() {
                   <p id = "title">{nowPlayingSong?.name}</p>
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
                 </div>
-              <img id="skip" onClick={() => { skipCounter(); }} src={skipImg} />
+                <div>
+                  <p>{SkipVotes?.skipVotes[0]}</p>
+                  <img id="skip" className={(skipLocked) ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
+                </div>
               </div>
             </div>
           : // ELSE IF FALSE
