@@ -10,6 +10,8 @@
 // Revision: Chinh fixed API calls to correctly call function from authorizationApi.jsx to fetch playlists
 // Revised on: 2/17/2024
 // Revision: Chinh sanitized response from getPlaylists.php and mapped the playlists to a dropdown element
+// Revised on: 2/24/2024
+// Revision: Chinh started to add functionality to add tracks from fallback playlist to queue
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -27,6 +29,9 @@ function SpotifyPlaylists() {
     const [playlists, setPlaylists] = useState([]);
     const { getPlaylists } = authorizationApi();
     const { getTracks } = authorizationApi();
+    const { nowPlaying } = authorizationApi();
+
+    var fallbackTracks = [];
 
     const fetchPlaylists = async () => {
         setIsLoading(true);
@@ -50,10 +55,26 @@ function SpotifyPlaylists() {
         try {
             const response = await getTracks(playlistID);
             console.log("Tracks of selected playlist:", response);
+            // Add tracks from response to local fallbackTracks variable
+            for (let i = 0; i < response.length; i++) {
+                fallbackTracks.push(response[i].id);
+            }
+            console.log(fallbackTracks);
         } catch (error) {
             console.log('Could not fetch tracks:', error);
         };
     }
+
+    // TODO: I need nowPlaying response to be stored in a variable
+    // I can sanitize it myself later.
+
+    // const addToQueueFromFallback = () => {
+    //     let timer = nowPlaying();
+    //     console.log(timer);
+    // }
+
+    // Run addToQueueFromFallback every 10 seconds
+    //setInterval(addToQueueFromFallback, 10000);
 
     return (
         <div>
@@ -81,45 +102,3 @@ function SpotifyPlaylists() {
 }
 
 export default SpotifyPlaylists;
-
-/* THIS IS THE OLD FILE. IT IS NO LONGER USED.
-// useAPI, getAuthURl, and useHostAPI are necessary functions from SpotifyAPI.js
-import { useAPI, getAuthUrl, useHostAPI } from '../SpotifyAPI';
-import { useState, useEffect } from 'react'
-// imports textfield component of material UI for input field of search bar
-
-// allows usage of contexts
-import { useContext } from 'react';
-import PaletteContext from './paletteContext';
-import authorizationApi from '../authorizationApi';
-
-const Playlists = () => {
-    const { palette } = useContext( PaletteContext );
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    const fetchPlaylists = () => {
-        setIsLoading(true);
-        fetch('http://localhost:8000/Server/Spotify/getPlaylists.php')
-
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // Logging the playlists to the console
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching playlists:', error);
-                setIsLoading(false);
-            });
-    };
-
-    return (
-        <button className = "queueButton" onClick={fetchPlaylists} style = {{backgroundColor: palette[1]}} disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Get Playlists'}
-        </button>
-    );
-}
-
-export default Playlists;
-
-*/
