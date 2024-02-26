@@ -50,7 +50,7 @@ body {
   margin: 0;
   overflow-y: auto; /* Allows vertical scrolling */
 
-  background: linear-gradient(to bottom right, #12a46c, #000000);
+  background: linear-gradient(to bottom right, #12a46c, #333333);
 }
 
 /***************** CSS FOR THE MAIN CLIENT/HOST SCREEN *****************/
@@ -392,7 +392,7 @@ h1 {
   /* horizontally centered */
   justify-content: center;
   /* vertically centered */
-  background-color: #17DE92;
+  /* background-color: #17DE92; */
   /* main SongSync UI Color */
 }
 
@@ -412,6 +412,17 @@ h1 {
   position: absolute;
 
   top: 75%;
+}
+
+#host-button {
+  border: none;
+  font-size: 16px;
+}
+
+#welcome {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #queueButtonStack {
@@ -439,22 +450,23 @@ h1 {
 }
 
 .blackBackground {
-  background-color: black;
-  color: #17DE92;
-}
-
-.tealBackground {
-  background-color: #12B476;
+  background-color: rgba(0, 0, 0, 0.5);
   color: #FFFFFF;
 }
 
+.tealBackground {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #a4d3c0;
+}
+
 .blackText {
-  color: #000000;
+  color: #FFFFFF;
+  filter: drop-shadow(0 0 0.3rem rgba( 255, 255, 255, 0.4 ));
 }
 
 .tealText {
   background: none;
-  color: #12B476;
+  color: #a4d3c0;
 }
 
 .code-input-container {
@@ -476,7 +488,7 @@ h1 {
 
 .code-input::placeholder {
   font-family: proxima-nova, Helvetica, Arial, sans-serif;
-  color: #17DE92;
+  color: #a4d3c0;
 }
 
 .code-input:focus {
@@ -485,21 +497,41 @@ h1 {
 }
 
 .name-input {
-    position: relative;
-    z-index: 0;
-    width: 200px;
-    height: 65px;
-    margin: 2px;
-    font-size: 50px;
-    float: left;
-    text-align: center;
-    border-radius: 7.5px;
-    border-style: none;
-    font-family: proxima-nova, Helvetica, Arial, sans-serif;
-    caret-color: transparent;
+  position: relative;
+  z-index: 0;
+  width: 500px;
+  height: 65px;
+  margin: 2px;
+  font-size: 36px;
+  float: left;
+  text-align: left;
+  border-style: none;
+  font-family: proxima-nova, Helvetica, Arial, sans-serif;
+  caret-color: transparent;
+  background: none;
+  border-bottom: solid;
+  border-width: 3px;
+  border-color: white;
+  color: white;
 }
 
-.name-input::placeholder {
-    font-family: proxima-nova, Helvetica, Arial, sans-serif;
-    color: #17DE92;
+.name-input:focus {
+  outline: none;
+}
+
+.name-input::placeholder{
+  color: rgba( 255, 255, 255, 0.7 );
+  caret-color: rgba( 255, 255, 255, 0.3 );
+}
+
+#hidden-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#hidden-name b {
+  padding-top: 10px;
+  font-size: 64px;
+  color: white;
 }

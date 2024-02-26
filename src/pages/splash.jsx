@@ -44,26 +44,6 @@ import Cookies from 'universal-cookie';
 
 function Splash()
 {
-    
-    // array destructuring: const [ code, setCode ]
-    //  code is the current value of the state
-    //  setCode is a function that updates the value of code
-    //  when called
-    //
-    // useState() initializes the state with an array 
-    //  of four empty strings
-    //
-    // This will be modified within later parts of the app
-    //  to collect the code input from the user 
-
-    // colorFill is the current value of the state
-    // setColor is a function that updates the value of colorFill when called
-    // useState initializes the state with the default background color
-    //  for input elements
-    // this will be modified when all codes are filled in
-    //  input elements will turn black instead of a darkened teal
-    // const [ colorFill, setColor ] = useState( "teal" );
-
     // inputColor is the current array of class names. 
     // setInputColor changes the value of inputColor/changes the array of class names
     const [ inputColor, setInputColor ] = useState( ["code-input", "tealBackground"] );
@@ -76,6 +56,8 @@ function Splash()
     // setPlaceHolderCode sets the placeholder text to "SONG" if the input boxes
     //  are completely empty
     const [placeholderCode, setPlaceHolderCode] = useState(['S', 'O', 'N', 'G']);
+
+    const [ hostJoinSuccess, setHostJoinSuccess ] = useState( false );
     
     const [hostCode, setHostCode] = useState("");
 
@@ -174,50 +156,6 @@ function Splash()
         
     };
 
-    //Const function to fade out html elements for host/join flow
-    const fadeOut = () => {
-        // this block of code is for the fade out effect
-        setTimeout(() => {
-            const mainContainer = document.getElementById("main-container"); // get the main container
-            let opacity = 1; // set the opacity to 1
-            const intervalId = setInterval(() => { // set an interval to run every 9 milliseconds
-                opacity -= 0.01; // decrease the opacity by 0.01
-                if(mainContainer) {
-                    mainContainer.style.opacity = opacity; // set the opacity of the main container to the new opacity
-                }
-                if (opacity <= 0) { // if the opacity is less than or equal to 0
-                    clearInterval(intervalId); // clear the interval
-                    const inputContainer = document.getElementById("code-input-container"); // get the main container
-                    if(inputContainer){
-                    inputContainer.style.display = "none"; // set the background color to black
-                    mainContainer.style.opacity = 1; // set the opacity to 1
-                    }
-                    const hostContainer = document.getElementById("host-button-container"); // get the host button
-                    hostContainer.style.display = "none"; // Hide the host container when we're fading out
-
-                    // This block of code handles the fade in effect of logo!
-                    setTimeout(() => {
-                        const hiddenName = document.getElementById("hidden-name"); // get the main container
-                        hiddenName.style.display = "block"; // show the name box
-                        const button = document.getElementById("sync-button");
-                        button.style.left = "125%";
-                        hiddenName.style.zIndex = 2; // set the z-index to 1
-                        let opacity = 0; // variable to hold the opacity
-                        const intervalId = setInterval(() => { // set an interval to run every x milliseconds
-                            opacity += 0.01; // increase the opacity by 0.01
-                            hiddenName.style.opacity = opacity; // set the opacity of the logo to new opacity
-                            button.style.opacity = opacity;
-                            if (opacity >= 1) { // if the opacity is greater than or equal to 1
-                                clearInterval(intervalId); // clear the interval
-                            }
-                        }, 12); // milliseconds per update FOR LOGO FADE IN
-                    }, 50); // milliseconds before fade out FOR LOGO FADE IN
-
-                }
-            }, 9); // milliseconds per update FOR MAIN CONTAINER FADE OUT
-        }, 350); // milliseconds before fade out FOR MAIN CONTAINER FADE OUT
-    }
-
     // handle backspace, focus on previous input box
     const handleBackTrack = ( e, index ) => {
         // if not on the first box, go backward on focus
@@ -245,6 +183,7 @@ function Splash()
                 return;
             }
             makeRequest("join-name", roomCode.join(""), username); //Otherwise, we want to just use join php files
+            setHostJoinSuccess(true);
         }
     };
 
@@ -268,6 +207,7 @@ function Splash()
             let tempCode = genCode();
             setHostCode(tempCode); //Generate a code and store it in the hostCode state
             makeRequest("host-code", tempCode, null); //Make php request
+            setHostJoinSuccess(true); //Set the hostJoinSuccess state to true
         }
         else { //Doesn't get hit right now, after spotify integration it will be fixed.
             console.log("Doing spotify login flow...");
@@ -300,13 +240,11 @@ function Splash()
             if (phpResponse.status == 'ok_join') {
                 console.log("good!");
                 cookie.set('roomCode', roomCode.join(""), { path: '/' });
-                fadeOut();
             }
             //Case for good room code generation on host 
             if (phpResponse.status == 'ok_host') {
                 console.log("good host!");
                 dispatch(setCode(hostCode));
-                fadeOut();
             }
             //Error handling
             else if (phpResponse.status == 'error') {
@@ -336,62 +274,58 @@ function Splash()
         // contains all the elements on the page
         <div id = "main-container">
             {/*Contains the name entry text field*/}
-            <div id = "hidden-name" style={{opacity: 0}}>
-                <input type="text" 
-                    className="name-input"
-                    minLength={3}
-                    placeholder="Name"
-                    onChange={ e => handleNameChange( e ) }/>
-            </div>
+            
+            { hostJoinSuccess ? 
+                (<div id = "hidden-name" style={{opacity: 1}}>
+                    <input type="text" 
+                        className="name-input"
+                        minLength={3}
+                        placeholder="What's your name?"
+                        onChange={ e => handleNameChange( e ) }/><b onClick={ sync }>&#9758;</b>
+                </div> )
 
-            {/* container holds the input boxes
-            to collect user input */}
-            <div id = "code-input-container">
-                {/* code.map "lays out" the input fields
-                 for our code input.
-                 think of it like rendering each code input box */}
-                { placeholderCode.map( ( code_char, index ) => (
-                        <input
-                            // allows dynamic className, inputColor will be either 
-                            //  "code-input teal"
-                            //  or "code-input black"
-                            className = { inputColor.join( " " ) }
-                            type = "text"
-                            maxLength = "1"
-                            key = { index }
-                            placeholder = { placeholderCode[ index ] }
+            : 
+            
+            (
+                <div id = "welcome">
+                    {/* container holds the input boxes to collect user input */}
+                    <div id="code-input-container">
+                        {/* code.map "lays out" the input fields for our code input.
+                        think of it like rendering each code input box */}
+                        {placeholderCode.map((code_char, index) => (
+                            <input
+                                className={inputColor.join(" ")}
+                                type="text"
+                                maxLength="1"
+                                key={index}
+                                placeholder={placeholderCode[index]}
+                                ref={boxRefs[index]}
+                                onChange={e => handleCodeChange(e, index)}
+                                onKeyDown={e => handleBackTrack(e, index)}
+                            />
+                        ))}
+                    </div>
+                    
+                    <button 
+                        className={buttonColor.join(" ")}
+                        onClick={sync} 
+                        id="sync-button"
+                    >SYNC</button>
+        
+                    {/* Contains the 'host a room' button
+                        On clicking this, a roomCode will be generated and name input will be requested.
+                        Finally, the information will be stored in the mySQL server */}
+                    <div id="host-button-container">
+                        <button
+                            className="tealText"
+                            onClick={host}
+                            id="host-button"
+                        >Host a Room</button>
+                    </div>
+                </div>
+            )}
 
-                            // boxRefs attached to inputs
-                            ref = { boxRefs[ index ] } 
-
-                            // when the input changes, run the handleCodeChange()
-                            //  function
-                            onChange = { e => handleCodeChange( e, index ) }
-
-                            // handle backspace
-                            onKeyDown = { e => handleBackTrack( e, index ) }
-                        />
-                    ) ) }
-            </div>
-            {/* when pressed, run the sync() function */}
-            <button 
-                // allows dynamic className, buttonColor will be either 
-                //  "sync-button teal"
-                //  or "sync-button black"
-                className = { buttonColor.join( " " ) }
-                onClick={ sync } 
-                id = "sync-button"
-            >SYNC</button>
-            {/*Contains the 'host a room' button
-                On clicking this, a roomCode will be generated and name input will be requested.
-                Finally, the information will be stored in the mySQL server*/}
-            <div id="host-button-container">
-                    <button
-                        className = "tealText"
-                        onClick = { host }
-                        id = "host-button"
-                    >Host a Room</button>
-            </div>
+                
         </div>
     );
 }
