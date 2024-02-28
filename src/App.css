@@ -540,7 +540,6 @@ h1 {
 #drawerButton {
   aspect-ratio: 1 / 1;
   width: 75px;
-  background-color: green;
   border: none;
   cursor:pointer;
 }
@@ -553,8 +552,8 @@ h1 {
 #drawerDiv {
   height: 100%;
   width: 75px;
-  background: green;
   position: absolute;
+  background: linear-gradient(45deg, black, rgb(0, 163, 103));  
   right: 0;
   top: 0;
   z-index: -1;

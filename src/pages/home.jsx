@@ -133,7 +133,7 @@ function Home() {
           {!(location.hash === "#/callback")
             ? <LoginOverlay /> //LoginOverlay will show to tell the host that they need to login to use our app
             : null}
-          <div id='drawerDiv' style={{ background: `linear-gradient(to bottom right, ${palette[0]}, #333333)`}}>
+          <div id='drawerDiv' style={{ background: 'transparent'}}>
             <SettingsDrawer />
           </div>
           </QueueContext.Provider>

@@ -21,12 +21,17 @@ import phpAPI from "../phpApi";
 import authorizationApi from "../authorizationApi";
 import Cookies from "universal-cookie";
 import { useSelector } from "react-redux";
+import GuestList from "./guestList";
 
 function SettingsDrawer() {
 
   const { palette } = useContext(PaletteContext);
 
   const [open, setOpen] = React.useState(false);
+
+  const [guestOpen, setGuestOpen] = React.useState(false);
+
+  const [blockedOpen, setBlockedOpen] = React.useState(false);
 
   const location = useLocation();
 
@@ -41,6 +46,16 @@ function SettingsDrawer() {
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+  };
+
+  const toggleGuests = () => {
+    let tmp = !guestOpen
+    setGuestOpen(tmp);
+  };
+
+  const toggleBlocked = () => {
+    let tmp = !blockedOpen;
+    setBlockedOpen(tmp);
   };
 
   const logoutHost = () => {
@@ -63,15 +78,25 @@ function SettingsDrawer() {
 
   const guestList = () => {
     //TODO: Add component that displays guest list
+    toggleGuests();
   };
 
   const blockedSongs = () => {
     //TODO: Set up blocked songs list in SQL and make php for it
+    toggleBlocked();
+  };
+
+  const listStyle = {
+    color: "white",
+    fontWeight: "bolder",
+    fontFamily: "proxima-nova, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif",
+    fontSize: "medium"
   };
 
   let listIcons = [LoginIcon, CloseIcon];
   let listText = ['Login to Spotify', 'Close Room'];
   let listButtonFunction = [loginHost, closeRoom];
+  let listButtonPosition = ['0', '0'];
 
   if (location.pathname == '/join') {
     listIcons = [LogoutIcon];
@@ -82,18 +107,29 @@ function SettingsDrawer() {
     listIcons = [GuestIcon, BlockIcon, LogoutIcon, CloseIcon];
     listText = ['Guest List', 'Blocked Songs', 'Logout of Spotify', 'Close Room'];
     listButtonFunction = [guestList, blockedSongs, logoutHost, closeRoom];
+    listButtonPosition = ['', '', '0', '0'];
   }
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
         {listText.map((text, index) => (
-          <ListItem key={text} disablePadding>
+          <ListItem key={text} disablePadding style={{bottom: `${listButtonPosition[index]}`}}>
             <ListItemButton onClick={listButtonFunction[index]}>
               <ListItemIcon>
                 <img src={listIcons[index]} id='drawerIcon' />
+                <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+                  <Box sx={{ width: 250 }} role="presentation">
+                    <p>Guests</p>
+                  </Box>
+                </Drawer>
+                <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+                  <Box sx={{ width: 250 }} role="presentation">
+                    <p>Blocked</p>
+                  </Box>
+                </Drawer>
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primaryTypographyProps={{style: listStyle}}primary={text}  />
             </ListItemButton>
           </ListItem>
         ))}
@@ -101,13 +137,15 @@ function SettingsDrawer() {
     </Box>
   );
 
-  console.log('Color:', palette[1])
+  if(!palette[0]) {
+    palette[0] = 'rgb(0, 163, 103)';
+  }
 
   return (
     <>
       <div id="drawertwo" >
-        <button id='drawerButton' onClick={toggleDrawer(true)} style={{ backgroundColor: 'transparent' }}><MenuIcon fontSize="large" /></button>
-        <Drawer PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }} anchor='right' open={open} onMouseLeave={toggleDrawer(false)} onClose={toggleDrawer(false)} DrawerListProps={{ onMouseLeave: toggleDrawer(false), onMouseEnter: toggleDrawer(true) }} BackdropProps={{ invisible: true }}>
+        <button id='drawerButton' onClick={toggleDrawer(true)} style={{ backgroundColor: 'transparent' }}><MenuIcon fontSize="large" style={{ color: 'white' }}/></button>
+        <Drawer PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: true }}>
           {DrawerList}
         </Drawer>
       </div>
