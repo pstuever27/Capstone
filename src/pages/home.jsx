@@ -32,6 +32,8 @@ import { useDispatch } from 'react-redux'
 import { setCode } from '../redux/roomCodeSlice'
 import Cookies from 'universal-cookie'
 import phpAPI from '../phpApi'
+import SettingsDrawer from './drawer'
+import LoginOverlay from './loginOverlay'
 
 function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
@@ -41,7 +43,14 @@ function Home() {
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
   const { makeRequest } = phpAPI();
 
+  // const { toggleDrawer } = SettingsDrawer();
+
   const cookie = new Cookies(); //Using cookies for information passing
+
+  //If there's no roomCode associated with the room, then kick the user out
+  if (!cookie.get('roomCode')) {
+    window.location.href = '/';
+  }
 
   const dispatch = useDispatch(); //Redux
 
@@ -120,9 +129,14 @@ function Home() {
             <div className="third" id="panel-3">
               <h1>Search</h1>
               <Search /> { /*Search component holds search bar, add to queue, and other functions*/}
-            </div>
+          </div>
+          {!(location.hash === "#/callback")
+            ? <LoginOverlay /> //LoginOverlay will show to tell the host that they need to login to use our app
+            : null}
+          <div id='drawerDiv' style={{ background: `linear-gradient(to bottom right, ${palette[0]}, #333333)`}}>
+            <SettingsDrawer />
+          </div>
           </QueueContext.Provider>
-          <Login /> { /*Login holds the login buttons*/ }
         </PaletteContext.Provider>
     </>
   )

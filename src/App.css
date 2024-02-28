@@ -63,6 +63,7 @@ body {
   border-color: Red;
   margin: 0;
   height: 100vh;
+  z-index: 5;
 }
 
 #searchDiv { 
@@ -534,4 +535,31 @@ h1 {
   padding-top: 10px;
   font-size: 64px;
   color: white;
+}
+
+#drawerButton {
+  aspect-ratio: 1 / 1;
+  width: 75px;
+  background-color: green;
+  border: none;
+  cursor:pointer;
+}
+
+#drawerButton:hover {
+  background-color: grey;
+  opacity: 50%;
+}
+
+#drawerDiv {
+  height: 100%;
+  width: 75px;
+  background: green;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+#drawerIcon {
+  height: 30px;
 }
