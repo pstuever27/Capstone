@@ -1,3 +1,23 @@
+/**
+ * Prolouge
+ * File: drawer.jsx
+ * Description: This page is for the side drawer menu bar that contains various functions collapsed. 
+ *              
+ * Programmer(s): Paul Stuever
+ * Date Created: 2/28/2024
+ * 
+ * Date Revised: 2/29/2024 - Kieran Delaney - Added guest leave button functionality with PHP SQL query
+ * 
+ * Preconditions: Created or joined a room and on home page.
+ *  @inputs : None 
+ * Postconditions: Renders collapsable drawer with functional buttons. 
+ *  @returns : 
+ * Error conditions: None
+ * Side effects: None
+ * Invariants: None
+ * Known Faults: 
+ * **/
+
 import React from "react";
 import { useContext } from "react";
 import Drawer from '@mui/material/Drawer';
@@ -41,6 +61,7 @@ function SettingsDrawer() {
   const cookie = new Cookies();
 
   const roomCode = cookie.get('roomCode');
+  const username = cookie.get('username');
 
   const { serverAddress } = useSelector(store => store.serverAddress);
 
@@ -72,8 +93,8 @@ function SettingsDrawer() {
   };
 
   const leaveRoom = () => {
-    //TODO: Add php for user that leaves
-    window.location.href = '/';
+    //DONE: Add php for user that leaves
+    makeRequest("guest-leave", roomCode, username);
   };
 
   const guestList = () => {

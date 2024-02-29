@@ -6,6 +6,7 @@
  * Date Created: 11/5/2023
  * Date Revised: 11/5/2023 - Paul Stuever - Created file, won't integrate yet as things aren't working
  * Date Revised: 11/17/2023 - Paul Stuever - Updated phpApi to return makeRequest for use in components. Working now.
+ * Date Revised: 2/29/2024 - Kieran Delaney - Added guests who click leave button to the condition for redirecting them back to splash screen.
  * Preconditions: 
  *  @inputs : php file name, arguments
  * Postconditions:
@@ -63,7 +64,7 @@ const phpAPI = () => {
                     if (response.status === 'no-guests') {
                         throwError("No Guests in the Room!");
                     }
-                    if (response.status === 'closed') {
+                    if (response.status === 'closed' || response.status === 'guest-exited') {
                         window.location.href = '/';
                     }
                     //Else, set the callback to the JSON response and return
