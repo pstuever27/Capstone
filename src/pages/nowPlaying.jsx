@@ -72,17 +72,21 @@ function NowPlaying() {
   */ 
   useEffect( () => { //this is very important useEffect for unlocking guests' skiplocks after a song has changed AND performing majority skip voting
     if(location.hash == '#/callback' || location.pathname == '/join') {
-      if(SkipVotes?.skipVotes[0] == 0){//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
-        setSkipped(false); //unlock skiplock
+      if (SkipVotes?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
+        if (SkipVotes?.skipVotes[0]) {
+          setSkipped(false); //unlock skiplock   
+        }
       }
     }
     //we need this to only happen for host, so that duplicate skips aren't made by all the guests at once. doesn't run if guestList is null
-    if(location.hash == '#/callback' && !skipLocked){
-      if((SkipVotes?.skipVotes[0] * 2) > (guestList?.length)){ //if we hit majority vote (more than half of guests vote), we can skip
-        skip();
-        getNowPlaying();
-        console.log("Executing majority skip...");
-        setSkipped(true); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+    if (location.hash == '#/callback' && !skipLocked) {
+      if (SkipVotes?.skipVotes) {
+        if ((SkipVotes?.skipVotes[0] * 2) > (guestList?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
+          skip();
+          getNowPlaying();
+          console.log("Executing majority skip...");
+          setSkipped(true); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+        }
       }
     }
   }, [SkipVotes, guestList]);
@@ -173,9 +177,12 @@ function NowPlaying() {
                 <div id = "track_info">
                   <p id = "title">{nowPlayingSong?.name}</p>
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
-                </div>
-                <div>
+              </div>
+              <div>
+                {(SkipVotes?.skipVotes)
+                ? 
                   <p>{SkipVotes?.skipVotes[0]}</p>
+                : null}
                   <img id="skip" className={(skipLocked) ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                 </div>
               </div>
