@@ -9,22 +9,24 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ListItemIcon, Menu } from "@mui/material";
 import CloseIcon from '../images/close.png';
+import { Suspense } from "react";
 
 
 import phpAPI from "../phpApi";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { useStackState } from "rooks";
+import { useForceUpdate } from "@mantine/hooks";
 
-function GuestList () {
+function Loading () {
+    return(
+        <ListItem>
+            <ListItemText primary={"hello"}/>
+        </ListItem>
+    );
+}
 
-    const { makeRequest, phpResponse } = phpAPI();
-
-    const [guestListPopulate, setGuestList] = useState([]);
-
-    const cookie = new Cookies();
-
-    let currentGuests = [];
+function ListMaker ( {guests} ) {
 
     const listStyle = {
         color: "white",
@@ -33,53 +35,57 @@ function GuestList () {
         fontSize: "medium"
     };
 
-    useEffect( () => {
-        if (phpResponse) {
-            setGuestList(phpResponse.getJSONArray("username"));
-        }
+    console.log("Guests:", guests)
 
-    }, [phpResponse])
-
-    const guestList = () => {
-        if (!guestListPopulate) {
-            <></>
-        }
-        else {
-            guestListPopulate.map((name, index) => (
-                <ListItem key="guest" disablePadding>
+    return(
+       <> { (guests) 
+        ?
+            <>
+            {guests.map((name, index) => (
+                <ListItem key={name.userName} disablePadding>
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
-                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary="hello" />
+                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary={name.userName} />
                         <ListItemIcon>
                             <img src={CloseIcon} id='kickGuestIcon' onClick={console.log('hi')} />
                         </ListItemIcon>
                     </ListItemButton>
                 </ListItem>
-            ))
-        }
-    }
+            ))}
+        </>
+        :
+        <></>
+            }
+    </>
+    )
+}
 
-    console.log("Guests:", guestListPopulate);
+function GuestList () {
+
+    const { makeRequest, phpResponse } = phpAPI();
+
+    const [guestListPopulate, setGuestList] = useState('');
+
+    const cookie = new Cookies();
+
+    useEffect( () => {
+        if (phpResponse) {
+            if(!phpResponse.status){
+                setGuestList(phpResponse);
+            }
+        }
+    }, [phpResponse])
+
+    useForceUpdate((null), [phpResponse])
 
     useEffect(() => {
         makeRequest('guest-list', cookie.get('roomCode'), null) //Runs room.php to see if the room is still open
     }, [])
 
     return (
-        (!guestListPopulate)
-            ?
-            <></>
-            :
-            guestListPopulate.map((name, index) => (
-                <ListItem key={name} disablePadding>
-                    <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
-                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary="hello" />
-                        <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={console.log('hi')} />
-                        </ListItemIcon>
-                    </ListItemButton>
-                </ListItem>
-            )));
-
+        <Suspense fallback={<Loading />}>
+            <ListMaker guests={guestListPopulate}/>
+        </Suspense>
+    );
 }
 
 export default GuestList;
