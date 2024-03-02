@@ -35,7 +35,11 @@ function ListMaker ( {guests} ) {
         fontSize: "medium"
     };
 
-    console.log("Guests:", guests)
+    const { makeRequest, phpResponse } = phpAPI();
+
+    const cookie = new Cookies();
+
+    console.log('guests: ', guests);
 
     return(
        <> { (guests) 
@@ -46,7 +50,7 @@ function ListMaker ( {guests} ) {
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
                         <ListItemText primaryTypographyProps={{ style: listStyle }} primary={name.userName} />
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={console.log('hi')} />
+                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), name.userName) }} />
                         </ListItemIcon>
                     </ListItemButton>
                 </ListItem>
@@ -69,10 +73,12 @@ function GuestList () {
 
     useEffect( () => {
         if (phpResponse) {
-            if(!phpResponse.status){
+            if (!phpResponse.status) {
+                
                 setGuestList(phpResponse);
             }
         }
+        console.log("Guests! ", phpResponse)
     }, [phpResponse])
 
     useForceUpdate((null), [phpResponse])

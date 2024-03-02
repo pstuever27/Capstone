@@ -256,6 +256,7 @@ function Splash()
             // Case for good name entry on join
             else if (phpResponse.status == "good_name") {
                 console.log("moving on!");
+                cookie.set('username', username, { path: '/' });
                 navigate("/join"); // Navigate to join.jsx
                 // navigate(path);
             }

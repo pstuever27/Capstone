@@ -29,9 +29,9 @@ $mysql = SQLConnect();
 $status = 'wait';
 
 //Check if the gamecode exists
-$stmt = $mysql->prepare('SELECT roomCode FROM room WHERE BINARY roomCode = ?');
+$stmt = $mysql->prepare('SELECT id FROM client WHERE userName = ? AND roomCode = ?');
 //Set parameter to 'roomCode' from JS call
-$stmt->bind_param('s', $_POST['roomCode']);
+$stmt->bind_param('ss', $_POST['username'], $_POST['roomCode']);
 
 //Execute SQL 
 $stmt->execute();

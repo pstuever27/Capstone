@@ -62,7 +62,7 @@ function Home() {
   useEffect(() => {
       const interval = setInterval(() => { //Timer component
         if (location.pathname == '/join') {
-          makeRequest('room', cookie.get('roomCode'), null) //Runs room.php to see if the room is still open
+          makeRequest('room', cookie.get('roomCode'), cookie.get('username')) //Runs room.php to see if the room is still open
       }
     }, 10000); //Runs every 10 seconds
   
@@ -130,7 +130,7 @@ function Home() {
               <h1>Search</h1>
               <Search /> { /*Search component holds search bar, add to queue, and other functions*/}
           </div>
-          {!(location.hash === "#/callback")
+          {!(location.hash === "#/callback" || location.pathname === '/join')
             ? <LoginOverlay /> //LoginOverlay will show to tell the host that they need to login to use our app
             : null}
           <div id='drawerDiv' style={{ background: 'transparent'}}>
