@@ -20,6 +20,8 @@
 // Revision: Kieran added skip voting functionality (votes are added to the database when clients click skip, votes reset when track changes).
 // Revised on: 2/25/2024
 // Revision: Kieran added the skiplock mechanism and further developed the skip voting functionality, syncronization, and made some minor optimizations. Also added the majority voting mechanism using the guest list size.
+// Revised on: 3/2/2024
+// Revision: Chinh removed dequeue in original song transition logic. Added local queue and fallbackTracks functionality. Uses nowPlaying information to determine when to add a song to the queue from the songQueue array or the fallbackTracks array.
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -58,6 +60,9 @@ function NowPlaying() {
 
   //API call handles for skipping to next track and getting currently playing track
   const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
+  
+  // API call handle for adding a song to the queue
+  const { addToQueue } = authorizationApi();
 
 
   //API call handles & other prep work for majority skip
@@ -119,15 +124,52 @@ function NowPlaying() {
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, dequeue } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, dequeue } = useContext( QueueContext );
+
+  const playNextSong = async (time_to_end) => {
+    // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
+    // making it super hard to squeeze the next song in before the current song ends
+    let crossfade_stupid = 6000; // right now, it seems like a good area is ~4s greater than crossfade.
+
+    if (songQueue.length === 0) {
+      console.log("Queue is empty, pulling from fallbackTracks");
+      // Handle the case where the queue is empty
+      if (fallbackTracks.length > 0) {
+        const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+        addToQueue(fallbackTracks[randomIndex]);
+      } else {
+        console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
+      }
+    } else {
+      if (time_to_end < crossfade_stupid) {
+        addToQueue(songQueue[0].uri);
+        dequeue();
+      } else {
+        setTimeout(() => {
+          addToQueue(songQueue[0].uri);
+          dequeue();
+        }, time_to_end - crossfade_stupid);
+      }
+    }
+    
+  }
 
   // useEffect is used to perform side effects in phpResponse
   // [phpResponse] syntax at the end uses phpResponse as a dependency for useEffect
   //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       if(location.hash === '#/callback' || location.pathname === '/join'){
-        getNowPlaying();
+        console.log("Aki: Getting now playing...");
+        let currentSong = await getNowPlaying();
+        let time_to_end = currentSong?.item?.duration_ms - currentSong?.progress_ms;
+        console.log("Current Position: " + currentSong?.progress_ms);
+        console.log("Total Duration: " + currentSong?.item?.duration_ms);
+        console.log("Time to end: " + time_to_end);
+        if (time_to_end < 15000) {
+          playNextSong(time_to_end);
+        }
+
         getSkipVotes("get-skip-votes", roomCode, username); //needed to be known for both host and guests. host needs it for automatic majority skip; guests need it for having their skip buttons unlock when the track changes (see SKIP_USE_EFFECT above)
       }
       if(location.hash === '#/callback'){ //optimization to only make these calls on host end, since only the host will be computing whether there is majority vote for skip in the SKIP_USE_EFFECT side effect above
@@ -135,12 +177,13 @@ function NowPlaying() {
       }
     }, 10000); //runs every 10.6 seconds
 
+    // I think the dequeue function in here is obsolete now, since we have the playNextSong function!
     if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes.
       if(phpResponse?.item){
         if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
           resetSkipVotes();
           setNowPlayingSong(phpResponse.item); //sets our current track save state to the new track, so we can render the track's content on the screen as the track changes in spotify
-          dequeue();   //removes the previous track from our ui queue
+          // dequeue();   //removes the previous track from our ui queue
         }
       }
     }

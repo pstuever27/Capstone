@@ -12,6 +12,8 @@
 // Revision: Chinh sanitized response from getPlaylists.php and mapped the playlists to a dropdown element
 // Revised on: 2/24/2024
 // Revision: Chinh started to add functionality to add tracks from fallback playlist to queue
+// Revised on: 3/2/2024
+// Revision: Chinh added functionality to add tracks received from getTracks to the fallbackTracks array in the queue context
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -24,6 +26,10 @@
 import { useState } from 'react' 
 import authorizationApi from '../authorizationApi';
 
+// imports queue context to manipulate queue data structure across components
+import QueueContext from './queueContext';
+import { useContext } from 'react'; 
+
 function SpotifyPlaylists() {
     const [isLoading, setIsLoading] = useState(false);
     const [playlists, setPlaylists] = useState([]);
@@ -31,7 +37,7 @@ function SpotifyPlaylists() {
     const { getTracks } = authorizationApi();
     const { nowPlaying } = authorizationApi();
 
-    var fallbackTracks = [];
+    var fallbackTracks_Holder = [];
 
     const fetchPlaylists = async () => {
         setIsLoading(true);
@@ -45,6 +51,8 @@ function SpotifyPlaylists() {
         setIsLoading(false);
     };
 
+    const { setFallbackTracks } = useContext( QueueContext );
+
     const fetchTracks = async () => {
         let playlistID = document.getElementById("selectPlaylist").value;
         if (playlistID === "") {
@@ -55,11 +63,12 @@ function SpotifyPlaylists() {
         try {
             const response = await getTracks(playlistID);
             console.log("Tracks of selected playlist:", response);
-            // Add tracks from response to local fallbackTracks variable
+            // Add tracks from response to local fallbackTracks_Holder variable
             for (let i = 0; i < response.length; i++) {
-                fallbackTracks.push(response[i].id);
+                fallbackTracks_Holder.push(response[i].id);
             }
-            console.log(fallbackTracks);
+            // Now we set it to the context
+            setFallbackTracks(fallbackTracks_Holder);
         } catch (error) {
             console.log('Could not fetch tracks:', error);
         };
