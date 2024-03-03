@@ -9,6 +9,8 @@
  * Date Revised: 2/10/2024 - Moved Nick's changes here for compartmentalization
  * Revision: 2/24/2024 - Paul Stuever - Added support for checking room status. 
  * 
+ * Date Revised: 3/02/2024
+ * Revision: Chinh Nguyen - Added implementation for fallbackTracks helper functions "setFallbackTracks" and "clearFallbackTracks"
  * Preconditions: 
  *  @inputs : None 
  * Postconditions:
@@ -39,6 +41,7 @@ function Home() {
   // This is the queue data structure that stores the songs to be rendered on screen.
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
+  const [fallbackTracks, modFallback] = useState([]);
 
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
   const { makeRequest } = phpAPI();
@@ -75,6 +78,14 @@ function Home() {
 
   const dequeue = () => {
     modQueue(songQueue.slice(1)); //Removes song from our local queue
+  }
+
+  const setFallbackTracks = (tracks) => {
+    modFallback(tracks);
+  }
+
+  const clearFallbackTracks = () => {
+    modFallback([]);
   }
 
   //Palatte for background gradient
@@ -116,7 +127,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-          <QueueContext.Provider value={{ songQueue, enqueue, dequeue }}>
+          <QueueContext.Provider value={{ songQueue, fallbackTracks, enqueue, dequeue, setFallbackTracks }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />

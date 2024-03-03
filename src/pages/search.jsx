@@ -7,6 +7,8 @@
 // Revised on: 02/09/2024
 // Revision: Nicholas recreated the MUI search bar using the MUI base, headless autocomplete component
 //           also added color palette context to change the color of buttons
+// Revised on: 03/02/2024
+// Revision: Chinh adjusted addToQueue to not be the function responsible to add to Spotify queue
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -116,8 +118,7 @@ function Search() {
   async function addToQueue() {
     // Verifies that the user has selected a song from the search results & it isn't blocked
     if( songChoice != null && !blockedSongs.includes( songChoice ) ){
-      // Adds songChoice to the visual queue on screen
-      
+      // Adds songChoice to the queue context for rendering on screen AND the host's queue
       enqueue( songChoice ); 
 
       // If the user has logged into spotify and the callback result is in the url bar
@@ -130,7 +131,9 @@ function Search() {
 
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
-        addQueue( songChoice.id );    
+
+        // Moved to nowPlaying.jsx! Based off of song duration left.
+        // addQueue( songChoice.id );    
       }
 
       // if the url doesn't contain callback, it means they didn't login to spotify first 

@@ -20,6 +20,8 @@
 // Revision: Chinh adjusted getPlaylists to return a promise for async/await
 // Revised on: 2/24/2024
 // Revision: Paul added functionality for hosts to be able to log out of Spotify
+// Revised on: 3/02/2024
+// Revision: Chinh adjusted nowPlaying to return a promise for async/await
 // Preconditions: Must have npm and node installed to run in dev environment. Must have a php server running for it to work.
 // Postconditions: Route to the appropriate php calls for our frontend.
 // 
@@ -58,9 +60,28 @@ const authorizationApi = () => {
     }
 
     //Gets nowPlaying song from Spotify
-    const nowPlaying = () => {
-        let xhr = makeRequest('nowPlaying');
-        xhr.send('roomCode=' + roomCode);
+    const nowPlaying = async () => {
+        return new Promise((resolve, reject) => { // Wrap the XHR in a Promise
+            let xhr = makeRequest('nowPlaying');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'error') {
+                            reject(response.error); // Reject the promise on error
+                        } else {
+                            resolve(response); // Resolve the promise with the response
+                        }
+                    } catch (err) {
+                        reject(err); // Reject the promise on JSON parsing error
+                    }
+                } else {
+                    reject(xhr.statusText); // Reject the promise on XHR error
+                }
+            };
+            xhr.onerror = () => reject(xhr.statusText); // Reject the promise on XHR network error
+            xhr.send('roomCode=' + roomCode); // Send the request
+        });
     }
 
     //Skips currently playing song
