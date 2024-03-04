@@ -19,7 +19,7 @@
  * **/
 
 import React from "react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
@@ -33,6 +33,8 @@ import GuestIcon from '../images/guests.png';
 import CloseIcon from '../images/close.png';
 import LogoutIcon from '../images/logout.png';
 import LoginIcon from '../images/enter.png';
+import BackIcon from '../images/back.png';
+import Divider from '@mui/material/Divider';
 import { ListItemIcon, Menu } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
@@ -64,6 +66,15 @@ function SettingsDrawer() {
   const username = cookie.get('username');
 
   const { serverAddress } = useSelector(store => store.serverAddress);
+
+  // //Used for closing the room. 'ok' status says the room was closed, or that the user has successfully left the room
+  // useEffect(() => {
+  //   if (phpResponse) {
+  //     if (phpResponse.status == 'ok') {
+  //       window.location.href = '/'; //Goes back to the splash screen
+  //     }
+  //   }
+  // }, [phpResponse])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -99,6 +110,7 @@ function SettingsDrawer() {
 
   const guestList = () => {
     //TODO: Add component that displays guest list
+    console.log('test');
     toggleGuests();
   };
 
@@ -132,6 +144,7 @@ function SettingsDrawer() {
   }
 
   const DrawerList = (
+    <>
     <Box sx={{ width: 250 }} role="presentation">
       <List>
         {listText.map((text, index) => (
@@ -139,23 +152,33 @@ function SettingsDrawer() {
             <ListItemButton onClick={listButtonFunction[index]}>
               <ListItemIcon>
                 <img src={listIcons[index]} id='drawerIcon' />
-                <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
-                  <Box sx={{ width: 250 }} role="presentation">
-                    <p>Guests</p>
-                  </Box>
-                </Drawer>
-                <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
-                  <Box sx={{ width: 250 }} role="presentation">
-                    <p>Blocked</p>
-                  </Box>
-                </Drawer>
               </ListItemIcon>
               <ListItemText primaryTypographyProps={{style: listStyle}}primary={text}  />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-    </Box>
+      </Box>
+      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+        <Box sx={{ width: 250 }} role="presentation">
+          <ListItem key="back" disablePadding>
+            <ListItemButton onClick={() => { guestList; toggleGuests() }}>
+              <ListItemIcon>
+                <img src={BackIcon} id='drawerIcon' />
+              </ListItemIcon>
+              <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Go Back" />
+            </ListItemButton>
+          </ListItem>
+          <Divider variant="middle"/>
+          <GuestList />
+        </Box>
+      </Drawer>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+        <Box sx={{ width: 250 }} role="presentation">
+          <p>Blocked</p>
+        </Box>
+      </Drawer>
+    </>
   );
 
   if(!palette[0]) {

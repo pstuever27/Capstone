@@ -46,7 +46,6 @@ if(!$result || !$row) {
 }
 else{
     $status = 'ok';
-        $myArray[] = $row;
     while($row = $result->fetch_assoc()) {
         $myArray[] = $row;
     }

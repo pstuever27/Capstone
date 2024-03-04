@@ -56,7 +56,6 @@ const phpAPI = () => {
                     // console.log(xhr.responseText);
                     //Response should have a JSON in it, if not, this will error out
                     response = JSON.parse(xhr.responseText);
-
                     //If error, then throw an error
                     if (response.status === 'error') {
                         throwError(response.error);
