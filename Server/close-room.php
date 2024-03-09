@@ -9,6 +9,7 @@
  * Date Revised: 10/22/2023 - Paul Stuever - Created file and worked on close room functionality
  *     Revision: 11/5/2023 - Paul Stuever - Integrate into React frontend 
  *     Revision: 2/24/2024 - Paul Stuever - Further integrate to make sure everything works
+ *     Revision: 3/09/2024 - Kieran Delaney - Changed success status to "closed" so that it hooks up to the splash redirect in phpAPI.jsx after host clicks "Close Room" button
  * Preconditions: 
  *  @inputs : Requires input from Javascript to do SQL query
  * Postconditions:
@@ -52,9 +53,9 @@ $stmt = $mysql -> prepare('DELETE FROM client WHERE roomCode = ?');
 $stmt -> bind_param('s', $_POST['roomCode']);
 $stmt -> execute();
 
-//If we get here, then it all worked and we can return 'ok'
+//If we get here, then it all worked and we can return 'closed'
 $response = [
-    'status' => 'ok'
+    'status' => 'closed'
 ];
 $mysql->close();
 //Send response
