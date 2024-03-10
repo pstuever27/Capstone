@@ -54,6 +54,7 @@ function NowPlaying() {
   const cookie = new Cookies();
   const roomCode = cookie.get('roomCode')
   const username = cookie.get('username');
+  //skiplock sessionStorage cookie is first created and initialized to unlocked in splash.jsx. it is read and written to here to handle skip voting and locking mechanisms necessary for that.
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
@@ -69,7 +70,6 @@ function NowPlaying() {
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
   const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
   const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI(); //used for editing the skipVotes counter value, either incrementing it or resetting it to 0 depending on the path argument
-
   const [ skipLocked, setSkipped ] = useState( false );  //boolean save state for ensuring that a user can only submit one vote towards skipping the current track
 
   /* 
@@ -78,19 +78,19 @@ function NowPlaying() {
   useEffect( () => { //this is very important useEffect for unlocking guests' skiplocks after a song has changed AND performing majority skip voting
     if(location.hash == '#/callback' || location.pathname == '/join') {
       if (SkipVotes?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
-        if (SkipVotes?.skipVotes[0]) {
-          setSkipped(false); //unlock skiplock   
+        if (SkipVotes?.skipVotes[0] == 0) { //==0 is needed, as it should only unlock if the song has skipped and we're at 0 votes again
+          sessionStorage.setItem('skipLock', 'unlocked'); //unlock skiplock for all users 
         }
       }
     }
     //we need this to only happen for host, so that duplicate skips aren't made by all the guests at once. doesn't run if guestList is null
-    if (location.hash == '#/callback' && !skipLocked) {
+    if (location.hash == '#/callback' && (sessionStorage.getItem('skipLock')=='unlocked')) {
       if (SkipVotes?.skipVotes) {
         if ((SkipVotes?.skipVotes[0] * 2) > (guestList?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
           skip();
           getNowPlaying();
           console.log("Executing majority skip...");
-          setSkipped(true); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+          sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
       }
     }
@@ -108,9 +108,9 @@ function NowPlaying() {
       skip();
       getNowPlaying();
     }
-    if(location.pathname=='/join' && !skipLocked){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
+    if(location.pathname=='/join' && (sessionStorage.getItem('skipLock')=='unlocked')){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
       voteSkip("vote-skip", roomCode, username); //submit vote for skipping track
-      setSkipped(true); //locks the user's voting priveledges since they've submitted their vote
+      sessionStorage.setItem('skipLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
       
       getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
     }
@@ -226,7 +226,7 @@ function NowPlaying() {
                 ? 
                   <p>{SkipVotes?.skipVotes[0]}</p>
                 : null}
-                  <img id="skip" className={(skipLocked) ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
+                  <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                 </div>
               </div>
             </div>
