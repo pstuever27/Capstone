@@ -9,7 +9,8 @@
 //           also added color palette context to change the color of buttons
 // Revised on: 03/02/2024
 // Revision: Chinh adjusted addToQueue to not be the function responsible to add to Spotify queue
-//
+// Revised on: 03/09/2024
+// Revision: Chinh implemented blocklist functionality utilizing QueueContext
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -51,6 +52,7 @@ function Search() {
   // INITIALIZING STATE VARIABLES
 
   const { enqueue } = useContext( QueueContext );
+  const { blocklist, addBlocklist } = useContext( QueueContext );
 
   // This is the default inputVal (blank) for the search bar. 
   const [inputVal, setInputValue] = useState( "" ); 
@@ -72,9 +74,6 @@ function Search() {
   // A null-initialized save state is used to have its value set as
   //  the user-selected song from the search results. 
   const [songChoice, setSongChoice] = useState( null ); 
-
-  // An empty list state is used to store the blocked songs.
-  const [blockedSongs, setBlockedSong] = useState( [] ); 
 
   const { palette } = useContext(PaletteContext);
   
@@ -115,9 +114,16 @@ function Search() {
    * @precondition songChoice must not be null
    * @params none
    */
+  
   async function addToQueue() {
-    // Verifies that the user has selected a song from the search results & it isn't blocked
-    if( songChoice != null && !blockedSongs.includes( songChoice ) ){
+    // Checks to see if in blocklist from QueueContext, can do anything based off that
+    if (blocklist.includes(songChoice)) {
+      console.log("Song is in blocklist! Not adding to queue.");
+      return;
+    }
+
+    // Verifies that the user has selected a song from the search results
+    if( songChoice != null ) {
       // Adds songChoice to the queue context for rendering on screen AND the host's queue
       enqueue( songChoice ); 
 
@@ -231,7 +237,8 @@ function Search() {
    */
   async function blockFromQueue(){
     if(songChoice != null){
-      setBlockedSong([...blockedSongs, songChoice]); // Add the selected song to the blockedSongs list
+      addBlocklist(songChoice);
+      console.log("Added the following song to blocklist: " + songChoice.name)
     }
   }
 

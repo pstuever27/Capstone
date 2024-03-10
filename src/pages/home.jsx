@@ -11,6 +11,10 @@
  * 
  * Date Revised: 3/02/2024
  * Revision: Chinh Nguyen - Added implementation for fallbackTracks helper functions "setFallbackTracks" and "clearFallbackTracks"
+ *
+ * Date Revised: 3/09/2024
+ * Revision: Chinh Nguyen - Added blocklist and addBlocklist function to QueueContext
+ * 
  * Preconditions: 
  *  @inputs : None 
  * Postconditions:
@@ -42,6 +46,7 @@ function Home() {
   // Its methods are imported from React's Queuestate: enqueue(), dequeue(), and peek().
   const [songQueue, modQueue] = useState([]);
   const [fallbackTracks, modFallback] = useState([]);
+  const [blocklist, modBlocklist] = useState([]);
 
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
   const { makeRequest } = phpAPI();
@@ -88,6 +93,10 @@ function Home() {
     modFallback([]);
   }
 
+  const addBlocklist = (song) => {
+    modBlocklist([...blocklist, song]);
+  }
+
   //Palatte for background gradient
   const [palette, setPalette] = useState([]);
 
@@ -127,7 +136,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-          <QueueContext.Provider value={{ songQueue, fallbackTracks, enqueue, dequeue, setFallbackTracks }}>
+        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setFallbackTracks, addBlocklist }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />
