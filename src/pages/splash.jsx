@@ -177,7 +177,7 @@ function Splash()
         if (!phpResponse || phpResponse.error == "Room Doesn't Exist!") {
             makeRequest("join", roomCode.join(""), null);
         }
-        else {
+        else if( !setHostJoinSuccess ) {
             if(hostCode) { // If a host code has been generated, then we're in host mode and we want to use host php files
                 makeRequest("host-name", hostCode, username);
                 return;
