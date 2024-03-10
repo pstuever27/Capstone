@@ -176,21 +176,15 @@ function Splash()
         // look at php response, and work accordingly
         if( !phpResponse ) {
             makeRequest("join", roomCode.join(""));
-        }
-        
-        if ( phpResponse && phpResponse.status == "error") {
-            setPlaceHolderCode( [ ':', '(', '', '' ] );
-            console.log( "not real" );
-        }
-        else {
-            
-            if(hostCode) { // If a host code has been generated, then we're in host mode and we want to use host php files
-                makeRequest("host-name", hostCode, username);
-                return;
-            }
-            makeRequest("join-name", roomCode.join(""), username); //Otherwise, we want to just use join php files
             setHostJoinSuccess(true);
+            return;
+        }   
+            
+        if(hostCode) { // If a host code has been generated, then we're in host mode and we want to use host php files
+            makeRequest("host-name", hostCode, username);
+            return;
         }
+        makeRequest("join-name", roomCode.join(""), username); //Otherwise, we want to just use join php files
     };
 
     //Generate a roomcode by random 
