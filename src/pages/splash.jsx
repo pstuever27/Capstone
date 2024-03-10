@@ -174,10 +174,16 @@ function Splash()
     // handle clicking the "SYNC" button
     const sync = () => {
         // look at php response, and work accordingly
-        if (!phpResponse || phpResponse.error == "Room Doesn't Exist!") {
-            makeRequest("join", roomCode.join(""), null);
+        if( !phpResponse ) {
+            makeRequest("join", roomCode.join(""));
         }
-        else if( !setHostJoinSuccess ) {
+        
+        if ( phpResponse && phpResponse.status == "error") {
+            setPlaceHolderCode( [ ':', '(', '', '' ] );
+            console.log( "not real" );
+        }
+        else {
+            
             if(hostCode) { // If a host code has been generated, then we're in host mode and we want to use host php files
                 makeRequest("host-name", hostCode, username);
                 return;
