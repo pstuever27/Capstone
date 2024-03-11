@@ -42,6 +42,7 @@ if(!$result || !$row) {
         'status' => $status
     ];
 
+    $mysql->close();
     echo json_encode($response);
     return;
 }
@@ -53,6 +54,7 @@ else{
     while($row = $result->fetch_assoc()) {
         $myArray[] = $row;
     }
+    $mysql->close();
     echo json_encode($myArray);
 }
 exit(200);

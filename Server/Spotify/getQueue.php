@@ -73,6 +73,8 @@ try {
   ];
 }
 
+$mysql->close();
+
 echo json_encode($response);
 
 
