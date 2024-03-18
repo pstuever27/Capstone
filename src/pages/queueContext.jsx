@@ -8,6 +8,8 @@
 // Revision: Chinh added fallBackTracks as a list state to the context and added setFallbackTracks and clearFallbackTracks for working with array
 // Revised on: 03/09/2024
 // Revision: Chinh added blocklist as a list state to the context and added addBlocklist function for adding to blocklist
+// Revised on: 03/18/2024
+// Revision: Chinh added setQueue function, where it replaces the queue with another array (for shuffling purpose)
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 // Postconditions: Handles queue data structure
@@ -35,6 +37,7 @@ const QueueContext = createContext( {
   blocklist: [],
   enqueue: () => {},
   dequeue: () => {},
+  setQueue: () => {},
   setFallbackTracks: () => {},
   clearFallbackTracks: () => {},
   addBlocklist: () => {},

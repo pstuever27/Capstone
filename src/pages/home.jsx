@@ -15,6 +15,9 @@
  * Date Revised: 3/09/2024
  * Revision: Chinh Nguyen - Added blocklist and addBlocklist function to QueueContext
  * 
+ * Date Revised: 3/18/2024
+ * Revision: Chinh Nguyen - Added setQueue implementation
+ * 
  * Preconditions: 
  *  @inputs : None 
  * Postconditions:
@@ -85,6 +88,10 @@ function Home() {
     modQueue(songQueue.slice(1)); //Removes song from our local queue
   }
 
+  const setQueue = anotherQueue => {
+    modQueue(anotherQueue); // replaces queue with another queue (will likely be a shuffled queue)
+  }
+
   const setFallbackTracks = (tracks) => {
     modFallback(tracks);
   }
@@ -136,7 +143,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setFallbackTracks, addBlocklist }}>
+        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, setFallbackTracks, addBlocklist }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />

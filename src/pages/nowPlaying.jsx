@@ -26,6 +26,8 @@
 // Revision: Kieran made it so the skipLock is stored in sessionStorage to ensure it stays locked even when the user refreshes their page
 // Revised on: 3/10/2024
 // Revision: Kieran unified skipvote_increment to also return the skipvotes value, reducing the total number of sql connections now to help us not reach the 500 connection limit. Some alterations to the vote request hook was also made to lay the groundwork for further optimizations.
+// Revised on: 3/18/2024
+// Revision: Chinh added if conditions for checkbox element to add to queue at random instead of in-order
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -145,11 +147,21 @@ function NowPlaying() {
       }
     } else {
       if (time_to_end < crossfade_stupid) {
-        addToQueue(songQueue[0].uri);
+        if (document.getElementById("shuffleQueue").checked) {
+          const randomIndex = Math.floor(Math.random() * songQueue.length);
+          addToQueue(songQueue[randomIndex].uri);
+        } else {
+          addToQueue(songQueue[0].uri);
+        }
         dequeue();
       } else {
         setTimeout(() => {
-          addToQueue(songQueue[0].uri);
+          if (document.getElementById("shuffleQueue").checked) {
+            const randomIndex = Math.floor(Math.random() * songQueue.length);
+            addToQueue(songQueue[randomIndex].uri);
+          } else {
+            addToQueue(songQueue[0].uri);
+          }
           dequeue();
         }, time_to_end - crossfade_stupid);
       }
