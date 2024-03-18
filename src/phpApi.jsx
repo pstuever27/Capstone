@@ -63,6 +63,9 @@ const phpAPI = () => {
                     if (response.status === 'no-guests') {
                         throwError("No Guests in the Room!");
                     }
+                    if (response.status === 'no-blocked') {
+                        throwError("No blocked songs!");
+                    }
                     if (response.status === 'closed' || response.status === 'guest-exited') {
                         window.location.href = '/';
                     }

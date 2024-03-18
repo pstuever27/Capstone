@@ -15,18 +15,9 @@ import { Backdrop } from '@mui/material';
 import phpAPI from "../phpApi";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { useStackState } from "rooks";
 import { useForceUpdate } from "@mantine/hooks";
 
-function Loading () {
-    return(
-        <ListItem>
-            <ListItemText primary={"hello"}/>
-        </ListItem>
-    );
-}
-
-function ListMaker ( {guests} ) {
+function ListMaker ( {blocked} ) {
 
     const listStyle = {
         color: "white",
@@ -39,6 +30,8 @@ function ListMaker ( {guests} ) {
 
     const cookie = new Cookies();
 
+    console.log(blocked);
+
     const confirmationOverlay = (
         <>
             <Backdrop>
@@ -49,15 +42,16 @@ function ListMaker ( {guests} ) {
 
 
     return(
-       <> { (guests) 
+       <> {      
+        (blocked) 
         ?
             <>
-            {guests.map((name, index) => (
-                <ListItem key={name.userName} disablePadding>
+            {blocked.map((id, index) => (
+                <ListItem key={id.songID} disablePadding>
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
-                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary={name.userName} />
+                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.songID} />
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), name.userName) }} />
+                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), id.userName) }} />
                         </ListItemIcon>
                     </ListItemButton>
                 </ListItem>
@@ -70,33 +64,32 @@ function ListMaker ( {guests} ) {
     )
 }
 
-function GuestList () {
+function BlockList () {
 
     const { makeRequest, phpResponse } = phpAPI();
 
-    const [guestListPopulate, setGuestList] = useState('');
+    const [blockListPopulate, setBlockList] = useState('');
 
     const cookie = new Cookies();
 
     useEffect( () => {
         if (phpResponse) {
             if (!phpResponse.status) {
-                setGuestList(phpResponse);
+                setBlockList(phpResponse);
             }
         }
+        console.log("Blocked: ", phpResponse)
     }, [phpResponse])
 
     useForceUpdate((null), [phpResponse])
 
     useEffect(() => {
-        makeRequest('guest-list', cookie.get('roomCode'), null) //Runs room.php to see if the room is still open
+        makeRequest('block-list', cookie.get('roomCode'), null) //Runs room.php to see if the room is still open
     }, [])
 
     return (
-        <Suspense fallback={<Loading />}>
-            <ListMaker guests={guestListPopulate}/>
-        </Suspense>
+        <ListMaker blocked={blockListPopulate}/>
     );
 }
 
-export default GuestList;
+export default BlockList;
