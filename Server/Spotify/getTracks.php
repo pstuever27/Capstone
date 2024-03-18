@@ -104,6 +104,8 @@ try {
     ];
 }
 
+$mysql->close();
+
 // Send response
 echo json_encode($response);
 

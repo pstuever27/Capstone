@@ -42,6 +42,8 @@ $response = [
     'status' => $status
 ];
 
+$mysql->close();
+
 //Send response
 echo json_encode($response);
 

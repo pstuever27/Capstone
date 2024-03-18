@@ -53,6 +53,7 @@ if (!$result || !$row) {
     ];
     //Send back an error response
     $result->free_result();
+    $mysql->close();
     echo json_encode($response);
     return;
 }
@@ -69,6 +70,8 @@ else {
         'roomCode' => $roomCode,
         'status' => $status,
     ];
+
+    $mysql->close();
 
     //Send response
     echo json_encode($response);

@@ -63,6 +63,7 @@ else {
   ];
 }
 
+$mysql->close();
 echo json_encode($response);
 
 exit(200);

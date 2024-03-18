@@ -48,6 +48,7 @@ $response = [
 
 file_put_contents("../data/.roomCode", $_POST['roomCode']);
 
+$mysql->close();
 //Send response
 echo json_encode($response);
 exit(200);

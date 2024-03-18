@@ -9,6 +9,7 @@
  * Date Revised: 10/22/2023 - Paul Stuever - Created file and worked on guest list functionality
  *     Revision: 11/5/2023 - Paul Stuever - Integrate into React frontend 
  *     Revision: 2/11/2024 - Kieran Delaney - Added access control header for local testing
+ *     Revision: 3/10/2024 - Kieran Delaney - Fixed bug with 1 guest edge case
  * Preconditions: 
  *  @inputs : Requires input from Javascript to do SQL query
  * Postconditions:
@@ -41,14 +42,19 @@ if(!$result || !$row) {
         'status' => $status
     ];
 
+    $mysql->close();
     echo json_encode($response);
     return;
 }
 else{
     $status = 'ok';
+    if($row){
+        $myArray[] = $row; //this is needed for when only one guest, as the while loop won't execute
+    }
     while($row = $result->fetch_assoc()) {
         $myArray[] = $row;
     }
+    $mysql->close();
     echo json_encode($myArray);
 }
 exit(200);

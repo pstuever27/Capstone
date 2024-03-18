@@ -22,6 +22,12 @@
 // Revision: Kieran added the skiplock mechanism and further developed the skip voting functionality, syncronization, and made some minor optimizations. Also added the majority voting mechanism using the guest list size.
 // Revised on: 3/2/2024
 // Revision: Chinh removed dequeue in original song transition logic. Added local queue and fallbackTracks functionality. Uses nowPlaying information to determine when to add a song to the queue from the songQueue array or the fallbackTracks array.
+// Revised on: 3/9/2024
+// Revision: Kieran made it so the skipLock is stored in sessionStorage to ensure it stays locked even when the user refreshes their page
+// Revised on: 3/10/2024
+// Revision: Kieran unified skipvote_increment to also return the skipvotes value, reducing the total number of sql connections now to help us not reach the 500 connection limit. Some alterations to the vote request hook was also made to lay the groundwork for further optimizations.
+// Revised on: 3/18/2024
+// Revision: Chinh added if conditions for checkbox element to add to queue at random instead of in-order
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -37,7 +43,6 @@ import { useState } from 'react'
 import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
 import phpAPI from '../phpApi';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom'
 import { ColorExtractor } from 'react-color-extractor'
 import QueueContext from './queueContext'; 
@@ -54,6 +59,7 @@ function NowPlaying() {
   const cookie = new Cookies();
   const roomCode = cookie.get('roomCode')
   const username = cookie.get('username');
+  //skiplock sessionStorage cookie is first created and initialized to unlocked in splash.jsx. it is read and written to here to handle skip voting and locking mechanisms necessary for that.
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
@@ -67,38 +73,35 @@ function NowPlaying() {
 
   //API call handles & other prep work for majority skip
   const { makeRequest: guestListRequest, phpResponse: guestList } = phpAPI();
-  const { makeRequest: getSkipVotes, phpResponse: SkipVotes } = phpAPI();
-  const { makeRequest: voteSkip, phpResponse: didVote } = phpAPI(); //used for editing the skipVotes counter value, either incrementing it or resetting it to 0 depending on the path argument
-
-  const [ skipLocked, setSkipped ] = useState( false );  //boolean save state for ensuring that a user can only submit one vote towards skipping the current track
+  const { makeRequest: votesReq, phpResponse: votesData } = phpAPI();
 
   /* 
     SKIP_USE_EFFECT : unlocks guests' skiplocks, executes majority skip via host
   */ 
   useEffect( () => { //this is very important useEffect for unlocking guests' skiplocks after a song has changed AND performing majority skip voting
     if(location.hash == '#/callback' || location.pathname == '/join') {
-      if (SkipVotes?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
-        if (SkipVotes?.skipVotes[0]) {
-          setSkipped(false); //unlock skiplock   
+      if (votesData?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
+        if (votesData?.skipVotes[0] == 0) { //==0 is needed, as it should only unlock if the song has skipped and we're at 0 votes again
+          sessionStorage.setItem('skipLock', 'unlocked'); //unlock skiplock for all users 
         }
       }
     }
     //we need this to only happen for host, so that duplicate skips aren't made by all the guests at once. doesn't run if guestList is null
-    if (location.hash == '#/callback' && !skipLocked) {
-      if (SkipVotes?.skipVotes) {
-        if ((SkipVotes?.skipVotes[0] * 2) > (guestList?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
+    if (location.hash == '#/callback' && (sessionStorage.getItem('skipLock')=='unlocked')) {
+      if (votesData?.skipVotes) {
+        if ((votesData?.skipVotes[0] * 2) > (guestList?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
           skip();
           getNowPlaying();
           console.log("Executing majority skip...");
-          setSkipped(true); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+          sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
       }
     }
-  }, [SkipVotes, guestList]);
+  }, [votesData, guestList]);
   
   const resetSkipVotes = () => {
     if(location.pathname=='/host/'){ //this is done to prevent the reset from occuring every time a new user joins the room or when someone refreshes their page
-      voteSkip("reset-skip", roomCode, username); //resets database skip vote counter to 0
+      votesReq("reset-skip", roomCode, username); //resets database skip vote counter to 0
     }
   }
 
@@ -108,11 +111,9 @@ function NowPlaying() {
       skip();
       getNowPlaying();
     }
-    if(location.pathname=='/join' && !skipLocked){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
-      voteSkip("vote-skip", roomCode, username); //submit vote for skipping track
-      setSkipped(true); //locks the user's voting priveledges since they've submitted their vote
-      
-      getSkipVotes("get-skip-votes", roomCode, username); //Make php request to get the current value of skipvotes in the room
+    if(location.pathname=='/join' && (sessionStorage.getItem('skipLock')=='unlocked')){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
+      votesReq("vote-skip", roomCode, username); //submit vote for skipping track
+      sessionStorage.setItem('skipLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
     }
   }
 
@@ -146,11 +147,21 @@ function NowPlaying() {
       }
     } else {
       if (time_to_end < crossfade_stupid) {
-        addToQueue(songQueue[0].uri);
+        if (document.getElementById("shuffleQueue").checked) {
+          const randomIndex = Math.floor(Math.random() * songQueue.length);
+          addToQueue(songQueue[randomIndex].uri);
+        } else {
+          addToQueue(songQueue[0].uri);
+        }
         dequeue();
       } else {
         setTimeout(() => {
-          addToQueue(songQueue[0].uri);
+          if (document.getElementById("shuffleQueue").checked) {
+            const randomIndex = Math.floor(Math.random() * songQueue.length);
+            addToQueue(songQueue[randomIndex].uri);
+          } else {
+            addToQueue(songQueue[0].uri);
+          }
           dequeue();
         }, time_to_end - crossfade_stupid);
       }
@@ -174,10 +185,10 @@ function NowPlaying() {
           playNextSong(time_to_end);
         }
 
-        getSkipVotes("get-skip-votes", roomCode, username); //needed to be known for both host and guests. host needs it for automatic majority skip; guests need it for having their skip buttons unlock when the track changes (see SKIP_USE_EFFECT above)
+        votesReq("get-skip-votes", roomCode, username); //needed to be known for both host and guests. host needs it for automatic majority skip; guests need it for having their skip buttons unlock when the track changes (see SKIP_USE_EFFECT above)
       }
       if(location.hash === '#/callback'){ //optimization to only make these calls on host end, since only the host will be computing whether there is majority vote for skip in the SKIP_USE_EFFECT side effect above
-        guestListRequest("guest-list", roomCode, username); //Make php request to store the guest list array into "guestList" variable
+        guestListRequest("guest-list", roomCode, null); //Make php request to store the guest list array into "guestList" variable
       }
     }, 10000); //runs every 10.6 seconds
 
@@ -222,11 +233,11 @@ function NowPlaying() {
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
               </div>
               <div>
-                {(SkipVotes?.skipVotes)
+                {(votesData?.skipVotes)
                 ? 
-                  <p>{SkipVotes?.skipVotes[0]}</p>
+                  <p>{votesData?.skipVotes[0]}</p>
                 : null}
-                  <img id="skip" className={(skipLocked) ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
+                  <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                 </div>
               </div>
             </div>
