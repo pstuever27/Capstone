@@ -44,6 +44,7 @@ import authorizationApi from "../authorizationApi";
 import Cookies from "universal-cookie";
 import { useSelector } from "react-redux";
 import GuestList from "./guestList";
+import BlockList from "./blockList";
 
 function SettingsDrawer() {
 
@@ -173,9 +174,18 @@ function SettingsDrawer() {
           <GuestList />
         </Box>
       </Drawer>
-      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
         <Box sx={{ width: 250 }} role="presentation">
-          <p>Blocked</p>
+          <ListItem key="back" disablePadding>
+            <ListItemButton onClick={() => { blockedSongs; toggleBlocked() }}>
+              <ListItemIcon>
+                <img src={BackIcon} id='drawerIcon' />
+              </ListItemIcon>
+              <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Go Back" />
+            </ListItemButton>
+          </ListItem>
+          <Divider variant="middle"/>
+          <BlockList />
         </Box>
       </Drawer>
     </>
