@@ -58,7 +58,7 @@ function ListMaker ( {blocked} ) {
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
                         <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.name} />
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.userName) }} />
+                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.name) }} />
                             <confirmationOverlay />
                         </ListItemIcon>
                     </ListItemButton>
