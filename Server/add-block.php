@@ -24,9 +24,14 @@ $mysql = SQLConnect();
 
 $status = 'wait';
 
-$stmt = $mysql->prepare('INSERT INTO blockList ("roomCode", "songID") VALUES (?, ?)');
+$songChoice = json_decode($_POST['username'], true);
 
-$stmt->bind_param('ss', $_POST['roomCode'], $_POST['username']);
+echo $_POST['username'];
+echo $_POST['aux'];
+
+$stmt = $mysql->prepare('INSERT INTO blockList (roomCode, songID, name) VALUES (?, ?, ?)');
+
+$stmt->bind_param('sss', $_POST['roomCode'], $_POST['aux'], $_POST['username']);
 $stmt->execute();
 
 

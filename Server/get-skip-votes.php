@@ -1,16 +1,16 @@
 <?php
 /**
  * Prolouge
- * File: room.php
- * Description: Handles PHP server functionality needed for checking if a room is still open
- * Programmer's Name: Paul Stuever
+ * File: get-skip-votes.php
+ * Description: Handles PHP server functionality needed for getting the current skip vote value from the SQL table
+ * Programmer's Name: Kieran Delaney
  * Date Created: 2/24/2024
- * Date Revised: 3/24/2024 - Kieran Delaney - Added functionality to ping to host to show whether the guest is still active
+ * Date Revised: 2/24/2024
  * Preconditions: 
  *  @inputs : Requires input from Javascript to do SQL query
  * Postconditions:
- *  @returns : If room code is found, return JSON with data encoded. If not, return error JSON
- * Error conditions: If roomcode is not found, return error. Other internal error may return error case 
+ *  @returns : Returns JSON with skip votes value from table encoded.
+ * Error conditions: If the skipvotes isn't available from the table for whatever reason, we will error out.
  * Side effects: None
  * Invariants: None
  * Known Faults: Requires more error handling for edge cases
@@ -22,8 +22,6 @@ require_once('require/error.php');
 //Require mySQL php file
 require_once('require/sql.php');
 
-$timestamp = time(); //ping timestamp
-
 //Connect to SQL
 $mysql = SQLConnect();
 
@@ -31,31 +29,27 @@ $mysql = SQLConnect();
 $status = 'wait';
 
 //Check if the gamecode exists
-$stmt = $mysql->prepare('SELECT id FROM client WHERE userName = ? AND roomCode = ?');
-//ping command
-$ping = $mysql->prepare('UPDATE client SET ping = ? WHERE userName = ? AND roomCode = ?');
+$stmt = $mysql->prepare('SELECT skipVotes FROM room WHERE BINARY roomCode = ?');
 //Set parameter to 'roomCode' from JS call
-$stmt->bind_param('ss', $_POST['username'], $_POST['roomCode']);
-//ping parameters
-$ping->bind_param('iss', $timestamp, $_POST['username'], $_POST['roomCode']);
+$stmt->bind_param('s', $_POST['roomCode']);
 
 //Execute SQL 
 $stmt->execute();
-//Grab the result from the SQL query
+
+//Grab the result from the SQL query. this should hold the skipVotes array
 $result = $stmt->get_result();
+
 //Get the row 
 $row = mysqli_fetch_row($result);
-$result->free_result();
 
-$ping->execute(); //send ping timestamp so host can know if guest is no longer active if they aren't pinging
 
 //If the row doesn't exist or there was no result, then the room doesn't exist. Error out
 if (!$result || !$row) {
     //Set up JSON response
-    $status = 'closed';
+    $status = 'no-vote';
     $response = [
         'status' => $status,
-        'error' => "Room Doesn't Exist!"
+        'error' => "SkipVotes Doesn't Exist!"
     ];
     //Send back an error response
     $result->free_result();
@@ -65,15 +59,12 @@ if (!$result || !$row) {
 }
 //If the row exists...
 else {
-    //Grab the roomCode
-    $roomCode = $_POST['roomCode'];
-
-    //Set status to good_name
-    $status = 'open';
+    //Set status to ok because we got a skipvotes value
+    $status = 'ok';
 
     //Set up JSON to respond with
     $response = [
-        'roomCode' => $roomCode,
+        'skipVotes' => $row, //gets the value from the skipVotes cell
         'status' => $status,
     ];
 

@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { useStackState } from "rooks";
 import { useForceUpdate } from "@mantine/hooks";
+import Notification from "./notification";
 
 function Loading () {
     return(
@@ -39,14 +40,7 @@ function ListMaker ( {guests} ) {
 
     const cookie = new Cookies();
 
-    const confirmationOverlay = (
-        <>
-            <Backdrop>
-
-            </Backdrop>
-        </>
-    );
-
+    const [notifMessage, setNotifMessage] = useState(null);
 
     return(
        <> { (guests) 
@@ -57,11 +51,12 @@ function ListMaker ( {guests} ) {
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
                         <ListItemText primaryTypographyProps={{ style: listStyle }} primary={name.userName} />
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), name.userName) }} />
+                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), name.userName); setNotifMessage(`Kicked user: ${name.userName}`); }} />
                         </ListItemIcon>
                     </ListItemButton>
                 </ListItem>
             ))}
+            <Notification message={notifMessage} />
         </>
         :
         <></>

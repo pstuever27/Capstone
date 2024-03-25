@@ -62,12 +62,16 @@ function NowPlaying() {
   const roomCode = cookie.get('roomCode')
   const username = cookie.get('username');
   //skiplock sessionStorage cookie is first created and initialized to unlocked in splash.jsx. it is read and written to here to handle skip voting and locking mechanisms necessary for that.
+  //skiplock sessionStorage cookie is first created and initialized to unlocked in splash.jsx. it is read and written to here to handle skip voting and locking mechanisms necessary for that.
 
   // State to hold the song object of the currently playing song
   const [nowPlayingSong, setNowPlayingSong] = useState( null ); 
 
   //API call handles for skipping to next track and getting currently playing track
   const { skipSong: skip, nowPlaying: getNowPlaying, phpResponse } = authorizationApi();
+  
+  // API call handle for adding a song to the queue
+  const { addToQueue } = authorizationApi();
   
   // API call handle for adding a song to the queue
   const { addToQueue } = authorizationApi();
@@ -85,6 +89,9 @@ function NowPlaying() {
       if (votesData?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
         if (votesData?.skipVotes[0] == 0) { //==0 is needed, as it should only unlock if the song has skipped and we're at 0 votes again
           sessionStorage.setItem('skipLock', 'unlocked'); //unlock skiplock for all users 
+      if (votesData?.skipVotes) {//if the current number of skipvotes in the table are 0, we can unlock the user's skiplock
+        if (votesData?.skipVotes[0] == 0) { //==0 is needed, as it should only unlock if the song has skipped and we're at 0 votes again
+          sessionStorage.setItem('skipLock', 'unlocked'); //unlock skiplock for all users 
         }
       }
     }
@@ -96,6 +103,7 @@ function NowPlaying() {
           getNowPlaying();
           console.log("Executing majority skip...");
           sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+          sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
       }
     }
@@ -103,6 +111,7 @@ function NowPlaying() {
   
   const resetSkipVotes = () => {
     if(location.pathname=='/host/'){ //this is done to prevent the reset from occuring every time a new user joins the room or when someone refreshes their page
+      votesReq("reset-skip", roomCode, username); //resets database skip vote counter to 0
       votesReq("reset-skip", roomCode, username); //resets database skip vote counter to 0
     }
   }
@@ -112,6 +121,9 @@ function NowPlaying() {
       skip();
       getNowPlaying();
     }
+    if(location.pathname=='/join' && (sessionStorage.getItem('skipLock')=='unlocked')){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
+      votesReq("vote-skip", roomCode, username); //submit vote for skipping track
+      sessionStorage.setItem('skipLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
     if(location.pathname=='/join' && (sessionStorage.getItem('skipLock')=='unlocked')){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
       votesReq("vote-skip", roomCode, username); //submit vote for skipping track
       sessionStorage.setItem('skipLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
@@ -169,11 +181,51 @@ function NowPlaying() {
     }
     
   }
+  const { songQueue, fallbackTracks, dequeue } = useContext( QueueContext );
+
+  const playNextSong = async (time_to_end) => {
+    // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
+    // making it super hard to squeeze the next song in before the current song ends
+    let crossfade_stupid = 6000; // right now, it seems like a good area is ~4s greater than crossfade.
+
+    if (songQueue.length === 0) {
+      console.log("Queue is empty, pulling from fallbackTracks");
+      // Handle the case where the queue is empty
+      if (fallbackTracks.length > 0) {
+        const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+        addToQueue(fallbackTracks[randomIndex]);
+      } else {
+        console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
+      }
+    } else {
+      if (time_to_end < crossfade_stupid) {
+        if (document.getElementById("shuffleQueue").checked) {
+          const randomIndex = Math.floor(Math.random() * songQueue.length);
+          addToQueue(songQueue[randomIndex].uri);
+        } else {
+          addToQueue(songQueue[0].uri);
+        }
+        dequeue();
+      } else {
+        setTimeout(() => {
+          if (document.getElementById("shuffleQueue").checked) {
+            const randomIndex = Math.floor(Math.random() * songQueue.length);
+            addToQueue(songQueue[randomIndex].uri);
+          } else {
+            addToQueue(songQueue[0].uri);
+          }
+          dequeue();
+        }, time_to_end - crossfade_stupid);
+      }
+    }
+    
+  }
 
   // useEffect is used to perform side effects in phpResponse
   // [phpResponse] syntax at the end uses phpResponse as a dependency for useEffect
   //  the getNowPlaying call alters phpResponse,in turn causing useEffect to run
   useEffect( () => { 
+    const timer = setInterval(async () => {
     const timer = setInterval(async () => {
       if(location.hash === '#/callback' || location.pathname === '/join'){
         console.log("Aki: Getting now playing...");
@@ -202,11 +254,13 @@ function NowPlaying() {
     }, 10000); //runs every 10.6 seconds
 
     // I think the dequeue function in here is obsolete now, since we have the playNextSong function!
+    // I think the dequeue function in here is obsolete now, since we have the playNextSong function!
     if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes.
       if(phpResponse?.item){
         if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
           resetSkipVotes();
           setNowPlayingSong(phpResponse.item); //sets our current track save state to the new track, so we can render the track's content on the screen as the track changes in spotify
+          // dequeue();   //removes the previous track from our ui queue
           // dequeue();   //removes the previous track from our ui queue
         }
       }
@@ -243,9 +297,12 @@ function NowPlaying() {
               </div>
               <div>
                 {(votesData?.skipVotes)
+                {(votesData?.skipVotes)
                 ? 
                   <p>{votesData?.skipVotes[0]}</p>
+                  <p>{votesData?.skipVotes[0]}</p>
                 : null}
+                  <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                   <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                 </div>
               </div>

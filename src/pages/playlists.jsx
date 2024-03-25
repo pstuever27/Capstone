@@ -70,9 +70,13 @@ function SpotifyPlaylists() {
             const response = await getTracks(playlistID);
             console.log("Tracks of selected playlist:", response);
             // Add tracks from response to local fallbackTracks_Holder variable
+            // Add tracks from response to local fallbackTracks_Holder variable
             for (let i = 0; i < response.length; i++) {
                 fallbackTracks_Holder.push(response[i].id);
+                fallbackTracks_Holder.push(response[i].id);
             }
+            // Now we set it to the context
+            setFallbackTracks(fallbackTracks_Holder);
             // Now we set it to the context
             setFallbackTracks(fallbackTracks_Holder);
         } catch (error) {

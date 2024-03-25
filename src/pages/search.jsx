@@ -28,7 +28,7 @@
 import { useAPI, useHostAPI } from '../SpotifyAPI'; 
 
 // useState is used to perform side effects in function components. 
-import { useState } from 'react' 
+import { useEffect, useState } from 'react' 
 
 // utocomplete renders the search results of the search bar. 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
@@ -50,6 +50,11 @@ import Playlists from './playlists';
 
 import { useLocation } from 'react-router-dom'
 
+import phpAPI from '../phpApi';
+import Cookies from 'universal-cookie';
+import Notification from './notification';
+
+
 function Search() {
   // INITIALIZING STATE VARIABLES
 
@@ -67,7 +72,11 @@ function Search() {
 
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
+  const { makeRequest: addBlock, phpResponse } = phpAPI();
+
   const { addToQueue: addQueue } = authorizationApi();
+
+  const cookie = new Cookies();
 
   // An empty list state is used to store search results.
   // These search results will be rendered in the search bar dropdown. 
@@ -80,6 +89,10 @@ function Search() {
   const { palette } = useContext(PaletteContext);
   
   const location = useLocation();
+
+  const [openNotif, setOpenNotif] = useState(null);
+
+  const [notifMessage, setNotifMessage] = useState(null);
 
   const { getInputProps, getListboxProps, getOptionProps,  groupedOptions } = useAutocomplete( {
     /***************************************************************************/
@@ -108,6 +121,12 @@ function Search() {
     getOptionLabel: (searchResult) => `${searchResult.name} - ${searchResult.artists.map((_artist) => _artist.name).join(", ")}`,
   });
 
+  useEffect( () => {
+    if(notifMessage != null){
+      setOpenNotif(null);
+    }
+  }, [notifMessage])
+
   /**
    * @brief This function is used to add a song to the queue. 
    *        The song added is whatever is stored in songChoice.
@@ -126,8 +145,6 @@ function Search() {
 
     // Verifies that the user has selected a song from the search results
     if( songChoice != null ) {
-      // Adds songChoice to the queue context for rendering on screen AND the host's queue
-      enqueue( songChoice ); 
 
       // If the user has logged into spotify and the callback result is in the url bar
       if ( location.hash === '#/callback' || location.pathname === '/join') { 
@@ -136,7 +153,9 @@ function Search() {
 
         // Get the code from the url; if the url doesn't contain a code, set code variable to "empty"
         let code = urlParams.get( 'code' ) || "empty";
-
+        // Adds songChoice to the queue context for rendering on screen AND the host's queue
+        enqueue( songChoice ); 
+        setNotifMessage("Added to Queue");
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
 
@@ -147,7 +166,7 @@ function Search() {
       // if the url doesn't contain callback, it means they didn't login to spotify first 
       else {
         // throw an alert, error dialog window
-        alert( "Must login to manipulate the Spotify queue." ); 
+        setNotifMessage( "Must login to manipulate the Spotify queue." ); 
       }
     }
 
@@ -222,7 +241,7 @@ function Search() {
         // If there is no currently playing song, show an alert
         else {
           // throw an alert, error dialog window
-          alert( "No song is currently playing on Spotify." ); 
+          setNotifMessage( "No song is currently playing on Spotify." ); 
         }
       } );
     }
@@ -230,7 +249,8 @@ function Search() {
     // If the url doesn't contain callback, it means they didn't login to spotify first
     else {
       // throw an alert, error dialog window
-      alert( "Must login to manipulate the Spotify queue." ); 
+      setNotifMessage("Must login to manipulate the Spotify queue");
+
     }
   }
 
@@ -296,7 +316,10 @@ function Search() {
           </label>
 
           <Playlists/>
+
         </div>
+        <Notification message={notifMessage}/>
+
       </div>
     </>
   );
