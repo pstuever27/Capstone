@@ -57,6 +57,7 @@ if (!$SkipVoteArr || !$skipRow) {
         'error' => "SkipVotes Doesn't Exist!"
     ];
     //Send back an error response
+    $mysql->close();
     echo json_encode($response);
     return;
 }
@@ -81,6 +82,8 @@ else {
     ];
     
     $GuestsResult->free_result();
+
+    $mysql->close();
     //Send response
     echo json_encode($response);
 }
