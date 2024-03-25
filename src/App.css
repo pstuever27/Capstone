@@ -353,6 +353,48 @@ h1 {
 
 }
 
+#playlistDiv
+{
+  width: 100%;
+  padding: none;
+  margin: none;
+}
+
+#selectPlaylist
+{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 50px;
+  padding: none;
+  margin-top: 10px;
+  background: none;
+  font-family: proxima-nova, Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  border: solid;
+  border-radius: 7px;
+  color: white;
+  text-align: center;
+  border-color: rgba( 255, 255, 255, 0.5 );
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+#selectPlaylist:focus
+{
+  outline: none;
+}
+
+#selectPlaylist:hover
+{
+  box-shadow: 0px 0px 30px -5px rgba(0, 0, 0, 1);
+}
+
+#selectionPlaylist > option
+{
+  font-family: proxima-nova, Arial, Helvetica, sans-serif;
+  color: green;
+}
+
 /***************** MEDIA QUERIES *****************/
 
 @media ( max-width: 768px ) { /* media query for when the screen is smaller than 768px */
@@ -417,7 +459,14 @@ h1 {
 
 #host-button {
   border: none;
-  font-size: 16px;
+  font-size: 18px;
+  transition: color 0.2s linear, filter 0.2s ease-in-out;
+}
+
+#host-button:hover {
+  cursor: pointer;
+  color: white;
+  filter: drop-shadow(0 0 0.3rem rgba( 255, 255, 255, 0.4 ));
 }
 
 #welcome {
@@ -485,6 +534,11 @@ h1 {
   border-style: none;
   font-family: proxima-nova, Helvetica, Arial, sans-serif;
   caret-color: transparent;
+  transition: color 0.2s linear;
+}
+
+.code-input:hover {
+  color: white;
 }
 
 .code-input::placeholder {
@@ -531,10 +585,15 @@ h1 {
   justify-content: center;
 }
 
-#hidden-name b {
+#hand {
   padding-top: 10px;
   font-size: 64px;
   color: white;
+  transition: filter 0.2s ease-in-out;
+}
+
+#hand:hover{
+  filter: drop-shadow(0 0 0.3rem rgba( 255, 255, 255, 0.4 ));
 }
 
 #drawerButton {

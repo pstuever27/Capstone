@@ -101,7 +101,7 @@ function SpotifyPlaylists() {
     }, []); 
 
     return (
-        <div>
+        <div id = "playlistDiv">
             { /* Button for manually fetching playlists no longer needed, but keeping in-case for future testing. */ }
             {/* <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
@@ -122,7 +122,6 @@ function SpotifyPlaylists() {
             {/* <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
                 Get Tracks of Selected Playlist
             </button> */}
-
         </div>
     );
 }

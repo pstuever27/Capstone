@@ -59,6 +59,8 @@ function Splash()
     //  are completely empty
     const [placeholderCode, setPlaceHolderCode] = useState(['S', 'O', 'N', 'G']);
 
+    const [placeholderName, setPlaceHolderName] = useState( "What's your name?" );
+
     const [ hostJoinSuccess, setHostJoinSuccess ] = useState( false );
     
     const [hostCode, setHostCode] = useState("");
@@ -177,6 +179,12 @@ function Splash()
     const sync = () => {
         // look at php response, and work accordingly
         if( !phpResponse ) {
+            // prevent name entry on incomplete code entry
+            if( roomCode.join("").length < 4 ) 
+            {
+                console.log( "silly goose" );
+                return;
+            }
             makeRequest("join", roomCode.join(""));
             setHostJoinSuccess(true);
             return;
@@ -219,6 +227,14 @@ function Splash()
 
     const refresh = () => {
         clientToken();
+    }
+
+    const handleFocus = () => {
+        setPlaceHolderName( "" );
+    }
+
+    const handleBlur = () => {
+        setPlaceHolderName( "What's your name?" );
     }
     
     // These are all redux globals. They are used to track important information between files. Works as sort of a database
@@ -287,8 +303,11 @@ function Splash()
                     <input type="text" 
                         className="name-input"
                         minLength={3}
-                        placeholder="What's your name?"
-                        onChange={ e => handleNameChange( e ) }/><b onClick={ sync }>&#9758;</b>
+                        // placeholder="What's your name?"
+                        placeholder = { placeholderName }
+                        onFocus = { handleFocus }
+                        onBlur = { handleBlur}
+                        onChange={ e => handleNameChange( e ) }/><b id = "hand" onClick={ sync }>&#9758;</b>
                 </div> )
 
             : 
