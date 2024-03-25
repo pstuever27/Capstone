@@ -14,6 +14,8 @@
 // Revision: Chinh started to add functionality to add tracks from fallback playlist to queue
 // Revised on: 3/2/2024
 // Revision: Chinh added functionality to add tracks received from getTracks to the fallbackTracks array in the queue context
+// Revised on: 3/24/2024
+// Revision: Chinh implemmented on page-load playlist fetching as well as fallback track updater when selected playlist is changed.
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -24,11 +26,13 @@
 //--------------------------------
 
 import { useState } from 'react' 
+import { useContext } from 'react'; 
+import { useEffect } from 'react';
+
 import authorizationApi from '../authorizationApi';
 
 // imports queue context to manipulate queue data structure across components
 import QueueContext from './queueContext';
-import { useContext } from 'react'; 
 
 function SpotifyPlaylists() {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +40,6 @@ function SpotifyPlaylists() {
     const { getPlaylists } = authorizationApi();
     const { getTracks } = authorizationApi();
     const { nowPlaying } = authorizationApi();
-
-    var fallbackTracks_Holder = [];
 
     const fetchPlaylists = async () => {
         setIsLoading(true);
@@ -49,9 +51,13 @@ function SpotifyPlaylists() {
             console.error('Could not fetch playlists:', error);
         };
         setIsLoading(false);
+        setTimeout(() => {
+            fetchTracks();
+        }, 2500);
     };
-
+    
     const { setFallbackTracks } = useContext( QueueContext );
+    var fallbackTracks_Holder = [];
 
     const fetchTracks = async () => {
         let playlistID = document.getElementById("selectPlaylist").value;
@@ -85,13 +91,19 @@ function SpotifyPlaylists() {
     // Run addToQueueFromFallback every 10 seconds
     //setInterval(addToQueueFromFallback, 10000);
 
+    // Makes it so that the page runs this function when component is loaded -- necessary for loading fetchPlaylists on load.
+    useEffect(() => {
+        fetchPlaylists();
+    }, []); 
+
     return (
         <div>
-            <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
+            { /* Button for manually fetching playlists no longer needed, but keeping in-case for future testing. */ }
+            {/* <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
-            </button>
+            </button> */}
 
-            <select id="selectPlaylist">
+            <select id="selectPlaylist" onChange={() => fetchTracks()}>
                 {Array.isArray(playlists) && playlists.map((playlist, index) => {
                     // console.log("Mapping playlist:", playlist); // Log each playlist being mapped
                     return (
@@ -102,9 +114,10 @@ function SpotifyPlaylists() {
                 })}
             </select>
 
-            <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
+            { /* Button for manually fetching tracks no longer needed, but keeping in-case for future testing. */ }
+            {/* <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
                 Get Tracks of Selected Playlist
-            </button>
+            </button> */}
 
         </div>
     );
