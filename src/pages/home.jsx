@@ -70,12 +70,12 @@ function Home() {
   dispatch(setCode(cookie.get('roomCode'))); //Reset the roomCode in redux to the cookie's stored value
 
   //UseEffect will check if the room is currently open, but only from the guest's point of view
-  useEffect(() => {
-      const interval = setInterval(() => { //Timer component
-        if (location.pathname == '/join') {
-          makeRequest('room', cookie.get('roomCode'), cookie.get('username')) //Runs room.php to see if the room is still open
+  useEffect(() => { //this is VERY important for multiple functions: automatically sends user back to splash screen if the host closes the room, AND sends a ping timestamp for the guest to the database so the host can detect whether they're still active or if they've left and should be automatically kicked for inactivity
+    const interval = setInterval(() => { //Timer component
+      if (location.pathname == '/join') {
+        makeRequest('room', cookie.get('roomCode'), cookie.get('username')) //Runs room.php to see if the room is still open and pings to host
       }
-    }, 10000); //Runs every 10 seconds
+    }, 10000); //Runs every 10 seconds. don't change this time interval as it is a factor of the ping calculations for the host determining if the guest left the page
   
     return () => clearInterval(interval); // clearInterval prevents memory leaks
   }, [])
