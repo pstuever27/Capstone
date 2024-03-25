@@ -572,3 +572,9 @@ h1 {
 #kickGuestIcon:hover {
   background-image: linear-gradient(rgb(0 0 0/10%) 0 0);;
 }
+
+#notifClose{
+  height: 20px;
+  padding: 5px;
+
+}

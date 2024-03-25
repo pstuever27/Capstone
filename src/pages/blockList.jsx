@@ -32,14 +32,21 @@ function ListMaker ( {blocked} ) {
 
     console.log(blocked);
 
-    const confirmationOverlay = (
-        <>
-            <Backdrop>
-
-            </Backdrop>
-        </>
-    );
-
+    // const confirmationOverlay = (open) => {(
+    // <>
+    //     <Menu
+    //     id="basic-menu"
+    //     anchorEl={anchorEl}
+    //     open={open}
+    //     onClose={setAnchorEl(null)}
+    //     MenuListProps={{
+    //       'aria-labelledby': 'basic-button',
+    //     }}
+    //     >
+    //     <MenuItem onClick={handleClose}>Delete from BlockList?</MenuItem>
+    //   </Menu>
+    // </>
+    // )}
 
     return(
        <> {      
@@ -47,11 +54,12 @@ function ListMaker ( {blocked} ) {
         ?
             <>
             {blocked.map((id, index) => (
-                <ListItem key={id.songID} disablePadding>
+                <ListItem key={id.name} disablePadding>
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
-                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.songID} />
+                        <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.name} />
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('kick', cookie.get('roomCode'), id.userName) }} />
+                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.userName) }} />
+                            <confirmationOverlay />
                         </ListItemIcon>
                     </ListItemButton>
                 </ListItem>

@@ -29,6 +29,7 @@ import authorizationApi from '../authorizationApi';
 // imports queue context to manipulate queue data structure across components
 import QueueContext from './queueContext';
 import { useContext } from 'react'; 
+import PaletteContext from './paletteContext';
 
 function SpotifyPlaylists() {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,7 @@ function SpotifyPlaylists() {
     const { getPlaylists } = authorizationApi();
     const { getTracks } = authorizationApi();
     const { nowPlaying } = authorizationApi();
+    const { palette } = useContext( PaletteContext );
 
     var fallbackTracks_Holder = [];
 
@@ -87,7 +89,7 @@ function SpotifyPlaylists() {
 
     return (
         <div>
-            <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
+            <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading} style={ {backgroundColor: palette[ 1 ]} }>
                 {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
             </button>
 
@@ -102,7 +104,7 @@ function SpotifyPlaylists() {
                 })}
             </select>
 
-            <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
+            <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading} style={ {backgroundColor: palette[ 1 ]} }>
                 Get Tracks of Selected Playlist
             </button>
 

@@ -39,7 +39,7 @@ const phpAPI = () => {
     const [phpResponse, setResponse] = useState(null);
 
     //Const which actually makes the request
-    const makeRequest = (phpUrl, roomCode, username) => {
+    const makeRequest = (phpUrl, roomCode, username, aux) => {
         //Make a new xhr object
 
         const xhr = new XMLHttpRequest();
@@ -84,7 +84,12 @@ const phpAPI = () => {
             }
         };
         //Send the roomcode and username to PHP file
-        xhr.send('roomCode=' + roomCode + '&username=' + username);
+        if(aux){
+            xhr.send('roomCode=' + roomCode + '&username=' + username + '&aux=' + aux);
+        }
+        else{
+            xhr.send('roomCode=' + roomCode + '&username=' + username);
+        }
     }
 
 

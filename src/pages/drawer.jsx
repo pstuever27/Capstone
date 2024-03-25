@@ -102,6 +102,7 @@ function SettingsDrawer() {
 
   const closeRoom = () => {
     makeRequest("close-room", roomCode, null);
+    window.location.href = '/';
   };
 
   const leaveRoom = () => {
