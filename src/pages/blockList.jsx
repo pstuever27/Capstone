@@ -12,6 +12,7 @@ import CloseIcon from '../images/close.png';
 import { Suspense } from "react";
 import { Backdrop } from '@mui/material';
 import { useLocation } from 'react-router-dom'
+import Notification from './notification';
 
 
 import phpAPI from "../phpApi";
@@ -29,6 +30,8 @@ function ListMaker ( {blocked} ) {
     };
 
     const { makeRequest, phpResponse } = phpAPI();
+
+    const [notifMessage, setNotifMessage] = useState(null);
 
     const cookie = new Cookies();
 
@@ -61,20 +64,22 @@ function ListMaker ( {blocked} ) {
                 <ListItem key={id.name} disablePadding>
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
                         <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.name} />
-                        {(location.hash == '/#/callback')
+                        {(location.hash == '#/callback')
                         ?
                         <ListItemIcon>
-                            <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.name) }} />
+                                <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.name); setNotifMessage(`Removed ${id.name} from Blocklist`) }} />
                             <confirmationOverlay />
                         </ListItemIcon>
                         : null}
                     </ListItemButton>
                 </ListItem>
+                
             ))}
         </>
         :
         <></>
-            }
+        }
+        <Notification message={notifMessage} />
     </>
     )
 }
@@ -103,7 +108,9 @@ function BlockList () {
     }, [])
 
     return (
-        <ListMaker blocked={blockListPopulate}/>
+        <>
+            <ListMaker blocked={blockListPopulate} />
+        </>
     );
 }
 

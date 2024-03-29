@@ -58,7 +58,6 @@ if (!$result || !$row) {
         'error' => "Room Doesn't Exist!"
     ];
     //Send back an error response
-    $result->free_result();
     $mysql->close();
     echo json_encode($response);
     return;

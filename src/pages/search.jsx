@@ -53,6 +53,7 @@ import { useLocation } from 'react-router-dom'
 import phpAPI from '../phpApi';
 import Cookies from 'universal-cookie';
 import Notification from './notification';
+import { useForceUpdate } from '@mantine/hooks';
 
 
 function Search() {
@@ -72,7 +73,7 @@ function Search() {
 
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
-  const { makeRequest: blockList, phpResponse } = phpAPI();
+  const { makeRequest: blockListRequest, phpResponse } = phpAPI();
 
   const cookie = new Cookies();
 
@@ -125,6 +126,8 @@ function Search() {
     }
   }, [notifMessage])
 
+  useForceUpdate((null), [blocklist]);
+
   /**
    * @brief This function is used to add a song to the queue. 
    *        The song added is whatever is stored in songChoice.
@@ -134,22 +137,35 @@ function Search() {
    * @params none
    */
 
-  useEffect( () => {
-    if(phpResponse != null){
-      clearBlocklist();
-      for(song in phpResponse){
-        addBlocklist(song);
+  useEffect(() => {
+    clearBlocklist();
+    if (phpResponse) {
+      console.log("hereeeee");
+      if (!phpResponse.status) {
+        phpResponse.map((id, index) => {
+          console.log(id.name);
+          addBlocklist(id.name);
+        })
+        console.log(blocklist);
       }
     }
-    console.log(blockList);
     addToQueue();
   }, [phpResponse])
   
   async function addToQueue() {
 
     // Checks to see if in blocklist from QueueContext, can do anything based off that
-    if (blocklist.includes(songChoice)) {
-      console.log("Song is in blocklist! Not adding to queue.");
+    let blocked = false;
+
+    blocklist.map((song, index) => {
+      console.log("Blocked song: ", song);
+      console.log("Chosen: ", songChoice.name);
+      if (song == songChoice.name) {
+        blocked = true
+      }
+    })
+    if (blocked) {
+      setNotifMessage(`Song is on the Blocklist: ${songChoice.name}`)
       return;
     }
 
@@ -165,7 +181,7 @@ function Search() {
         let code = urlParams.get( 'code' ) || "empty";
         // Adds songChoice to the queue context for rendering on screen AND the host's queue
         enqueue( songChoice ); 
-        setNotifMessage("Added to Queue");
+        setNotifMessage(`Added ${songChoice.name} to the queue`);
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
 
@@ -270,7 +286,9 @@ function Search() {
   async function blockFromQueue(){
     if(songChoice != null){
       addBlocklist(songChoice);
-      console.log("Added the following song to blocklist: " + songChoice.name)
+      blockListRequest("add-block", cookie.get("roomCode"), songChoice.name, songChoice.uri);
+      setSongChoice(null);
+      setNotifMessage(`Added ${songChoice.name} to the Blocklist`);
     }
   }
 
@@ -305,7 +323,7 @@ function Search() {
           ) : null}
 
           {/* clicking button calls the function to add song to queue */}
-          <button className="queueButton" onClick={() => blockList('block-list', cookie.get('roomCode'), songChoice.name) } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
+          <button className="queueButton" onClick={() => blockListRequest('block-list', cookie.get('roomCode'), songChoice.name) } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
 
           {/* clicking button calls the function to add song to queue */}
           <button className = "queueButton" onClick = { () => replaySong() } style={{ backgroundColor: palette[1]}}>Replay</button>

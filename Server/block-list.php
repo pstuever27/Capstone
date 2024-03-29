@@ -30,8 +30,9 @@ $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute();
 
 $result = $stmt->get_result();
+$row = $result->fetch_assoc();
 
-if(!$result ) {
+if(!$result || !$row) {
     $status = 'no-blocked';
 
     $response = [
@@ -43,9 +44,13 @@ if(!$result ) {
 }
 else{
     $status = 'ok';
-    while($row = $result->fetch_assoc()) {
+    if ($row) {
+        $myArray[] = $row; //this is needed for when only one guest, as the while loop won't execute
+    }
+    while ($row = $result->fetch_assoc()) {
         $myArray[] = $row;
     }
+    $mysql->close();
     echo json_encode($myArray);
 }
 exit(200);
