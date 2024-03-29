@@ -45,12 +45,14 @@ import { useState } from 'react'
 import { useEffect } from 'react';
 import authorizationApi from '../authorizationApi';
 import phpAPI from '../phpApi';
+import queueAPI from '../queueApi';
 import { useLocation } from 'react-router-dom'
 import { ColorExtractor } from 'react-color-extractor'
 import QueueContext from './queueContext'; 
 import { useContext } from 'react'; 
 import PaletteContext from './paletteContext';
 import Cookies from 'universal-cookie';
+
 
 import skipImg from '../images/skip.svg'
 
@@ -76,6 +78,7 @@ function NowPlaying() {
   //API call handles & other prep work for majority skip
   const { makeRequest: votesReq, phpResponse: votesData } = phpAPI(); //specific for votedata
   const { makeRequest: makeReq, phpResponse: phpAPIResponse } = phpAPI(); //general commands
+  const { makeRequest: getQueue, phpResponse: queueResponse } = phpAPI();
 
   /* 
     SKIP_USE_EFFECT : unlocks guests' skiplocks, executes majority skip via host
@@ -124,13 +127,14 @@ function NowPlaying() {
     console.log(location);
     if(location.hash == '#/callback' || location.pathname == '/join') {
       getNowPlaying();
+      makeReq('get-queue', roomCode, username);
     }
   }, [location.pathname]);
 
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, fallbackTracks, dequeue } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, dequeue, setQueue } = useContext( QueueContext );
 
   const playNextSong = async (time_to_end) => {
     // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
@@ -177,6 +181,7 @@ function NowPlaying() {
     const timer = setInterval(async () => {
       if(location.hash === '#/callback' || location.pathname === '/join'){
         console.log("Aki: Getting now playing...");
+        makeReq('get-queue', roomCode, username);
         let currentSong = await getNowPlaying();
         let time_to_end = currentSong?.item?.duration_ms - currentSong?.progress_ms;
         console.log("Current Position: " + currentSong?.progress_ms);
@@ -216,6 +221,17 @@ function NowPlaying() {
 
     return () => clearInterval(timer);
   }, [phpResponse, getNowPlaying] );
+
+  useEffect( () => {
+
+    if(queueResponse){
+      if(!queueResponse.status){
+        var newQueue = JSON.parse(queueResponse);
+        setQueue(newQueue);
+      }
+    }
+
+  }, [queueResponse]);
 
   var haveImg = nowPlayingSong?.album.images[1].url ? "block" : "none";
 
