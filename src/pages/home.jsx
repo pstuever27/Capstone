@@ -104,6 +104,10 @@ function Home() {
     modBlocklist([...blocklist, song]);
   }
 
+  const clearBlocklist = () => {
+    modBlocklist([]);
+  }
+
   //Palatte for background gradient
   const [palette, setPalette] = useState([]);
 

@@ -28,6 +28,8 @@
 import { useState } from 'react' 
 import { useContext } from 'react'; 
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom'
+
 
 import authorizationApi from '../authorizationApi';
 
@@ -40,6 +42,7 @@ function SpotifyPlaylists() {
     const { getPlaylists } = authorizationApi();
     const { getTracks } = authorizationApi();
     const { nowPlaying } = authorizationApi();
+    const location = useLocation();
 
     const fetchPlaylists = async () => {
         setIsLoading(true);
@@ -97,7 +100,9 @@ function SpotifyPlaylists() {
 
     // Makes it so that the page runs this function when component is loaded -- necessary for loading fetchPlaylists on load.
     useEffect(() => {
-        fetchPlaylists();
+        if(location.hash == '#/callback'){
+            fetchPlaylists(); //Added to prevent lock-up when first loading page and not signed into spotify
+        }
     }, []); 
 
     return (

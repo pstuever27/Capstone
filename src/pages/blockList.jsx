@@ -11,6 +11,8 @@ import { ListItemIcon, Menu } from "@mui/material";
 import CloseIcon from '../images/close.png';
 import { Suspense } from "react";
 import { Backdrop } from '@mui/material';
+import { useLocation } from 'react-router-dom'
+
 
 import phpAPI from "../phpApi";
 import { useEffect, useState } from "react";
@@ -29,6 +31,8 @@ function ListMaker ( {blocked} ) {
     const { makeRequest, phpResponse } = phpAPI();
 
     const cookie = new Cookies();
+
+    const location = useLocation();
 
     console.log(blocked);
 
@@ -57,10 +61,13 @@ function ListMaker ( {blocked} ) {
                 <ListItem key={id.name} disablePadding>
                     <ListItemButton disableRipple='true' /*onClick={() => {  }}*/>
                         <ListItemText primaryTypographyProps={{ style: listStyle }} primary={id.name} />
+                        {(location.hash == '/#/callback')
+                        ?
                         <ListItemIcon>
                             <img src={CloseIcon} id='kickGuestIcon' onClick={() => { makeRequest('remove-block', cookie.get('roomCode'), id.name) }} />
                             <confirmationOverlay />
                         </ListItemIcon>
+                        : null}
                     </ListItemButton>
                 </ListItem>
             ))}

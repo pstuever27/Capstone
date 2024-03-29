@@ -41,6 +41,7 @@ const QueueContext = createContext( {
   setFallbackTracks: () => {},
   clearFallbackTracks: () => {},
   addBlocklist: () => {},
+  clearBlocklist: () => {},
 } );
 
 export default QueueContext;

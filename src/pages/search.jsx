@@ -59,7 +59,7 @@ function Search() {
   // INITIALIZING STATE VARIABLES
 
   const { enqueue } = useContext( QueueContext );
-  const { blocklist, addBlocklist } = useContext( QueueContext );
+  const { blocklist, addBlocklist, clearBlocklist } = useContext( QueueContext );
 
   // This is the default inputVal (blank) for the search bar. 
   const [inputVal, setInputValue] = useState( "" ); 
@@ -72,9 +72,7 @@ function Search() {
 
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
-  const { makeRequest: addBlock, phpResponse } = phpAPI();
-
-  const { addToQueue: addQueue } = authorizationApi();
+  const { makeRequest: blockList, phpResponse } = phpAPI();
 
   const cookie = new Cookies();
 
@@ -135,8 +133,20 @@ function Search() {
    * @precondition songChoice must not be null
    * @params none
    */
+
+  useEffect( () => {
+    if(phpResponse != null){
+      clearBlocklist();
+      for(song in phpResponse){
+        addBlocklist(song);
+      }
+    }
+    console.log(blockList);
+    addToQueue();
+  }, [phpResponse])
   
   async function addToQueue() {
+
     // Checks to see if in blocklist from QueueContext, can do anything based off that
     if (blocklist.includes(songChoice)) {
       console.log("Song is in blocklist! Not adding to queue.");
@@ -295,7 +305,7 @@ function Search() {
           ) : null}
 
           {/* clicking button calls the function to add song to queue */}
-          <button className = "queueButton" onClick = { () => addToQueue() } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
+          <button className="queueButton" onClick={() => blockList('block-list', cookie.get('roomCode'), songChoice.name) } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
 
           {/* clicking button calls the function to add song to queue */}
           <button className = "queueButton" onClick = { () => replaySong() } style={{ backgroundColor: palette[1]}}>Replay</button>

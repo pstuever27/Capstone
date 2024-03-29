@@ -134,9 +134,9 @@ function SettingsDrawer() {
   let listButtonPosition = ['0', '0'];
 
   if (location.pathname == '/join') {
-    listIcons = [LogoutIcon];
-    listText = ["Leave Room"];
-    listButtonFunction = [leaveRoom];
+    listIcons = [BlockIcon, LogoutIcon];
+    listText = ['Blocked Songs', 'Leave Room'];
+    listButtonFunction = [blockedSongs, leaveRoom];
   }
   else if (location.hash == '#/callback') {
     listIcons = [GuestIcon, BlockIcon, LogoutIcon, CloseIcon];
