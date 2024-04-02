@@ -18,6 +18,9 @@
  * Date Revised: 3/18/2024
  * Revision: Chinh Nguyen - Added setQueue implementation
  * 
+ * Date Revised: 4/1/2024
+ * Revision: Chinh Nguyen - Added moveRandomToFront() function to QueueContext
+ * 
  * Preconditions: 
  *  @inputs : None 
  * Postconditions:
@@ -92,6 +95,19 @@ function Home() {
     modQueue(anotherQueue); // replaces queue with another queue (will likely be a shuffled queue)
   }
 
+  const moveRandomToFront = () => {
+    const randomIndex = Math.floor(Math.random() * songQueue.length);
+    const selectedSong = songQueue[randomIndex];
+    const updatedQueue = [...songQueue];
+    updatedQueue.splice(randomIndex, 1);
+    updatedQueue.unshift(selectedSong);
+    modQueue(updatedQueue);
+
+    // Bug Testing
+    console.log("Queue should have randomly pushed a song to the front of queue.");
+    console.log(updatedQueue);
+  }
+
   const setFallbackTracks = (tracks) => {
     modFallback(tracks);
   }
@@ -147,7 +163,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, setFallbackTracks, addBlocklist, clearBlocklist }}>
+        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, moveRandomToFront, setFallbackTracks, addBlocklist, clearBlocklist }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />

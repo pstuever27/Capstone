@@ -30,6 +30,8 @@
 // Revision: Chinh added if conditions for checkbox element to add to queue at random instead of in-order
 // Revised on: 3/24/2024
 // Revision: Kieran added auto-removal of inactive guests and merged some queries for optimizing number of SQL connections
+// Revised on: 4/1/2024
+// Revision: Chinh altered sequence of events for skipping a song -- adds from the queue, then skips.
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -95,6 +97,8 @@ function NowPlaying() {
     if (location.hash == '#/callback' && (sessionStorage.getItem('skipLock')=='unlocked')) {
       if (votesData?.skipVotes) {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
+          addToQueue(songQueue[0].uri);
+          dequeue();
           skip();
           getNowPlaying();
           console.log("Executing majority skip...");
@@ -112,6 +116,8 @@ function NowPlaying() {
 
   const skipCounter = () => {
     if(location.pathname=='/host/'){ //hosts can always skip, from the location.pathname=='/host/' condition.
+      addToQueue(songQueue[0].uri);
+      dequeue();
       skip();
       getNowPlaying();
     }
@@ -134,7 +140,7 @@ function NowPlaying() {
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, fallbackTracks, dequeue, setQueue } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, dequeue, setQueue, moveRandomToFront } = useContext( QueueContext );
 
   const playNextSong = async (time_to_end) => {
     // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
@@ -152,22 +158,59 @@ function NowPlaying() {
       }
     } else {
       if (time_to_end < crossfade_stupid) {
+        // Shuffle Queue
         if (document.getElementById("shuffleQueue").checked) {
+          // THIS DOESNT WORK, WHY?
+          // console.log("random..?");
+          // moveRandomToFront();
+          // setTimeout(() => {
+          //   console.log("Adding song now.");
+          //   console.log(songQueue);
+          //   addToQueue(songQueue[0].uri);
+          //   dequeue();
+          // }, 1000);
+
           const randomIndex = Math.floor(Math.random() * songQueue.length);
-          addToQueue(songQueue[randomIndex].uri);
+          const selectedSong = songQueue[randomIndex];
+          const shuffledQueue = [...songQueue];
+          shuffledQueue.splice(randomIndex, 1);
+          shuffledQueue.unshift(selectedSong);
+          setQueue(shuffledQueue);
+          addToQueue(selectedSong.uri);
+          dequeue();
+        // Normal Queue
         } else {
           addToQueue(songQueue[0].uri);
+          dequeue();
         }
         dequeue();
       } else {
         setTimeout(() => {
+          // Shuffle Queue
           if (document.getElementById("shuffleQueue").checked) {
+            // THIS DOESNT WORK, WHY?
+            // console.log("random..?");
+            // moveRandomToFront();
+            // setTimeout(() => {
+            //   console.log("Adding song now.");
+            //   console.log(songQueue);
+            //   addToQueue(songQueue[0].uri);
+            //   dequeue();
+            // }, 1000);
+
             const randomIndex = Math.floor(Math.random() * songQueue.length);
-            addToQueue(songQueue[randomIndex].uri);
+            const selectedSong = songQueue[randomIndex];
+            const shuffledQueue = [...songQueue];
+            shuffledQueue.splice(randomIndex, 1);
+            shuffledQueue.unshift(selectedSong);
+            setQueue(shuffledQueue);
+            addToQueue(selectedSong.uri);
+            dequeue();
+          // Normal Queue
           } else {
             addToQueue(songQueue[0].uri);
+            dequeue();
           }
-          dequeue();
         }, time_to_end - crossfade_stupid);
       }
     }
