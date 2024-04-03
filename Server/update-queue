@@ -14,16 +14,17 @@ $stmt->execute();
 
 $queue = $_POST['queueList'];
 $index = 0;
+if($queue){
+    foreach($queue as $song){
+        $songName = $song['name'];
+        $songuri = $song['uri'];
+        
+        $stmt = $mysql->prepare('INSERT INTO queueList(roomCode, name, uri, pos) VALUES (?, ?, ?, ?)');
+        $stmt->bind_param('sssi', $_POST['roomCode'], $songName, $songuri, $index);
+        $stmt->execute();
 
-foreach($queue as $song){
-    $songName = $song['name'];
-    $songuri = $song['uri'];
-    
-    $stmt = $mysql->prepare('INSERT INTO queueList(roomCode, name, uri, pos) VALUES (?, ?, ?, ?)');
-    $stmt->bind_param('sssi', $_POST['roomCode'], $songName, $songuri, $index);
-    $stmt->execute();
-
-    $index++;
+        $index++;
+    }
 }
 
 

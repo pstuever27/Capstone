@@ -40,5 +40,6 @@ const queueAPI = () => {
         xhr.send('roomCode=' + roomCode + '&queueList=' + json);
 
     }
+    return { makeRequest, phpResponse };
 }
 export default queueAPI

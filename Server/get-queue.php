@@ -24,7 +24,7 @@ $mysql = SQLConnect();
 
 $status = 'wait';
 
-$stmt = $mysql->prepare('SELECT FROM queueList WHERE roomCode = ?');
+$stmt = $mysql->prepare('SELECT * FROM queueList WHERE roomCode = ?');
 
 $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute();

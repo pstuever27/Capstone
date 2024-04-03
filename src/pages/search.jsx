@@ -54,6 +54,7 @@ import phpAPI from '../phpApi';
 import Cookies from 'universal-cookie';
 import Notification from './notification';
 import { useForceUpdate } from '@mantine/hooks';
+import queueAPI from '../queueApi';
 
 
 function Search() {
@@ -74,6 +75,8 @@ function Search() {
   const { makeRequest: reqPlayer } = useHostAPI( 'https://api.spotify.com/v1/me/player' ); 
 
   const { makeRequest: blockListRequest, phpResponse } = phpAPI();
+
+  const { makeRequest: addQueueRequest, queueResponse } = queueAPI();
 
   const cookie = new Cookies();
 
@@ -181,6 +184,7 @@ function Search() {
         let code = urlParams.get( 'code' ) || "empty";
         // Adds songChoice to the queue context for rendering on screen AND the host's queue
         enqueue( songChoice ); 
+        addQueueRequest('update-queue', cookie.get("roomCode"), blocklist);
         setNotifMessage(`Added ${songChoice.name} to the queue`);
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
