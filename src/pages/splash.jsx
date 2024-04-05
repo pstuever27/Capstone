@@ -23,6 +23,8 @@
  *  Revision: Added cookies for information passing
  * Date Revised: 3/09/2024 - Kieran Delaney
  *  Revision: Added session storage initialization for more secure skiplock mechanism
+ * Date Revised: 4/05/2024 - Kieran Delaney
+ *  Revision: Added session storage initialization for replayLock mechanism
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -277,6 +279,7 @@ function Splash()
                 cookie.set('username', username, { path: '/' });
                 //"skipLock" session storage cookie is a boolean save state for ensuring that a user can only submit one vote towards skipping the current track. it is stored in cookies to ensure it won't be unlocked by refreshing the page
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
+                sessionStorage.setItem('replayLock', 'unlocked'); //initializes replayLock to be unlocked when first entering site
                 navigate("/join"); // Navigate to join.jsx
                 // navigate(path);
             }
@@ -287,6 +290,7 @@ function Splash()
                 cookie.set('username', username, { path: '/' });
                 //"skipLock" session storage cookie is needed for host too for the majority vote mechanism (more details in comments of NowPlaying.jsx)
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
+                sessionStorage.setItem('replayLock', 'unlocked'); //initializes replayLock to be unlocked when first entering site
                 navigate("/host"); // Navigate to host.jsx
             }
         }

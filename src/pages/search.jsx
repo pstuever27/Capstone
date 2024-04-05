@@ -13,6 +13,8 @@
 // Revision: Chinh implemented blocklist functionality utilizing QueueContext
 // Revised on: 3/18/2024
 // Revision: Chinh added two ways to shuffle queue, one via checkbox where it adds randomly from queue or one that actually shuffles live
+// Revised on: 4/05/2024
+// Revision: Kieran moved replay button to nowplaying block rather than being here to better match our design goals
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -234,53 +236,6 @@ function Search() {
   }
 
   /**
-   * @brief This function is used to replay the song that is currently playing on Spotify.
-   * 
-   * @precondition There is a currently playing song in the host's queue.
-   *               The user must be logged into Spotify.
-   * @params none
-   */
-  async function replaySong() {
-    // If the user has logged into spotify and the callback result is in the url bar
-    if (location.hash === '#/callback') {
-      // Parse the elements of the url, retain only the search query after `?` in the URL
-      let urlParams = new URLSearchParams(window.location.search);
-
-      // Get the code from the url; if the url doesn't contain a code, set code variable to "empty"
-      let code = urlParams.get('code') || "empty"; 
-      
-      // Calls the currently-playing API request
-      reqPlayer(`/currently-playing`, code).then( ( data ) => {
-        // Checks whether data and data.item exist are are truthy.
-        if( data && data.item ) { 
-          // Save the value returned by data.item to currentSong
-          const currentSong = data.item;
-
-          // Re-adds the song to the queue on screen.
-          enqueue( currentSong ); 
-          
-          // Adds the current song to the queue on screen, literally does nothing afterward 
-          // Why is this syntax necessary? This is stupid.
-          reqPlayer( `/queue?uri = ${ encodeURIComponent( currentSong.uri ) }`, code ).then( () => {} ) 
-        } 
-        
-        // If there is no currently playing song, show an alert
-        else {
-          // throw an alert, error dialog window
-          setNotifMessage( "No song is currently playing on Spotify." ); 
-        }
-      } );
-    }
-    
-    // If the url doesn't contain callback, it means they didn't login to spotify first
-    else {
-      // throw an alert, error dialog window
-      setNotifMessage("Must login to manipulate the Spotify queue");
-
-    }
-  }
-
-  /**
    * @brief This function is used to block a song from being added to the queue.
    */
   async function blockFromQueue(){
@@ -324,9 +279,6 @@ function Search() {
 
           {/* clicking button calls the function to add song to queue */}
           <button className="queueButton" onClick={() => blockListRequest('block-list', cookie.get('roomCode'), songChoice.name) } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
-
-          {/* clicking button calls the function to add song to queue */}
-          <button className = "queueButton" onClick = { () => replaySong() } style={{ backgroundColor: palette[1]}}>Replay</button>
 
           {/* clicking button calls the function to block the song from queue */
             location.hash === '#/callback' ?

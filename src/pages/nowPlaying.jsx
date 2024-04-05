@@ -127,6 +127,34 @@ function NowPlaying() {
     }
   }
 
+  /**
+   * @brief This function is used to replay the song that is currently playing on Spotify.
+   * 
+   * @precondition There is a currently playing song in the host's queue.
+   *               The user must be logged into Spotify.
+   * @params none
+   */
+  const replaySong = () => {
+    alert("replay") //testing purposes. remove after implementing
+
+    // run replay on host
+    if (location.hash === '#/callback') {   
+      //use nowPlayingSong object to select the current track to add back to queue for replay
+      //add this current track to the front of the songQueue[] to add the current track to the local queue
+    }
+  }
+
+  //Replay voting
+  const replayVote = () => {
+    if(location.pathname=='/host/'){ //hosts can always replay, from the location.pathname=='/host/' condition.
+      replaySong(); //calls the replay function
+    }
+    if(location.pathname=='/join' && (sessionStorage.getItem('replayLock')=='unlocked')){ //otherwise, majority of users must vote for replay. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
+      votesReq("vote-replay", roomCode, username); //submit vote for replaying track
+      sessionStorage.setItem('replayLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
+    }
+  }
+
   //runs when a change occurs in the url, allowing now playing to run once immediately upon logging in
   const location = useLocation();
   useEffect( () => {
@@ -296,16 +324,22 @@ function NowPlaying() {
               </ColorExtractor>
               <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer" id = "breadcrumb" style={{ backgroundColor: palette[1], display: haveImg }}>Open in Spotify <b>&#9758;</b></a>
               <div id = "playback_info">
+                {/* REPLAY BUTTON: clicking button calls the function to add song to queue */}
+                <div>
+                  <button id="replay" className={(sessionStorage.getItem('replayLock')=='locked') ? "buttonlock" : ""} onClick = { () => replayVote() } style={{ backgroundColor: palette[1]}}>Replay</button>
+                </div>
+                {/* TRACK INFO */}
                 <div id = "track_info">
                   <p id = "title">{nowPlayingSong?.name}</p>
                   <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
-              </div>
-              <div>
-                {(votesData?.skipVotes)
-                ? 
-                  <p>{votesData?.skipVotes[0]}</p>
-                : null}
-                  <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "skiplock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
+                </div>
+                {/* SKIP BUTTON: shows skipvotes and has skip button */}
+                <div>
+                  {(votesData?.skipVotes)
+                  ? 
+                    <p>{votesData?.skipVotes[0]}</p>
+                  : null}
+                  <img id="skip" className={(sessionStorage.getItem('skipLock')=='locked') ? "buttonlock" : ""} onClick={() => { skipCounter(); }} src={skipImg} />
                 </div>
               </div>
             </div>

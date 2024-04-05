@@ -177,6 +177,19 @@ body {
   margin: 0;
 }
 
+#replay {
+  height: 24px;
+  margin: 0;
+  cursor: pointer;
+  position: relative;
+  left: 0px;
+  transition: left ease 0.1s;
+}
+
+#replay:hover{
+  left: 5px;
+}
+
 #skip {
   height: 24px;
   margin: 0;
@@ -186,17 +199,17 @@ body {
   transition: left ease 0.1s;
 }
 
-.skiplock {
+#skip:hover{
+  left: 5px;
+}
+
+.buttonlock {
   opacity:0.4;
   filter:alpha(opacity=40);
   cursor:default !important;
 }
-.skiplock:hover{
+.buttonlock:hover{
   left:0px !important;
-}
-
-#skip:hover{
-  left: 5px;
 }
 
 #dequeue {
