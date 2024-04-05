@@ -102,7 +102,7 @@ function SettingsDrawer() {
 
   const closeRoom = () => {
     makeRequest("close-room", roomCode, null);
-    window.location.href = '/';
+    //window.location.href = '/'; //this should remain commented out! don't want this redirect to happen here. we only want it to happen once we know the close room is successful with status "closed", which is detected and the redirect is done in phpApi.jsx
   };
 
   const leaveRoom = () => {

@@ -163,6 +163,8 @@ body {
 
 #track_info {
   width: 300px;
+  padding-left: 20%; /* added this for leaving room for replay button to left of track info */
+  padding-right: 20%; /* for skip button */
 }
 
 #title {

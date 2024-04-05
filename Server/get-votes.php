@@ -6,6 +6,7 @@
  * Programmer's Name: Kieran Delaney
  * Date Created: 2/24/2024
  * Date Revised: 3/24/2024 - Kieran Delaney - Was originally just get-skip-votes.php, but modified it in this revision to be more than just skipVotes, by also adding guest list for majority skip, and the pings of the guests for auto-removal of inactive guests. This one command will return all the data we need for managing votes in our app for various things. 
+ * Date Revised: 4/05/2024 - Kieran Delaney - Added replayVotes to also be returned
  * Preconditions: 
  *  @inputs : Requires input from Javascript to do SQL query
  * Postconditions:
@@ -30,9 +31,11 @@ $status = 'wait';
 
 //Check if the gamecode exists
 $skipVoteStmt = $mysql->prepare('SELECT skipVotes FROM room WHERE BINARY roomCode = ?');
+$replayVoteStmt = $mysql->prepare('SELECT replayVotes FROM room WHERE BINARY roomCode = ?');
 $guests = $mysql->prepare('SELECT userName, ping FROM client WHERE roomCode = ?');
 //Set parameter to 'roomCode' from JS call
 $skipVoteStmt->bind_param('s', $_POST['roomCode']);
+$replayVoteStmt->bind_param('s', $_POST['roomCode']);
 $guests->bind_param('s', $_POST['roomCode']);
 
 //Execute SQL 
@@ -42,6 +45,14 @@ $SkipVoteArr = $skipVoteStmt->get_result();
 //Get the row 
 $skipRow = mysqli_fetch_row($SkipVoteArr);
 $SkipVoteArr->free_result();
+
+//Execute SQL 
+$replayVoteStmt->execute();
+//Grab the result from the SQL query. this should hold the replayVotes array
+$ReplayVoteArr = $replayVoteStmt->get_result();
+//Get the row 
+$replayRow = mysqli_fetch_row($ReplayVoteArr);
+$ReplayVoteArr->free_result();
 
 $guests->execute();
 $GuestsResult = $guests->get_result();
@@ -77,6 +88,7 @@ else {
     //Set up JSON to respond with
     $response = [
         'skipVotes' => $skipRow, //gets the value from the skipVotes cell
+        'replayVotes' => $replayRow, //replayVotes cell
         'guestList' => array($guestList),
         'status' => $status,
     ];

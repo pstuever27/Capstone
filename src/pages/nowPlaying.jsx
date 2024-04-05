@@ -32,6 +32,8 @@
 // Revision: Kieran added auto-removal of inactive guests and merged some queries for optimizing number of SQL connections
 // Revised on: 4/1/2024
 // Revision: Chinh altered sequence of events for skipping a song -- adds from the queue, then skips.
+// Revised on: 4/5/2024
+// Revision: Kieran added replay voting
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -57,6 +59,7 @@ import Cookies from 'universal-cookie';
 
 
 import skipImg from '../images/skip.svg'
+import replayImg from '../images/replay.png'
 
 
 function NowPlaying() { 
@@ -92,12 +95,30 @@ function NowPlaying() {
           sessionStorage.setItem('skipLock', 'unlocked'); //unlock skiplock for all users 
         }
       }
+      if(votesData?.replayVotes){
+        if(votesData?.replayVotes[0] == 0){
+          sessionStorage.setItem('replayLock', 'unlocked'); //unlocks replaylock for all users
+        }
+      }
     }
     //we need this to only happen for host, so that duplicate skips aren't made by all the guests at once. doesn't run if guestList is null
-    if (location.hash == '#/callback' && (sessionStorage.getItem('skipLock')=='unlocked')) {
-      if (votesData?.skipVotes) {
+    if (location.hash == '#/callback') {
+      if (votesData?.skipVotes && (sessionStorage.getItem('skipLock')=='unlocked')) {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
-          addToQueue(songQueue[0].uri);
+          // Empty queue, need to pull back from fallback
+          if (songQueue.length === 0) {
+            // Handle the case where the queue is empty
+            if (fallbackTracks.length > 0) {
+              const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+              addToQueue(fallbackTracks[randomIndex]);
+            } else {
+              console.log("If you're seeing this, serious error.");
+            }
+          }
+          // There IS a song in the queue (DOES NOT HANDLE SHUFFLE YET, STILL WORKING ON THAT! SHOULD PROBABLY CREATE A NEW FUNCTION, LOTS OF REPEATED CODE BLOCKS)
+          else {
+            addToQueue(songQueue[0].uri);
+          }
           dequeue();
           skip();
           getNowPlaying();
@@ -105,12 +126,20 @@ function NowPlaying() {
           sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
       }
+
+      if (votesData?.replayVotes && (sessionStorage.getItem('replayLock')=='unlocked')) {
+        if ((votesData?.replayVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can replay
+          console.log("Executing majority replay...");
+          replaySong(); //calls our replay song function to add current track to top of queue
+          sessionStorage.setItem('replayLock', 'locked'); //needed to prevent duplicate replays. this temporarily locks the host from replaying anymore until all the asyncronous tasks (replaying track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
+        }
+      }
     }
   }, [votesData]);
   
-  const resetSkipVotes = () => {
+  const resetVotes = () => {
     if(location.pathname=='/host/'){ //this is done to prevent the reset from occuring every time a new user joins the room or when someone refreshes their page
-      votesReq("reset-skip", roomCode, username); //resets database skip vote counter to 0
+      votesReq("reset-votes", roomCode, username); //resets database skip and replay vote counters to 0
     }
   }
 
@@ -158,13 +187,16 @@ function NowPlaying() {
   }
 
   //Replay voting
-  const replayVote = () => {
-    if(location.pathname=='/host/'){ //hosts can always replay, from the location.pathname=='/host/' condition.
-      replaySong(); //calls the replay function
-    }
-    if(location.pathname=='/join' && (sessionStorage.getItem('replayLock')=='unlocked')){ //otherwise, majority of users must vote for replay. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
-      votesReq("vote-replay", roomCode, username); //submit vote for replaying track
-      sessionStorage.setItem('replayLock', 'locked'); //locks the user's voting priveledges since they've submitted their vote
+  const voteReplay = () => {
+    if(sessionStorage.getItem('replayLock')=='unlocked'){ //if user already used replay button for this current track, we don't want them spamming for more replays
+      if(location.pathname=='/host/'){ //hosts can always replay, from the location.pathname=='/host/' condition.
+        sessionStorage.setItem('replayLock', 'locked'); //locks host's replay until track changes, as we only want to allow replaying once for a song, not being able to repeatedly add it back to the queue
+        replaySong(); //calls the replay function
+      }
+      if(location.pathname=='/join'){ //otherwise, majority of users must vote for replay. each user is only allowed to vote once
+        votesReq("vote-replay", roomCode, username); //submit vote for replaying track
+        sessionStorage.setItem('replayLock', 'locked'); //this lock is done after sending the vote so that the frame has updated with the newly added vote. the reason we don't want to put this lock before sending the vote is that if the votes are 0, then the lock will unlock before the vote has registered being sent
+      }
     }
   }
 
@@ -284,7 +316,8 @@ function NowPlaying() {
           console.log(`Username of guest #${index}: ${guest.userName}\t(ping ${pingToGuest}sec)`);
           if(pingToGuest >=30){ //ping should be ~10-20 seconds, but if it's 30 or greater, we know that the guest is no longer active (they closed their tab without clicking Leave Room) and should be kicked due to inactivity so they don't skew the majority voting numbers
             console.log(`Removing inactive guest "${guest.userName}".`);
-            makeReq('kick', roomCode, guest.userName); //runs our kick.php command to remove the user if they're inactive. can take several seconds before the command completes, so the console might show that it's removing them twice but that can be ignored
+            //temporarily commented out for testing
+            //makeReq('kick', roomCode, guest.userName); //runs our kick.php command to remove the user if they're inactive. can take several seconds before the command completes, so the console might show that it's removing them twice but that can be ignored
           }
         });
       }
@@ -294,7 +327,7 @@ function NowPlaying() {
     if(phpResponse){ //only runs if the phpResponse of the getNowPlaying call is different than it was last time we checked, so this code below only runs when the track changes.
       if(phpResponse?.item){
         if( nowPlayingSong?.name != phpResponse?.item.name & nowPlayingSong?.artists != phpResponse?.item.artists ) {
-          resetSkipVotes();
+          resetVotes();
           setNowPlayingSong(phpResponse.item); //sets our current track save state to the new track, so we can render the track's content on the screen as the track changes in spotify
           // dequeue();   //removes the previous track from our ui queue
         }
@@ -339,7 +372,11 @@ function NowPlaying() {
               <div id = "playback_info">
                 {/* REPLAY BUTTON: clicking button calls the function to add song to queue */}
                 <div>
-                  <button id="replay" className={(sessionStorage.getItem('replayLock')=='locked') ? "buttonlock" : ""} onClick = { () => replayVote() } style={{ backgroundColor: palette[1]}}>Replay</button>
+                  {(votesData?.replayVotes)
+                  ? 
+                    <p>{votesData?.replayVotes[0]}</p>
+                  : null}
+                  <img id="replay" className={(sessionStorage.getItem('replayLock')=='locked') ? "buttonlock" : ""} onClick = { () => {voteReplay(); }} src={replayImg} />
                 </div>
                 {/* TRACK INFO */}
                 <div id = "track_info">
