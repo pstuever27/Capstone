@@ -97,7 +97,20 @@ function NowPlaying() {
     if (location.hash == '#/callback' && (sessionStorage.getItem('skipLock')=='unlocked')) {
       if (votesData?.skipVotes) {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
-          addToQueue(songQueue[0].uri);
+          // Empty queue, need to pull back from fallback
+          if (songQueue.length === 0) {
+            // Handle the case where the queue is empty
+            if (fallbackTracks.length > 0) {
+              const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+              addToQueue(fallbackTracks[randomIndex]);
+            } else {
+              console.log("If you're seeing this, serious error.");
+            }
+          }
+          // There IS a song in the queue (DOES NOT HANDLE SHUFFLE YET, STILL WORKING ON THAT! SHOULD PROBABLY CREATE A NEW FUNCTION, LOTS OF REPEATED CODE BLOCKS)
+          else {
+            addToQueue(songQueue[0].uri);
+          }
           dequeue();
           skip();
           getNowPlaying();
