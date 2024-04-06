@@ -34,6 +34,8 @@
 // Revision: Chinh altered sequence of events for skipping a song -- adds from the queue, then skips.
 // Revised on: 4/5/2024
 // Revision: Kieran added replay voting
+// Revised on: 4/6/2024
+// Revision: Chinh fully implemented shuffle queue checkbox, working shuffle mode and queue is updated properly. Also, skip function now also handles all modes -- possibly random button obsolete?
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -105,21 +107,7 @@ function NowPlaying() {
     if (location.hash == '#/callback') {
       if (votesData?.skipVotes && (sessionStorage.getItem('skipLock')=='unlocked')) {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
-          // Empty queue, need to pull back from fallback
-          if (songQueue.length === 0) {
-            // Handle the case where the queue is empty
-            if (fallbackTracks.length > 0) {
-              const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
-              addToQueue(fallbackTracks[randomIndex]);
-            } else {
-              console.log("If you're seeing this, serious error.");
-            }
-          }
-          // There IS a song in the queue (DOES NOT HANDLE SHUFFLE YET, STILL WORKING ON THAT! SHOULD PROBABLY CREATE A NEW FUNCTION, LOTS OF REPEATED CODE BLOCKS)
-          else {
-            addToQueue(songQueue[0].uri);
-          }
-          dequeue();
+          playNextSong(0);
           skip();
           getNowPlaying();
           console.log("Executing majority skip...");
@@ -145,21 +133,7 @@ function NowPlaying() {
 
   const skipCounter = () => {
     if(location.pathname=='/host/'){ //hosts can always skip, from the location.pathname=='/host/' condition.
-      // Empty queue, need to pull back from fallback
-      if (songQueue.length === 0) {
-        // Handle the case where the queue is empty
-        if (fallbackTracks.length > 0) {
-          const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
-          addToQueue(fallbackTracks[randomIndex]);
-        } else {
-          console.log("If you're seeing this, serious error.");
-        }
-      }
-      // There IS a song in the queue (DOES NOT HANDLE SHUFFLE YET, STILL WORKING ON THAT! SHOULD PROBABLY CREATE A NEW FUNCTION, LOTS OF REPEATED CODE BLOCKS)
-      else {
-        addToQueue(songQueue[0].uri);
-      }
-      dequeue();
+      playNextSong(0);
       skip();
       getNowPlaying();
     }
@@ -220,65 +194,41 @@ function NowPlaying() {
     // making it super hard to squeeze the next song in before the current song ends
     let crossfade_stupid = 6000; // right now, it seems like a good area is ~4s greater than crossfade.
 
+    // ADDING FROM FALLBCAK
     if (songQueue.length === 0) {
       console.log("Queue is empty, pulling from fallbackTracks");
-      // Handle the case where the queue is empty
       if (fallbackTracks.length > 0) {
         const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
         addToQueue(fallbackTracks[randomIndex]);
       } else {
         console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
       }
+    // ADDING FROM QUEUE
     } else {
       if (time_to_end < crossfade_stupid) {
         // Shuffle Queue
         if (document.getElementById("shuffleQueue").checked) {
-          // THIS DOESNT WORK, WHY?
-          // console.log("random..?");
-          // moveRandomToFront();
-          // setTimeout(() => {
-          //   console.log("Adding song now.");
-          //   console.log(songQueue);
-          //   addToQueue(songQueue[0].uri);
-          //   dequeue();
-          // }, 1000);
-
           const randomIndex = Math.floor(Math.random() * songQueue.length);
           const selectedSong = songQueue[randomIndex];
-          const shuffledQueue = [...songQueue];
-          shuffledQueue.splice(randomIndex, 1);
-          shuffledQueue.unshift(selectedSong);
+          const shuffledQueue = songQueue.filter(song => song !== selectedSong);
+
           setQueue(shuffledQueue);
           addToQueue(selectedSong.uri);
-          dequeue();
         // Normal Queue
         } else {
           addToQueue(songQueue[0].uri);
           dequeue();
         }
-        dequeue();
       } else {
         setTimeout(() => {
           // Shuffle Queue
           if (document.getElementById("shuffleQueue").checked) {
-            // THIS DOESNT WORK, WHY?
-            // console.log("random..?");
-            // moveRandomToFront();
-            // setTimeout(() => {
-            //   console.log("Adding song now.");
-            //   console.log(songQueue);
-            //   addToQueue(songQueue[0].uri);
-            //   dequeue();
-            // }, 1000);
-
             const randomIndex = Math.floor(Math.random() * songQueue.length);
             const selectedSong = songQueue[randomIndex];
-            const shuffledQueue = [...songQueue];
-            shuffledQueue.splice(randomIndex, 1);
-            shuffledQueue.unshift(selectedSong);
+            const shuffledQueue = songQueue.filter(song => song !== selectedSong);
+
             setQueue(shuffledQueue);
             addToQueue(selectedSong.uri);
-            dequeue();
           // Normal Queue
           } else {
             addToQueue(songQueue[0].uri);
