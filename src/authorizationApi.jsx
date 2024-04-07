@@ -164,13 +164,13 @@ const authorizationApi = () => {
                         throwError(response.error);
                     }
                     else {
-                        console.log(response);
+                        // console.log(response);
                         setResponse(response);
                     }
                 }
                 catch (err) {
                     //Catch whatever error was thrown. This also catches PHP errors to display them
-                    console.log(err);
+                    // console.log(err);
                     throwError(err);
                 }
             }

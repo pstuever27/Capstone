@@ -24,7 +24,7 @@ $mysql = SQLConnect();
 
 $status = 'wait';
 
-$stmt = $mysql->prepare('SELECT FROM queueList WHERE roomCode = ?');
+$stmt = $mysql->prepare('SELECT songInfo FROM queueList WHERE roomCode = ?');
 
 $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute();
@@ -42,16 +42,11 @@ if(!$result || !$row) {
     echo json_encode($response);
     return;
 }
-else{
-    $status = 'ok';
-    if ($row) {
-        $myArray[] = $row; //this is needed for when only one guest, as the while loop won't execute
-    }
-    while ($row = $result->fetch_assoc()) {
-        $myArray[] = $row;
-    }
-    $mysql->close();
-    echo json_encode($myArray);
+else {
+    $response = $row['songInfo'];
 }
+
+echo($response);
+
 exit(200);
 ?>

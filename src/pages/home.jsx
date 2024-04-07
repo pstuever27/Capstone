@@ -108,6 +108,10 @@ function Home() {
     console.log(updatedQueue);
   }
 
+  const clearQueue = () => {
+    modQueue([]);
+  }
+
   const setFallbackTracks = (tracks) => {
     modFallback(tracks);
   }
@@ -163,7 +167,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, moveRandomToFront, setFallbackTracks, addBlocklist, clearBlocklist }}>
+        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, clearQueue, moveRandomToFront, setFallbackTracks, addBlocklist, clearBlocklist }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />

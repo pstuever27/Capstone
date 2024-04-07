@@ -112,7 +112,6 @@ function SettingsDrawer() {
 
   const guestList = () => {
     //TODO: Add component that displays guest list
-    console.log('test');
     toggleGuests();
   };
 

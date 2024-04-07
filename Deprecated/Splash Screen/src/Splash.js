@@ -103,7 +103,7 @@ function Splash()
             // if the code is not completely empty, remove placeholder text in input boxes
             if( codeCopy.join() != "" )
             {
-                console.log( "butthole 1" );
+                // console.log( "butthole 1" );
                 setPlaceHolderCode( [ '', '', '', '' ] );
             }
 
@@ -122,7 +122,7 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                 } );
-                console.log( "black" );
+                // console.log( "black" );
 
                 // this block of code is for the fade out effect
                 setTimeout(() => {
@@ -169,7 +169,7 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "tealText" );
                 } );
-                console.log( "teal" );
+                // console.log( "teal" );
             }
 
             // handle focus advancement of input boxes once a valid input is given
@@ -200,7 +200,7 @@ function Splash()
     };
 
     const sync = () => {
-        console.log( code.join( '' ) );
+        // console.log( code.join( '' ) );
     };
 
     return (

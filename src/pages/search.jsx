@@ -56,6 +56,7 @@ import phpAPI from '../phpApi';
 import Cookies from 'universal-cookie';
 import Notification from './notification';
 import { useForceUpdate } from '@mantine/hooks';
+import queueAPI from '../queueApi';
 
 
 function Search() {
@@ -77,6 +78,8 @@ function Search() {
 
   const { makeRequest: blockListRequest, phpResponse } = phpAPI();
 
+  const { makeRequest: addQueueRequest, queueResponse } = queueAPI();
+
   const cookie = new Cookies();
 
   // An empty list state is used to store search results.
@@ -94,6 +97,10 @@ function Search() {
   const [openNotif, setOpenNotif] = useState(null);
 
   const [notifMessage, setNotifMessage] = useState(null);
+
+  const [previousQueue, setPreviousQueue] = useState([]);
+  
+  const { songQueue, setQueue } = useContext(QueueContext);
 
   const { getInputProps, getListboxProps, getOptionProps,  groupedOptions } = useAutocomplete( {
     /***************************************************************************/
@@ -142,13 +149,10 @@ function Search() {
   useEffect(() => {
     clearBlocklist();
     if (phpResponse) {
-      console.log("hereeeee");
       if (!phpResponse.status) {
         phpResponse.map((id, index) => {
-          console.log(id.name);
           addBlocklist(id.name);
         })
-        console.log(blocklist);
       }
     }
     addToQueue();
@@ -160,8 +164,6 @@ function Search() {
     let blocked = false;
 
     blocklist.map((song, index) => {
-      console.log("Blocked song: ", song);
-      console.log("Chosen: ", songChoice.name);
       if (song == songChoice.name) {
         blocked = true
       }
@@ -182,7 +184,8 @@ function Search() {
         // Get the code from the url; if the url doesn't contain a code, set code variable to "empty"
         let code = urlParams.get( 'code' ) || "empty";
         // Adds songChoice to the queue context for rendering on screen AND the host's queue
-        enqueue( songChoice ); 
+        setPreviousQueue(songQueue);
+        enqueue(songChoice); 
         setNotifMessage(`Added ${songChoice.name} to the queue`);
         // calls the add to queue API request
         // `.then( () => {} )` literally does nothing. `then()` is required syntax. 
@@ -228,8 +231,6 @@ function Search() {
       // print spotify request json data to the browser's console. 
       // useful for navigating through the json structure with the gui dropdowns as a reference on how 
       //  to access certain data you need within it
-      console.log( data ); 
-
       // adds each spotify track data object into our array
       setSearchRes( data.tracks.items.map( item => item ) );
     } );
@@ -248,7 +249,15 @@ function Search() {
   }
 
   
-  const { songQueue, setQueue } = useContext( QueueContext );
+
+  
+  useEffect(() => {
+    // console.log("Previous:", previousQueue);
+    // console.log("Current:", songQueue);
+    if (songQueue && (songQueue != previousQueue)) {
+      addQueueRequest('update-queue', cookie.get("roomCode"), songQueue);
+    }
+  }, [songQueue])
 
   async function shuffleQueueBtn() {
     const shuffledQueue = [...songQueue].sort(() => Math.random() - 0.5);

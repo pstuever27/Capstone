@@ -127,7 +127,7 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                 } );
-                console.log( "black" );
+                // console.log( "black" );
             }
 
             else
@@ -141,7 +141,7 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "tealText" );
                 } );
-                console.log( "teal" );
+                // console.log( "teal" );
             }
 
             // handle focus advancement of input boxes once a valid input is given
@@ -184,7 +184,7 @@ function Splash()
             // prevent name entry on incomplete code entry
             if( roomCode.join("").length < 4 ) 
             {
-                console.log( "silly goose" );
+                // console.log( "silly goose" );
                 return;
             }
             makeRequest("join", roomCode.join(""));
@@ -209,7 +209,7 @@ function Splash()
         for (var i = 0; i < 4; i++) {
             code += chars[Math.floor(Math.random() * chars.length)];
         }
-        console.log(code); //Console log for dev purposes
+        // // console.log(code); //Console log for dev purposes
         return code;
     };
 
@@ -222,7 +222,7 @@ function Splash()
             setHostJoinSuccess(true); //Set the hostJoinSuccess state to true
         }
         else { //Doesn't get hit right now, after spotify integration it will be fixed.
-            console.log("Doing spotify login flow...");
+            // console.log("Doing spotify login flow...");
             //Call spotify login flow and store necessary info there
         }
     }
@@ -258,24 +258,24 @@ function Splash()
         if (phpResponse) {
             // Case for good room code on join
             if (phpResponse.status == 'ok_join') {
-                console.log("good!");
+                // console.log("good!");
                 cookie.set('roomCode', roomCode.join(""), { path: '/' });
             }
             //Case for good room code generation on host 
             if (phpResponse.status == 'ok_host') {
-                console.log("good host!");
+                // console.log("good host!");
                 dispatch(setCode(hostCode));
             }
             //Error handling
             else if (phpResponse.status == 'error') {
-                console.log(phpResponse.error); // This will need to be replaced with front-end error box
+                // console.log(phpResponse.error); // This will need to be replaced with front-end error box
                 if (phpResponse.error == 'Bad host code!') {
                     // genCode();
                 }
             }
             // Case for good name entry on join
             else if (phpResponse.status == "good_name") {
-                console.log("moving on!");
+                // console.log("moving on!");
                 cookie.set('username', username, { path: '/' });
                 //"skipLock" session storage cookie is a boolean save state for ensuring that a user can only submit one vote towards skipping the current track. it is stored in cookies to ensure it won't be unlocked by refreshing the page
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
@@ -285,7 +285,7 @@ function Splash()
             }
             // Case for good name entry on host. Shouldn't fail unless there's server error
             else if (phpResponse.status == "good_host_name") {
-                console.log("Host good!");
+                // console.log("Host good!");
                 cookie.set('roomCode', roomCode, { path: '/' });
                 cookie.set('username', username, { path: '/' });
                 //"skipLock" session storage cookie is needed for host too for the majority vote mechanism (more details in comments of NowPlaying.jsx)

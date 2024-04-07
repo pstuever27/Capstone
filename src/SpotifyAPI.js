@@ -48,7 +48,7 @@ export const useAPI = url => { // exports these functions to the other module th
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
-        console.log( data.accessToken + " fart" );
+        // console.log( data.accessToken + " fart" );
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
 
@@ -71,7 +71,7 @@ export const useAPI = url => { // exports these functions to the other module th
         }
         
         // get token if it hasn't been made yet
-        console.log( accessToken );
+        // console.log( accessToken );
         let token = accessToken; //sets to local variable so it updates in this render cycle
         if(token == null){ // check if token is the initial null state
             token = await refreshToken(); // if so, set it to a new token
@@ -121,14 +121,14 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
 
         // INVALID GRANT: AUTHORIZATION CODE EXPIREED. 
-        console.log( data );
-        if( data.error ) console.log( data.error + ": " + data.error_description );
-        console.log( "code: " + code );
+        // console.log( data );
+        // if( data.error ) console.log( data.error + ": " + data.error_description );
+        // console.log( "code: " + code );
 
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
-        console.log( "access token: " + data.access_token );
+        // console.log( "access token: " + data.access_token );
         setRefreshToken(data.refresh_token); //sets the refresh token parameter which is used later for the refresh token requests
-        console.log( "refresh token: " + data.refresh_token );
+        // console.log( "refresh token: " + data.refresh_token );
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
 
@@ -148,7 +148,7 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         }
         const result = await fetch('https://accounts.spotify.com/api/token', param); // asyncronously fetches the response from the spotify token call request passing in the base token url and our parameters
         const data = await result.json(); // converts the response stream to a json structure of the body, and sets the data variable to this
-        console.log( "useHostAPI " + data );
+        // console.log( "useHostAPI " + data );
         setAccessToken(data.access_token); //saves the new token to our state to be reused if the request is made again within the token lifetime
         return data.access_token; //token is returned so we can use this new token in this render cycle of the react app. otherwise it won't be reflected until the next render cycle (when the token save state is updated) which will be after the refresh function runs
     };
@@ -183,11 +183,11 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
         
         // get token if it hasn't been made yet
         let token = hostAccessToken; //sets to local variable so it updates in this render cycle
-        console.log( token );
+        // console.log( token );
 
         if(token == null){ // check if token is the initial null state
             token = await createToken(code); // if so, set it to a new token
-            console.log( "makeRequest createToken(code) " + token );
+            // console.log( "makeRequest createToken(code) " + token );
         }
 
         if(urlOptions=='/currently-playing'){ //now playing call
@@ -214,8 +214,8 @@ export const useHostAPI = url => { // this is needed for api calls that work wit
                 "message": "Player command failed: No active device found",
                 "reason": "NO_ACTIVE_DEVICE"
         */
-       console.log( token );
-       console.log( result );
+    //    console.log( token );
+    //    console.log( result );
         if (result.status != 204)
             alert("ERROR: No active device found. Please ensure that you're logged into spotify and currently have something playing. Then add to queue should work. Result.status: " + result.status + ".");
                 // window.location.reload();
