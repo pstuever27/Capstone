@@ -58,7 +58,7 @@ const hideCode = () => {
 const showCodeHost = (msg, code, username) => {
     localStorage.setItem('message', JSON.stringify(msg));
     localStorage.setItem('code', JSON.stringify(code));
-    console.log( username );
+    // console.log( username );
     localStorage.setItem('hostName', JSON.stringify(username));
 }
 
@@ -66,7 +66,7 @@ const showCodeHost = (msg, code, username) => {
 const showCodeJoin = (msg, code, username) => {
     localStorage['message'] = msg;
     localStorage['code'] = code;
-    console.log( username );
+    // console.log( username );
     localStorage['username'] = username;
 }
 
@@ -85,7 +85,7 @@ const phpAPI = (url, roomCode, username, callBack) => {
         let response;
         //try/catch if JSON works
         try {
-            console.log(xhr.responseText);
+            // console.log(xhr.responseText);
             //Response should have a JSON in it, if not, this will error out
             response = JSON.parse(xhr.responseText);
             //If error, then throw an error
@@ -102,7 +102,7 @@ const phpAPI = (url, roomCode, username, callBack) => {
         }
         catch (err) {
             //Catch whatever error was thrown. This also catches PHP errors to display them
-            console.log(err);
+            // console.log(err);
             throwError(err);
         }
     }
@@ -174,7 +174,7 @@ const join = () => {
         return;
     }
     //If regex good, then call PHP
-    console.log( username );
+    // console.log( username );
     phpAPI('join', roomCode, username, (response) => {
         //If the room is found, then open join room display roomCode. If not, PHP will show error in phpAPI 
         if( response.status === 'ok' ) {

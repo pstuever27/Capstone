@@ -23,7 +23,7 @@ const queueAPI = () => {
                 let response;
                 try{
 
-                    if(response.status === 'error') {
+                    if(response?.status === 'error') {
                         throwError(response.error);
                     }
                     else{

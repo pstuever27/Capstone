@@ -12,19 +12,16 @@ $stmt = $mysql->prepare('DELETE FROM queueList WHERE roomCode = ?');
 $stmt->bind_param('s', $_POST['roomCode']);
 $stmt->execute();
 
-$queue = $_POST['queueList'];
+$queue = json_decode($_POST['queueList'], true);
 $index = 0;
 if($queue){
-    foreach($queue as $song){
-        $songName = $song['name'];
-        $songuri = $song['uri'];
         
-        $stmt = $mysql->prepare('INSERT INTO queueList(roomCode, name, uri, pos) VALUES (?, ?, ?, ?)');
-        $stmt->bind_param('sssi', $_POST['roomCode'], $songName, $songuri, $index);
+        $stmt = $mysql->prepare('INSERT INTO queueList(roomCode, songInfo, pos) VALUES (?, ?, ?)');
+        $stmt->bind_param('ssi', $_POST['roomCode'], $_POST['queueList'], $index);
         $stmt->execute();
 
         $index++;
-    }
+
 }
 
 

@@ -37,7 +37,7 @@ function ListMaker ( {blocked} ) {
 
     const location = useLocation();
 
-    console.log(blocked);
+    // console.log(blocked);
 
     // const confirmationOverlay = (open) => {(
     // <>
@@ -98,7 +98,7 @@ function BlockList () {
                 setBlockList(phpResponse);
             }
         }
-        console.log("Blocked: ", phpResponse)
+        // console.log("Blocked: ", phpResponse)
     }, [phpResponse])
 
     useForceUpdate((null), [phpResponse])

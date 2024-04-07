@@ -97,7 +97,7 @@ function NowPlaying() {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
           skip();
           getNowPlaying();
-          console.log("Executing majority skip...");
+          // console.log("Executing majority skip...");
           sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
       }
@@ -124,17 +124,17 @@ function NowPlaying() {
   //runs when a change occurs in the url, allowing now playing to run once immediately upon logging in
   const location = useLocation();
   useEffect( () => {
-    console.log(location);
+    // console.log(location);
     if(location.hash == '#/callback' || location.pathname == '/join') {
       getNowPlaying();
-      makeReq('get-queue', roomCode, username);
+      getQueue('get-queue', roomCode, username);
     }
   }, [location.pathname]);
 
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, fallbackTracks, dequeue, setQueue } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, dequeue, setQueue, clearQueue } = useContext( QueueContext );
 
   const playNextSong = async (time_to_end) => {
     // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
@@ -142,13 +142,13 @@ function NowPlaying() {
     let crossfade_stupid = 6000; // right now, it seems like a good area is ~4s greater than crossfade.
 
     if (songQueue.length === 0) {
-      console.log("Queue is empty, pulling from fallbackTracks");
+      // console.log("Queue is empty, pulling from fallbackTracks");
       // Handle the case where the queue is empty
       if (fallbackTracks.length > 0) {
         const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
         addToQueue(fallbackTracks[randomIndex]);
       } else {
-        console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
+        // console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
       }
     } else {
       if (time_to_end < crossfade_stupid) {
@@ -180,13 +180,13 @@ function NowPlaying() {
   useEffect( () => { 
     const timer = setInterval(async () => {
       if(location.hash === '#/callback' || location.pathname === '/join'){
-        console.log("Aki: Getting now playing...");
-        makeReq('get-queue', roomCode, username);
+        // console.log("Aki: Getting now playing...");
+        getQueue('get-queue', roomCode, username);
         let currentSong = await getNowPlaying();
         let time_to_end = currentSong?.item?.duration_ms - currentSong?.progress_ms;
-        console.log("Current Position: " + currentSong?.progress_ms);
-        console.log("Total Duration: " + currentSong?.item?.duration_ms);
-        console.log("Time to end: " + time_to_end);
+        // console.log("Current Position: " + currentSong?.progress_ms);
+        // console.log("Total Duration: " + currentSong?.item?.duration_ms);
+        // console.log("Time to end: " + time_to_end);
         if (time_to_end < 15000) {
           playNextSong(time_to_end);
         }
@@ -197,9 +197,9 @@ function NowPlaying() {
       if(location.hash === '#/callback' && (votesData?.guestList[0]?.length > 0)){ //if there are guests, then this action will run by the host only every 10 seconds to check if any guests are inactive (closed their window without leaving the room) and need to be kicked
         votesData?.guestList[0]?.forEach((guest, index)=>{
           let pingToGuest = (guest.ping===0)? 0 : (Math.round(Date.now() / 1000) - guest.ping); //sets the pingtoguest to be the gap in time from the current host time to the guest's ping timestamp. sets it to 0 if the user has just joined and their ping value is still the default 0 from the sql table.
-          console.log(`Username of guest #${index}: ${guest.userName}\t(ping ${pingToGuest}sec)`);
+          // console.log(`Username of guest #${index}: ${guest.userName}\t(ping ${pingToGuest}sec)`);
           if(pingToGuest >=30){ //ping should be ~10-20 seconds, but if it's 30 or greater, we know that the guest is no longer active (they closed their tab without clicking Leave Room) and should be kicked due to inactivity so they don't skew the majority voting numbers
-            console.log(`Removing inactive guest "${guest.userName}".`);
+            // console.log(`Removing inactive guest "${guest.userName}".`);
             makeReq('kick', roomCode, guest.userName); //runs our kick.php command to remove the user if they're inactive. can take several seconds before the command completes, so the console might show that it's removing them twice but that can be ignored
           }
         });
@@ -224,11 +224,15 @@ function NowPlaying() {
 
   useEffect( () => {
 
-    if(queueResponse){
-      if(!queueResponse.status){
-        var newQueue = JSON.parse(queueResponse);
-        setQueue(newQueue);
+    if (queueResponse) {
+      // console.log("whatttt");
+      if (!queueResponse.status) {
+        // console.log("Queue:", queueResponse);
+        clearQueue();
+        setQueue(queueResponse);
+        // console.log("Local:", songQueue);
       }
+      // console.log("Local:", songQueue);
     }
 
   }, [queueResponse]);

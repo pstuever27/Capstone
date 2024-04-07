@@ -60,24 +60,24 @@ const phpAPI = () => {
                     if (response.status === 'error') {
                         throwError(response.error);
                     }
-                    if (response.status === 'no-guests') {
-                        throwError("No Guests in the Room!");
-                    }
-                    if (response.status === 'no-blocked') {
-                        throwError("No blocked songs!");
-                    }
+                    // if (response.status === 'no-guests') {
+                    //     throwError("No Guests in the Room!");
+                    // }
+                    // if (response.status === 'no-blocked') {
+                    //     throwError("No blocked songs!");
+                    // }
                     if (response.status === 'closed' || response.status === 'guest-exited') {
                         window.location.href = '/';
                     }
                     //Else, set the callback to the JSON response and return
                     else {
-                        console.log(response);
+                        // console.log(response);
                         setResponse(response);
                     }
                 }
                 catch (err) {
                     //Catch whatever error was thrown. This also catches PHP errors to display them
-                    console.log(err);
+                    // console.log(err);
                     throwError(err);
                 }
  
