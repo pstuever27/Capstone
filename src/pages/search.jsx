@@ -15,6 +15,8 @@
 // Revision: Chinh added two ways to shuffle queue, one via checkbox where it adds randomly from queue or one that actually shuffles live
 // Revised on: 4/05/2024
 // Revision: Kieran moved replay button to nowplaying block rather than being here to better match our design goals
+// Revised on: 4/07/2024
+// Revision: Chinh made it so that the "shuffleQueue" checkbox is not rendered if user is not the host
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -299,10 +301,12 @@ function Search() {
           <button className = "queueButton" onClick = { () => shuffleQueueBtn() } style={{ backgroundColor: palette[1]}}>Shuffle Queue</button>
 
           {/* temporary switch element to determine shuffle queue or in-order queue*/ }
-          <label className="switch">
-            <input type="checkbox" id="shuffleQueue">
-            </input> Shuffle Queue
-          </label>
+          { location.hash === '#/callback' && (
+            <label className="switch">
+              <input type="checkbox" id="shuffleQueue">
+              </input> Shuffle Queue
+            </label>
+          )}
 
           <Playlists/>
 

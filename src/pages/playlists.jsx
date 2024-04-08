@@ -16,6 +16,8 @@
 // Revision: Chinh added functionality to add tracks received from getTracks to the fallbackTracks array in the queue context
 // Revised on: 3/24/2024
 // Revision: Chinh implemmented on page-load playlist fetching as well as fallback track updater when selected playlist is changed.
+// Revised on: 4/7/2024
+// Revision: Chinh made it so that the fallback playlist selector is not rendered if user is not the host
 // Preconditions: npm and node must be installed for dev environment, spotify-web-api-js library must be installed
 // Postconditions: Currently attempts to console.log list of user's playlists,
 //                 Goal is to render an autocomplete element containing user's Spotify playlists
@@ -111,17 +113,19 @@ function SpotifyPlaylists() {
             {/* <button id="fetchPlaylistsBtn" className="queueButton" onClick={fetchPlaylists} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Fetch and Load Playlists'}
             </button> */}
-
-            <select id="selectPlaylist" onChange={() => fetchTracks()}>
-                {Array.isArray(playlists) && playlists.map((playlist, index) => {
-                    // console.log("Mapping playlist:", playlist); // Log each playlist being mapped
-                    return (
-                        <option key={index} value={playlist.id}>
-                            {playlist.name}
-                        </option>
-                    );
-                })}
-            </select>
+            
+            { location.hash === '#/callback' && (
+                <select id="selectPlaylist" onChange={() => fetchTracks()}>
+                    {Array.isArray(playlists) && playlists.map((playlist, index) => {
+                        // console.log("Mapping playlist:", playlist); // Log each playlist being mapped
+                        return (
+                            <option key={index} value={playlist.id}>
+                                {playlist.name}
+                            </option>
+                        );
+                    })}
+                </select>)
+            }
 
             { /* Button for manually fetching tracks no longer needed, but keeping in-case for future testing. */ }
             {/* <button id="fetchTracksBtn" className="queueButton" onClick={fetchTracks} disabled={isLoading}>
