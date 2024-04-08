@@ -299,7 +299,7 @@ function Search() {
           <button className = "queueButton" onClick = { () => shuffleQueueBtn() } style={{ backgroundColor: palette[1]}}>Shuffle Queue</button>
 
           {/* temporary switch element to determine shuffle queue or in-order queue*/ }
-          <label class="switch">
+          <label className="switch">
             <input type="checkbox" id="shuffleQueue">
             </input> Shuffle Queue
           </label>
