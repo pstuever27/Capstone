@@ -20,6 +20,8 @@
 
 import React from "react";
 import { useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
+
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
@@ -39,6 +41,8 @@ import { ListItemIcon, Menu } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
 import Switch from '@mui/material/Switch';
+import IosSwitchMaterialUi from 'ios-switch-material-ui';
+
 
 import phpAPI from "../phpApi";
 import authorizationApi from "../authorizationApi";
@@ -144,6 +148,8 @@ function SettingsDrawer() {
   let listText = ['Login to Spotify', 'Close Room'];
   let listButtonFunction = [loginHost, closeRoom];
   let listButtonPosition = ['0', '0'];
+  let switchColor = allowExplicit ? palette[1] : palette[0];
+  let buttonColor = allowExplicit ? palette[0] : palette[1];
 
   if (location.pathname == '/join') {
     listIcons = [BlockIcon, LogoutIcon];
@@ -174,14 +180,20 @@ function SettingsDrawer() {
           {location.hash == '#/callback'
             ?
             <ListItem key="explicit" >
-              <Switch label="Allow Explicit Songs" disablePadding checked={allowExplicit} onChange={handleExplicit}></Switch>
-              <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={buttonColor}
+                colorKnobOnRight={buttonColor}
+                colorSwitch={switchColor}
+                knobOnLeft={allowExplicit}
+                onChange={handleExplicit}
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
             </ListItem>
             :null
           }
         </List>
       </Box>
-      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='persistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { guestList; toggleGuests() }}>
@@ -195,7 +207,7 @@ function SettingsDrawer() {
           <GuestList />
         </Box>
       </Drawer>
-      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='persistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { blockedSongs; toggleBlocked() }}>
