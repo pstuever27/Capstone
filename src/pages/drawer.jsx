@@ -38,6 +38,7 @@ import Divider from '@mui/material/Divider';
 import { ListItemIcon, Menu } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
+import Switch from '@mui/material/Switch';
 
 import phpAPI from "../phpApi";
 import authorizationApi from "../authorizationApi";
@@ -48,6 +49,8 @@ import BlockList from "./blockList";
 
 function SettingsDrawer() {
 
+  const cookie = new Cookies();
+
   const { palette } = useContext(PaletteContext);
 
   const [open, setOpen] = React.useState(false);
@@ -56,12 +59,12 @@ function SettingsDrawer() {
 
   const [blockedOpen, setBlockedOpen] = React.useState(false);
 
+  const [allowExplicit, setAllowExplicit] = React.useState(cookie.get('explicit'));
+
   const location = useLocation();
 
   const { logout: logoutUser } = authorizationApi();
   const { makeRequest, phpResponse } = phpAPI();
-
-  const cookie = new Cookies();
 
   const roomCode = cookie.get('roomCode');
   const username = cookie.get('username');
@@ -76,6 +79,10 @@ function SettingsDrawer() {
   //     }
   //   }
   // }, [phpResponse])
+
+  useEffect(() => {
+    cookie.set('explicit', allowExplicit, { path: '/' });
+  }, [allowExplicit])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -120,6 +127,12 @@ function SettingsDrawer() {
     toggleBlocked();
   };
 
+  const handleExplicit = () => {
+    let tmp = allowExplicit;
+    setAllowExplicit(!tmp);
+    console.log("Explicit state:", allowExplicit);
+  }
+
   const listStyle = {
     color: "white",
     fontWeight: "bolder",
@@ -158,7 +171,15 @@ function SettingsDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+          {location.hash == '#/callback'
+            ?
+            <ListItem key="explicit" >
+              <Switch label="Allow Explicit Songs" disablePadding checked={allowExplicit} onChange={handleExplicit}></Switch>
+              <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
+            </ListItem>
+            :null
+          }
+        </List>
       </Box>
       <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
         <Box sx={{ width: 250 }} role="presentation">

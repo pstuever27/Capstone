@@ -214,17 +214,29 @@ function Search() {
     if( inputVal.length == 0 ) { 
       return; 
     } 
-    
+
+    let explicitSongs = cookie.get('explicit');
+
+    console.log(explicitSongs);
+
     // calling the search api call, appending the search query with with search bar field input
     //  as the track name being requested after the asyncronous promise of the api call is fulfilled, 
     //  we'll perform the callback function below take the json 'data' variable from the SpotifyAPI.js
     //  makeRequest return statement as the parameter of the function
-    reqSearch( `?q=${ inputVal }&type=track` ).then( data => { 
+    reqSearch(`?q=${inputVal}&type=track`).then(data => { 
       if( !data.tracks ){ // handle invalid searches
         // if no spotify tracks correspond to the search bar input text, return to skip.
         // otherwise we'll try to access track and artist name data that isn't available and get errors.
         return; 
       }
+      if (!explicitSongs) {
+        let filter = data;
+        // data = filter.tracks.items.filter(item => !item.explicit);
+
+        setSearchRes(data.tracks.items.map(item => item));
+        return;
+      }
+      console.log(data);
 
       // print spotify request json data to the browser's console. 
       // useful for navigating through the json structure with the gui dropdowns as a reference on how 

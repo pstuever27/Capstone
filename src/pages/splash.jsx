@@ -285,6 +285,7 @@ function Splash()
                 // console.log("Host good!");
                 cookie.set('roomCode', roomCode, { path: '/' });
                 cookie.set('username', username, { path: '/' });
+                cookie.set('explicit', true, { path: '/' });
                 //"skipLock" session storage cookie is needed for host too for the majority vote mechanism (more details in comments of NowPlaying.jsx)
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
                 navigate("/host"); // Navigate to host.jsx
