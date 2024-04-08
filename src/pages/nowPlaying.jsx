@@ -151,16 +151,12 @@ function NowPlaying() {
    * @params none
    */
   const replaySong = () => {
-    alert("replay") //testing purposes. remove after implementing
-
     // run replay on host
     if (location.hash === '#/callback') {   
       //use nowPlayingSong object to select the current track to add back to queue for replay
       //add this current track to the front of the songQueue[] to add the current track to the local queue
-
       const secondQueue = [nowPlayingSong];
-      secondQueue.concat(songQueue);
-      setQueue(secondQueue);
+      setQueue(secondQueue.concat(songQueue));
     }
   }
 
