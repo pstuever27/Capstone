@@ -158,13 +158,15 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
+}
+
+#playback_info p {
+  margin-top: 10px;
+  margin: 7px;
 }
 
 #track_info {
   width: 300px;
-  padding-left: 20%; /* added this for leaving room for replay button to left of track info */
-  padding-right: 20%; /* for skip button */
 }
 
 #title {
@@ -185,11 +187,11 @@ body {
   cursor: pointer;
   position: relative;
   left: 0px;
-  transition: left ease 0.1s;
+  transition: transform ease 0.3s;
 }
 
 #replay:hover{
-  left: 5px;
+  transform: rotate( -90deg ) scale( 1.2 );
 }
 
 #skip {
@@ -198,11 +200,12 @@ body {
   cursor: pointer;
   position: relative;
   left: 0px;
-  transition: left ease 0.1s;
+  transition: translate ease 0.3s;
+  transition: transform ease 0.3s;
 }
 
 #skip:hover{
-  left: 5px;
+  transform: scale( 1.2 ) translateX( 5px ); 
 }
 
 .buttonlock {
@@ -272,6 +275,19 @@ body {
 h1 {
   position: absolute;
   padding-top: 100px;
+}
+
+#ipod-shuffle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  transition: color 0.3s linear, box-shadow 0.3s ease-in-out;
+
 }
 
 #breadcrumb {

@@ -285,7 +285,7 @@ function NowPlaying() {
       }
     }
 
-    document.body.style.background = `linear-gradient(to bottom right, ${palette[0]}, #333333)`;
+    document.body.style.background = `linear-gradient(to bottom right, ${palette[0]}, ${palette[3]})`;
 
     return () => clearInterval(timer);
   }, [phpResponse, getNowPlaying] );
@@ -324,6 +324,11 @@ function NowPlaying() {
                 <img id = "albumArt" src={ nowPlayingSong?.album.images[1].url } crossOrigin="anonymous"/>
               </ColorExtractor>
               <a href = { nowPlayingSong?.external_urls.spotify } target = '_blank' rel = "noreferrer" id = "breadcrumb" style={{ backgroundColor: palette[1], display: haveImg }}>Open in Spotify <b>&#9758;</b></a>
+              {/* TRACK INFO */}
+              <div id = "track_info">
+                  <p id = "title">{nowPlayingSong?.name}</p>
+                  <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
+              </div>
               <div id = "playback_info">
                 {/* REPLAY BUTTON: clicking button calls the function to add song to queue */}
                 <div>
@@ -332,11 +337,6 @@ function NowPlaying() {
                     <p>{votesData?.replayVotes[0]}</p>
                   : null}
                   <img id="replay" className={(sessionStorage.getItem('replayLock')=='locked') ? "buttonlock" : ""} onClick = { () => {voteReplay(); }} src={replayImg} />
-                </div>
-                {/* TRACK INFO */}
-                <div id = "track_info">
-                  <p id = "title">{nowPlayingSong?.name}</p>
-                  <p id = "artists">{nowPlayingSong?.artists.map((_artist) => _artist.name).join(", ")}</p>
                 </div>
                 {/* SKIP BUTTON: shows skipvotes and has skip button */}
                 <div>

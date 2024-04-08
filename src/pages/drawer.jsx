@@ -160,7 +160,7 @@ function SettingsDrawer() {
         ))}
       </List>
       </Box>
-      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { guestList; toggleGuests() }}>
@@ -174,7 +174,7 @@ function SettingsDrawer() {
           <GuestList />
         </Box>
       </Drawer>
-      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { blockedSongs; toggleBlocked() }}>
@@ -199,7 +199,7 @@ function SettingsDrawer() {
     <>
       <div id="drawertwo" >
         <button id='drawerButton' onClick={toggleDrawer(true)} style={{ backgroundColor: 'transparent' }}><MenuIcon fontSize="large" style={{ color: 'white' }}/></button>
-        <Drawer PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: true }}>
+        <Drawer PaperProps={{ sx: { background: palette[1] }}} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: false }}>
           {DrawerList}
         </Drawer>
       </div>
