@@ -64,6 +64,7 @@ function SettingsDrawer() {
   const [blockedOpen, setBlockedOpen] = React.useState(false);
 
   const [allowExplicit, setAllowExplicit] = React.useState(cookie.get('explicit'));
+  const [shuffle, setShuffle] = React.useState(cookie.get('shuffle'));
 
   const location = useLocation();
 
@@ -87,6 +88,10 @@ function SettingsDrawer() {
   useEffect(() => {
     cookie.set('explicit', allowExplicit, { path: '/' });
   }, [allowExplicit])
+
+  useEffect(() => {
+    cookie.set('shuffle', shuffle, { path: '/' });
+  }, [shuffle])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -134,7 +139,11 @@ function SettingsDrawer() {
   const handleExplicit = () => {
     let tmp = allowExplicit;
     setAllowExplicit(!tmp);
-    console.log("Explicit state:", allowExplicit);
+  }
+
+  const handleShuffle = () => {
+    let tmp = shuffle;
+    setShuffle(!tmp);
   }
 
   const listStyle = {
@@ -148,8 +157,6 @@ function SettingsDrawer() {
   let listText = ['Login to Spotify', 'Close Room'];
   let listButtonFunction = [loginHost, closeRoom];
   let listButtonPosition = ['0', '0'];
-  let switchColor = allowExplicit ? palette[1] : palette[0];
-  let buttonColor = allowExplicit ? palette[0] : palette[1];
 
   if (location.pathname == '/join') {
     listIcons = [BlockIcon, LogoutIcon];
@@ -179,16 +186,29 @@ function SettingsDrawer() {
         ))}
           {location.hash == '#/callback'
             ?
-            <ListItem key="explicit" >
+            <>
+            <ListItem key="explicit">
               <IosSwitchMaterialUi
-                colorKnobOnLeft={buttonColor}
-                colorKnobOnRight={buttonColor}
-                colorSwitch={switchColor}
+                colorKnobOnLeft={allowExplicit ? palette[0] : "white"}
+                colorKnobOnRight={allowExplicit ? palette[0] : "white"}
+                colorSwitch={allowExplicit ? "white" : palette[1]}
                 knobOnLeft={allowExplicit}
                 onChange={handleExplicit}
               />              
             <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
             </ListItem>
+            <ListItem key="shuffle" >
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={shuffle ? palette[0] : "white"}
+                colorKnobOnRight={shuffle ? palette[0] : "white"}
+                colorSwitch={shuffle ? "white" : palette[1]}
+                knobOnLeft={shuffle}
+                onChange={handleShuffle}
+                id="shuffleQueue"
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Randomize Queue" />
+              </ListItem>
+            </>
             :null
           }
         </List>
