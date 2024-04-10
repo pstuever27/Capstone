@@ -20,6 +20,8 @@
 
 import React from "react";
 import { useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
+
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
@@ -38,6 +40,9 @@ import Divider from '@mui/material/Divider';
 import { ListItemIcon, Menu } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
+import Switch from '@mui/material/Switch';
+import IosSwitchMaterialUi from 'ios-switch-material-ui';
+
 
 import phpAPI from "../phpApi";
 import authorizationApi from "../authorizationApi";
@@ -48,6 +53,8 @@ import BlockList from "./blockList";
 
 function SettingsDrawer() {
 
+  const cookie = new Cookies();
+
   const { palette } = useContext(PaletteContext);
 
   const [open, setOpen] = React.useState(false);
@@ -56,12 +63,13 @@ function SettingsDrawer() {
 
   const [blockedOpen, setBlockedOpen] = React.useState(false);
 
+  const [allowExplicit, setAllowExplicit] = React.useState(cookie.get('explicit'));
+  const [shuffle, setShuffle] = React.useState(cookie.get('shuffle'));
+
   const location = useLocation();
 
   const { logout: logoutUser } = authorizationApi();
   const { makeRequest, phpResponse } = phpAPI();
-
-  const cookie = new Cookies();
 
   const roomCode = cookie.get('roomCode');
   const username = cookie.get('username');
@@ -76,6 +84,14 @@ function SettingsDrawer() {
   //     }
   //   }
   // }, [phpResponse])
+
+  useEffect(() => {
+    cookie.set('explicit', allowExplicit, { path: '/' });
+  }, [allowExplicit])
+
+  useEffect(() => {
+    cookie.set('shuffle', shuffle, { path: '/' });
+  }, [shuffle])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -120,6 +136,16 @@ function SettingsDrawer() {
     toggleBlocked();
   };
 
+  const handleExplicit = () => {
+    let tmp = allowExplicit;
+    setAllowExplicit(!tmp);
+  }
+
+  const handleShuffle = () => {
+    let tmp = shuffle;
+    setShuffle(!tmp);
+  }
+
   const listStyle = {
     color: "white",
     fontWeight: "bolder",
@@ -158,7 +184,34 @@ function SettingsDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+          {location.hash == '#/callback'
+            ?
+            <>
+            <ListItem key="explicit">
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={allowExplicit ? palette[0] : "white"}
+                colorKnobOnRight={allowExplicit ? palette[0] : "white"}
+                colorSwitch={allowExplicit ? "white" : palette[1]}
+                knobOnLeft={allowExplicit}
+                onChange={handleExplicit}
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
+            </ListItem>
+            <ListItem key="shuffle" >
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={shuffle ? palette[0] : "white"}
+                colorKnobOnRight={shuffle ? palette[0] : "white"}
+                colorSwitch={shuffle ? "white" : palette[1]}
+                knobOnLeft={shuffle}
+                onChange={handleShuffle}
+                id="shuffleQueue"
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Randomize Queue" />
+              </ListItem>
+            </>
+            :null
+          }
+        </List>
       </Box>
       <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
         <Box sx={{ width: 250 }} role="presentation">
