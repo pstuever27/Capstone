@@ -24,6 +24,9 @@
 // imports queue context
 import QueueContext from './queueContext'; 
 
+// for determining if user is a host or guest
+import { useLocation } from 'react-router-dom'
+
 // imports useContext hook from react
 import { useContext } from 'react'; 
 
@@ -35,6 +38,7 @@ import authorizationApi from '../authorizationApi';
 function Queue() {
   const { songQueue, setQueue, dequeue } = useContext( QueueContext );
   const { palette } = useContext( PaletteContext );
+  const location = useLocation();
 
   return (
     <>
@@ -51,7 +55,7 @@ function Queue() {
                 return( <div id = "queueGridCol" span={ 12 } key={ song.name } >
                   <p id = "qname">
                     { song.name }
-                    <span id = "qremove" onClick={() => { 
+                    <span id = "qremove" className={(location.pathname === '/join') ? "hideDequeueTrack" : ""} onClick={() => { 
                       const modifiedQueue = songQueue.filter(songs => songs !== song); //removes current track with 'x' being clicked from queue
                       setQueue(modifiedQueue); //updates the queue to no longer have that removed track
                     }} >&times;</span> {/* "&times;" renders the X symbol on the screen as a remove symbol to be clicked */}

@@ -159,6 +159,10 @@ body {
   float:inline-end;
 }
 
+.hideDequeueTrack {
+  display: none;
+}
+
 #playback_info {
   display: flex;
   flex-direction: row;
