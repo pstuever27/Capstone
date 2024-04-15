@@ -19,6 +19,8 @@
 // Revision: Chinh made it so that the "shuffleQueue" checkbox is not rendered if user is not the host
 // Revised on: 4/07/2024
 // Revision: Chinh removed Shuffle Queue button
+// Revised on: 4/15/2024
+// Revision: Chinh removed Shuffle Queue checkbox (moved to drawer.jsx!)
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -315,12 +317,12 @@ function Search() {
           {/* <button className = "queueButton" onClick = { () => shuffleQueueBtn() } style={{ backgroundColor: palette[1]}}>Shuffle Queue</button> */}
 
           {/* temporary switch element to determine shuffle queue or in-order queue*/ }
-          { location.hash === '#/callback' && (
+          {/*  location.hash === '#/callback' && (
             <label className="switch">
               <input type="checkbox" id="shuffleQueue">
               </input> Shuffle Queue
             </label>
-          )}
+          ) */}
 
           <Playlists/>
 

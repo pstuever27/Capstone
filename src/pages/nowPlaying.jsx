@@ -36,6 +36,8 @@
 // Revision: Kieran added replay voting
 // Revised on: 4/6/2024
 // Revision: Chinh fully implemented shuffle queue checkbox, working shuffle mode and queue is updated properly. Also, skip function now also handles all modes -- possibly random button obsolete?
+// Revised on: 4/15/2024
+// Revision: Chinh added delay to skip function, implemented ability to toggle on/off fallback switch, updated shuffle queue condition to utilize new States
 //
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
@@ -108,8 +110,10 @@ function NowPlaying() {
       if (votesData?.skipVotes && (sessionStorage.getItem('skipLock')=='unlocked')) {
         if ((votesData?.skipVotes[0] * 2) > (votesData?.guestList[0]?.length)) { //if we hit majority vote (more than half of guests vote), we can skip
           playNextSong(0);
-          skip();
-          getNowPlaying();
+          setTimeout(() => {
+            skip();
+            getNowPlaying();
+          }, 100);
           // console.log("Executing majority skip...");
           sessionStorage.setItem('skipLock', 'locked'); //needed to prevent duplicate skips. this temporarily locks the host from skipping anymore until all the asyncronous tasks (skipping track, resetting skipvotes to 0) are completed, where it is then unlocked along with all the guests at the top of this useEffect.
         }
@@ -134,8 +138,10 @@ function NowPlaying() {
   const skipCounter = () => {
     if(location.pathname=='/host/'){ //hosts can always skip, from the location.pathname=='/host/' condition.
       playNextSong(0);
-      skip();
-      getNowPlaying();
+      setTimeout(() => {
+        skip();
+        getNowPlaying();
+      }, 100);
     }
     if(location.pathname=='/join' && (sessionStorage.getItem('skipLock')=='unlocked')){ //otherwise, majority of users must vote for skip. each user is only allowed to vote once, so if they've voted already for the track they won't be let into this block again until the track changes
       votesReq("vote-skip", roomCode, username); //submit vote for skipping track
@@ -187,15 +193,15 @@ function NowPlaying() {
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, fallbackTracks, dequeue, setQueue, clearQueue, moveRandomToFront } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, shuffleSwitch, fallbackSwitch, dequeue, setQueue, clearQueue, moveRandomToFront } = useContext( QueueContext );
 
   const playNextSong = async (time_to_end) => {
     // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
     // making it super hard to squeeze the next song in before the current song ends
-    let crossfade_stupid = 6000; // right now, it seems like a good area is ~4s greater than crossfade.
+    let crossfade_stupid = 6200; // right now, it seems like a good area is ~4.2s greater than crossfade.
 
     // ADDING FROM FALLBCAK
-    if (songQueue.length === 0) {
+    if (songQueue.length === 0 && fallbackSwitch) {
       // console.log("Queue is empty, pulling from fallbackTracks");
       // Handle the case where the queue is empty
       if (fallbackTracks.length > 0) {
@@ -208,7 +214,7 @@ function NowPlaying() {
     } else {
       if (time_to_end < crossfade_stupid) {
         // Shuffle Queue
-        if (document.getElementById("shuffleQueue").checked) {
+        if (shuffleSwitch) {
           const randomIndex = Math.floor(Math.random() * songQueue.length);
           const selectedSong = songQueue[randomIndex];
           const shuffledQueue = songQueue.filter(song => song !== selectedSong);
@@ -223,7 +229,7 @@ function NowPlaying() {
       } else {
         setTimeout(() => {
           // Shuffle Queue
-          if (document.getElementById("shuffleQueue").checked) {
+          if (shuffleSwitch) {
             const randomIndex = Math.floor(Math.random() * songQueue.length);
             const selectedSong = songQueue[randomIndex];
             const shuffledQueue = songQueue.filter(song => song !== selectedSong);

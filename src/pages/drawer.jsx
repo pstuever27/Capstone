@@ -6,7 +6,11 @@
  * Programmer(s): Paul Stuever
  * Date Created: 2/28/2024
  * 
- * Date Revised: 2/29/2024 - Kieran Delaney - Added guest leave button functionality with PHP SQL query
+ * Date Revised: 2/29/2024
+ * Revision: Kieran Delaney - Added guest leave button functionality with PHP SQL query
+ * 
+ * Date Revised: 4/15/2024
+ * Revision: Chinh Nguyen - Updated handling of switch toggles for shuffle queue, added new switch Fallback Queue to drawer with similar handling as shuffle queue, added QueueContext to component
  * 
  * Preconditions: Created or joined a room and on home page.
  *  @inputs : None 
@@ -50,6 +54,7 @@ import Cookies from "universal-cookie";
 import { useSelector } from "react-redux";
 import GuestList from "./guestList";
 import BlockList from "./blockList";
+import QueueContext from './queueContext'; 
 
 function SettingsDrawer() {
 
@@ -65,6 +70,7 @@ function SettingsDrawer() {
 
   const [allowExplicit, setAllowExplicit] = React.useState(cookie.get('explicit'));
   const [shuffle, setShuffle] = React.useState(cookie.get('shuffle'));
+  const [disableFallback, setFallback] = React.useState(cookie.get('fallback'));
 
   const location = useLocation();
 
@@ -91,6 +97,10 @@ function SettingsDrawer() {
 
   useEffect(() => {
     cookie.set('shuffle', shuffle, { path: '/' });
+  }, [shuffle])
+
+  useEffect(() => {
+    cookie.set('fallback', shuffle, { path: '/' });
   }, [shuffle])
 
   const toggleDrawer = (newOpen) => () => {
@@ -141,9 +151,20 @@ function SettingsDrawer() {
     setAllowExplicit(!tmp);
   }
 
+  const { shuffleSwitch, fallbackSwitch, toggleShuffle, toggleFallback } = useContext( QueueContext );
+
   const handleShuffle = () => {
     let tmp = shuffle;
     setShuffle(!tmp);
+    // console.log("Attempted to toggle shuffleSwitch state");
+    toggleShuffle();
+  }
+
+  const handleFallback = () => {
+    let tmp = disableFallback;
+    setFallback(!tmp);
+    // console.log("Attempted to toggle toggleFallback state");
+    toggleFallback();
   }
 
   const listStyle = {
@@ -207,6 +228,17 @@ function SettingsDrawer() {
                 id="shuffleQueue"
               />              
             <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Randomize Queue" />
+              </ListItem>
+              <ListItem key="fallback" >
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={disableFallback ? palette[0] : "white"}
+                colorKnobOnRight={disableFallback ? palette[0] : "white"}
+                colorSwitch={disableFallback ? "white" : palette[1]}
+                knobOnLeft={disableFallback}
+                onChange={handleFallback}
+                id="disableFallback"
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Fallback Queue" />
               </ListItem>
             </>
             :null
