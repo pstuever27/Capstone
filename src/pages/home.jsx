@@ -21,6 +21,9 @@
  * Date Revised: 4/1/2024
  * Revision: Chinh Nguyen - Added moveRandomToFront() function to QueueContext
  * 
+ * Date Revised: 4/15/2024
+ * Revision: Chinh Nguyen - Added two new states: shuffleSwitch and fallbackSwitch to QueueContext, both with respective functions to flip boolean value
+ * 
  * Preconditions: 
  *  @inputs : None 
  * Postconditions:
@@ -53,6 +56,8 @@ function Home() {
   const [songQueue, modQueue] = useState([]);
   const [fallbackTracks, modFallback] = useState([]);
   const [blocklist, modBlocklist] = useState([]);
+  const [shuffleSwitch, modShuffleSwitch] = useState(false);
+  const [fallbackSwitch, modFallbackSwitch] = useState(false);
 
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
   const { makeRequest } = phpAPI();
@@ -128,6 +133,14 @@ function Home() {
     modBlocklist([]);
   }
 
+  const toggleShuffle = () => {
+    modShuffleSwitch(!shuffleSwitch);
+  }
+  
+  const toggleFallback = () => {
+    modFallbackSwitch(!fallbackSwitch)
+  }
+
   //Palatte for background gradient
   const [palette, setPalette] = useState([]);
 
@@ -167,7 +180,7 @@ function Home() {
     // <SearchQueuePlayNow />
     <>
         <PaletteContext.Provider value={{ palette, update }}>
-        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, enqueue, dequeue, setQueue, clearQueue, moveRandomToFront, setFallbackTracks, addBlocklist, clearBlocklist }}>
+        <QueueContext.Provider value={{ songQueue, fallbackTracks, blocklist, shuffleSwitch, fallbackSwitch, enqueue, dequeue, setQueue, clearQueue, moveRandomToFront, setFallbackTracks, addBlocklist, clearBlocklist, toggleShuffle, toggleFallback }}>
             <div className="third" id="panel-1">
             <h1>Now Playing</h1> { /*NowPlaying component will show track information*/ }
               <NowPlaying />

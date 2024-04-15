@@ -12,7 +12,9 @@
 // Revision: Chinh added setQueue function, where it replaces the queue with another array (for shuffling purpose)
 // Revised on: 4/1/2024
 // Revision: Chinh added moveRandomToFront(), where a random element is added to the front of the list
-// 
+// Revised on: 4/15/2024 
+// Revision: Chinh added toggleShuffle() and toggleFallback(), two boolean values that will determine how queue functions
+//
 // Preconditions: Must have npm and node installed to run in dev environment. 
 // Postconditions: Handles queue data structure
 // 
@@ -46,6 +48,8 @@ const QueueContext = createContext( {
   clearFallbackTracks: () => {},
   addBlocklist: () => {},
   clearBlocklist: () => {},
+  toggleShuffle: () => {},
+  toggleFallback: () => {},
 } );
 
 export default QueueContext;

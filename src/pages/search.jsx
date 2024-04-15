@@ -15,6 +15,12 @@
 // Revision: Chinh added two ways to shuffle queue, one via checkbox where it adds randomly from queue or one that actually shuffles live
 // Revised on: 4/05/2024
 // Revision: Kieran moved replay button to nowplaying block rather than being here to better match our design goals
+// Revised on: 4/07/2024
+// Revision: Chinh made it so that the "shuffleQueue" checkbox is not rendered if user is not the host
+// Revised on: 4/07/2024
+// Revision: Chinh removed Shuffle Queue button
+// Revised on: 4/15/2024
+// Revision: Chinh removed Shuffle Queue checkbox (moved to drawer.jsx!)
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -216,17 +222,29 @@ function Search() {
     if( inputVal.length == 0 ) { 
       return; 
     } 
-    
+
+    let explicitSongs = cookie.get('explicit');
+
+    console.log(explicitSongs);
+
     // calling the search api call, appending the search query with with search bar field input
     //  as the track name being requested after the asyncronous promise of the api call is fulfilled, 
     //  we'll perform the callback function below take the json 'data' variable from the SpotifyAPI.js
     //  makeRequest return statement as the parameter of the function
-    reqSearch( `?q=${ inputVal }&type=track` ).then( data => { 
+    reqSearch(`?q=${inputVal}&type=track`).then(data => { 
       if( !data.tracks ){ // handle invalid searches
         // if no spotify tracks correspond to the search bar input text, return to skip.
         // otherwise we'll try to access track and artist name data that isn't available and get errors.
         return; 
       }
+      if (!explicitSongs) {
+        let filter = data;
+        // data = filter.tracks.items.filter(item => !item.explicit);
+
+        setSearchRes(data.tracks.items.map(item => item));
+        return;
+      }
+      console.log(data);
 
       // print spotify request json data to the browser's console. 
       // useful for navigating through the json structure with the gui dropdowns as a reference on how 
@@ -259,11 +277,11 @@ function Search() {
     }
   }, [songQueue])
 
-  async function shuffleQueueBtn() {
-    const shuffledQueue = [...songQueue].sort(() => Math.random() - 0.5);
+  // async function shuffleQueueBtn() {
+  //   const shuffledQueue = [...songQueue].sort(() => Math.random() - 0.5);
 
-    setQueue(shuffledQueue)
-  }
+  //   setQueue(shuffledQueue)
+  // }
 
   return ( 
     <>
@@ -296,13 +314,15 @@ function Search() {
           }
 
           {/* clicking button calls the function to add song to queue */}
-          <button className = "queueButton" onClick = { () => shuffleQueueBtn() } style={{ backgroundColor: palette[1]}}>Shuffle Queue</button>
+          {/* <button className = "queueButton" onClick = { () => shuffleQueueBtn() } style={{ backgroundColor: palette[1]}}>Shuffle Queue</button> */}
 
           {/* temporary switch element to determine shuffle queue or in-order queue*/ }
-          <label class="switch">
-            <input type="checkbox" id="shuffleQueue">
-            </input> Shuffle Queue
-          </label>
+          {/*  location.hash === '#/callback' && (
+            <label className="switch">
+              <input type="checkbox" id="shuffleQueue">
+              </input> Shuffle Queue
+            </label>
+          ) */}
 
           <Playlists/>
 

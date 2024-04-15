@@ -6,7 +6,11 @@
  * Programmer(s): Paul Stuever
  * Date Created: 2/28/2024
  * 
- * Date Revised: 2/29/2024 - Kieran Delaney - Added guest leave button functionality with PHP SQL query
+ * Date Revised: 2/29/2024
+ * Revision: Kieran Delaney - Added guest leave button functionality with PHP SQL query
+ * 
+ * Date Revised: 4/15/2024
+ * Revision: Chinh Nguyen - Updated handling of switch toggles for shuffle queue, added new switch Fallback Queue to drawer with similar handling as shuffle queue, added QueueContext to component
  * 
  * Preconditions: Created or joined a room and on home page.
  *  @inputs : None 
@@ -20,6 +24,8 @@
 
 import React from "react";
 import { useContext, useEffect } from "react";
+import { styled } from '@mui/material/styles';
+
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
@@ -38,6 +44,9 @@ import Divider from '@mui/material/Divider';
 import { ListItemIcon, Menu } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
+import Switch from '@mui/material/Switch';
+import IosSwitchMaterialUi from 'ios-switch-material-ui';
+
 
 import phpAPI from "../phpApi";
 import authorizationApi from "../authorizationApi";
@@ -45,8 +54,11 @@ import Cookies from "universal-cookie";
 import { useSelector } from "react-redux";
 import GuestList from "./guestList";
 import BlockList from "./blockList";
+import QueueContext from './queueContext'; 
 
 function SettingsDrawer() {
+
+  const cookie = new Cookies();
 
   const { palette } = useContext(PaletteContext);
 
@@ -56,12 +68,14 @@ function SettingsDrawer() {
 
   const [blockedOpen, setBlockedOpen] = React.useState(false);
 
+  const [allowExplicit, setAllowExplicit] = React.useState(cookie.get('explicit'));
+  const [shuffle, setShuffle] = React.useState(cookie.get('shuffle'));
+  const [disableFallback, setFallback] = React.useState(cookie.get('fallback'));
+
   const location = useLocation();
 
   const { logout: logoutUser } = authorizationApi();
   const { makeRequest, phpResponse } = phpAPI();
-
-  const cookie = new Cookies();
 
   const roomCode = cookie.get('roomCode');
   const username = cookie.get('username');
@@ -76,6 +90,18 @@ function SettingsDrawer() {
   //     }
   //   }
   // }, [phpResponse])
+
+  useEffect(() => {
+    cookie.set('explicit', allowExplicit, { path: '/' });
+  }, [allowExplicit])
+
+  useEffect(() => {
+    cookie.set('shuffle', shuffle, { path: '/' });
+  }, [shuffle])
+
+  useEffect(() => {
+    cookie.set('fallback', shuffle, { path: '/' });
+  }, [shuffle])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -120,6 +146,27 @@ function SettingsDrawer() {
     toggleBlocked();
   };
 
+  const handleExplicit = () => {
+    let tmp = allowExplicit;
+    setAllowExplicit(!tmp);
+  }
+
+  const { shuffleSwitch, fallbackSwitch, toggleShuffle, toggleFallback } = useContext( QueueContext );
+
+  const handleShuffle = () => {
+    let tmp = shuffle;
+    setShuffle(!tmp);
+    // console.log("Attempted to toggle shuffleSwitch state");
+    toggleShuffle();
+  }
+
+  const handleFallback = () => {
+    let tmp = disableFallback;
+    setFallback(!tmp);
+    // console.log("Attempted to toggle toggleFallback state");
+    toggleFallback();
+  }
+
   const listStyle = {
     color: "white",
     fontWeight: "bolder",
@@ -158,9 +205,47 @@ function SettingsDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+          {location.hash == '#/callback'
+            ?
+            <>
+            <ListItem key="explicit">
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={allowExplicit ? palette[0] : "white"}
+                colorKnobOnRight={allowExplicit ? palette[0] : "white"}
+                colorSwitch={allowExplicit ? "white" : palette[1]}
+                knobOnLeft={allowExplicit}
+                onChange={handleExplicit}
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
+            </ListItem>
+            <ListItem key="shuffle" >
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={shuffle ? palette[0] : "white"}
+                colorKnobOnRight={shuffle ? palette[0] : "white"}
+                colorSwitch={shuffle ? "white" : palette[1]}
+                knobOnLeft={shuffle}
+                onChange={handleShuffle}
+                id="shuffleQueue"
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Randomize Queue" />
+              </ListItem>
+              <ListItem key="fallback" >
+              <IosSwitchMaterialUi
+                colorKnobOnLeft={disableFallback ? palette[0] : "white"}
+                colorKnobOnRight={disableFallback ? palette[0] : "white"}
+                colorSwitch={disableFallback ? "white" : palette[1]}
+                knobOnLeft={disableFallback}
+                onChange={handleFallback}
+                id="disableFallback"
+              />              
+            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Fallback Queue" />
+              </ListItem>
+            </>
+            :null
+          }
+        </List>
       </Box>
-      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { guestList; toggleGuests() }}>
@@ -174,7 +259,7 @@ function SettingsDrawer() {
           <GuestList />
         </Box>
       </Drawer>
-      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }}>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { blockedSongs; toggleBlocked() }}>
@@ -199,7 +284,7 @@ function SettingsDrawer() {
     <>
       <div id="drawertwo" >
         <button id='drawerButton' onClick={toggleDrawer(true)} style={{ backgroundColor: 'transparent' }}><MenuIcon fontSize="large" style={{ color: 'white' }}/></button>
-        <Drawer PaperProps={{ sx: { background: `linear-gradient(to bottom right, ${palette[0]}, #333333)` } }} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: true }}>
+        <Drawer PaperProps={{ sx: { background: palette[1] }}} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: false }}>
           {DrawerList}
         </Drawer>
       </div>
