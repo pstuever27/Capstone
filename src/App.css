@@ -50,7 +50,7 @@ body {
   margin: 0;
   overflow-y: auto; /* Allows vertical scrolling */
 
-  background: linear-gradient(to bottom right, #12a46c, #333333);
+  background: linear-gradient(to bottom right, #12a46c, #0d4d68);
 }
 
 /***************** CSS FOR THE MAIN CLIENT/HOST SCREEN *****************/
@@ -228,7 +228,7 @@ body {
   width: 100%;
   border-radius: 7px;
   border: none;
-  background-color: grey;
+  background-color: #1189BD;
   color: white;
   transition: box-shadow 0.3s ease-in-out;
   cursor: pointer;
@@ -246,7 +246,7 @@ body {
   border-radius: 7px;
   border: none;
   margin: 10px;
-  background-color: grey;
+  background-color: #1189BD;
   color: white;
   font-weight: 550;
   font-size: 16px;
@@ -649,7 +649,6 @@ h1 {
   height: 100%;
   width: 75px;
   position: absolute;
-  background: linear-gradient(45deg, black, rgb(0, 163, 103));  
   right: 0;
   top: 0;
   z-index: -1;

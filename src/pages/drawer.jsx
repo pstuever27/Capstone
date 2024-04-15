@@ -215,8 +215,9 @@ function SettingsDrawer() {
                 colorSwitch={allowExplicit ? "white" : palette[1]}
                 knobOnLeft={allowExplicit}
                 onChange={handleExplicit}
+								id="allowExplicit"
               />              
-            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Allow Explicit Songs" />
+            <ListItemText primaryTypographyProps={{ style: listStyle, paddingLeft : "13px" }} primary="Allow Explicit Songs" />
             </ListItem>
             <ListItem key="shuffle" >
               <IosSwitchMaterialUi
@@ -227,7 +228,7 @@ function SettingsDrawer() {
                 onChange={handleShuffle}
                 id="shuffleQueue"
               />              
-            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Randomize Queue" />
+            <ListItemText primaryTypographyProps={{ style: listStyle, paddingLeft : "13px" }} primary="Randomize Queue" />
               </ListItem>
               <ListItem key="fallback" >
               <IosSwitchMaterialUi
@@ -238,14 +239,14 @@ function SettingsDrawer() {
                 onChange={handleFallback}
                 id="disableFallback"
               />              
-            <ListItemText primaryTypographyProps={{ style: listStyle }} primary="Fallback Queue" />
+            <ListItemText primaryTypographyProps={{ style: listStyle, paddingLeft : "13px" }} primary="Fallback Queue" />
               </ListItem>
             </>
             :null
           }
         </List>
       </Box>
-      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
+      <Drawer open={guestOpen} onClose={toggleGuests} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { backgroundColor: "black" } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { guestList; toggleGuests() }}>
@@ -259,7 +260,7 @@ function SettingsDrawer() {
           <GuestList />
         </Box>
       </Drawer>
-      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { background: `${ palette[1] }` } }}>
+      <Drawer open={blockedOpen} onClose={toggleBlocked} BackdropProps={{ invisible: true }} variant='perisistent' anchor='right' PaperProps={{ sx: { backgroundColor: "black" } }}>
         <Box sx={{ width: 250 }} role="presentation">
           <ListItem key="back" disablePadding>
             <ListItemButton onClick={() => { blockedSongs; toggleBlocked() }}>
@@ -284,7 +285,7 @@ function SettingsDrawer() {
     <>
       <div id="drawertwo" >
         <button id='drawerButton' onClick={toggleDrawer(true)} style={{ backgroundColor: 'transparent' }}><MenuIcon fontSize="large" style={{ color: 'white' }}/></button>
-        <Drawer PaperProps={{ sx: { background: palette[1] }}} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: false }}>
+        <Drawer PaperProps={{ sx: { background: palette[0] }}} anchor='right' open={open} onClose={toggleDrawer(false)} BackdropProps={{ invisible: false }}>
           {DrawerList}
         </Drawer>
       </div>
