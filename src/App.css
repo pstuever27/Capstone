@@ -153,6 +153,12 @@ body {
   margin: 0;
 }
 
+#qremove {
+  font-size:50px;
+  cursor:pointer;
+  float:inline-end;
+}
+
 #playback_info {
   display: flex;
   flex-direction: row;

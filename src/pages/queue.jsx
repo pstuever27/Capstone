@@ -42,7 +42,10 @@ function Queue() {
             { songQueue?.map( ( song ) => { 
               // return a grid column for the queue render; renders artist name and title
               return( <div id = "queueGridCol" span={ 12 } key={ song.name } >
-                <p id = "qname">{ song.name }</p>
+                <p id = "qname">
+                  { song.name }
+                  <span id = "qremove" onClick={() => { alert("bean"); }} >&times;</span>
+                </p>
                 <p id = "qartists">{ song.artists.map((_artist) => _artist.name).join(", ") }</p>
               </div> );
             } ) } 
