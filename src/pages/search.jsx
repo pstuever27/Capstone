@@ -225,8 +225,6 @@ function Search() {
 
     let explicitSongs = cookie.get('explicit');
 
-    console.log(explicitSongs);
-
     // calling the search api call, appending the search query with with search bar field input
     //  as the track name being requested after the asyncronous promise of the api call is fulfilled, 
     //  we'll perform the callback function below take the json 'data' variable from the SpotifyAPI.js
@@ -239,12 +237,12 @@ function Search() {
       }
       if (!explicitSongs) {
         let filter = data;
-        // data = filter.tracks.items.filter(item => !item.explicit);
+        data = filter.tracks.items.filter(item => !item.explicit);
 
-        setSearchRes(data.tracks.items.map(item => item));
+        setSearchRes(data.map(item => item));
         return;
       }
-      console.log(data);
+      // console.log(data);
 
       // print spotify request json data to the browser's console. 
       // useful for navigating through the json structure with the gui dropdowns as a reference on how 
@@ -306,7 +304,6 @@ function Search() {
 
           {/* clicking button calls the function to add song to queue */}
           <button className="queueButton" onClick={() => blockListRequest('block-list', cookie.get('roomCode'), songChoice.name) } style={{ backgroundColor: palette[1]}}>Add to Queue</button>
-
           {/* clicking button calls the function to block the song from queue */
             location.hash === '#/callback' ?
               <button className="queueButton" onClick={() => blockFromQueue()} style={{ backgroundColor: palette[1] }}>Block</button>

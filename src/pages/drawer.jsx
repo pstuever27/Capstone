@@ -210,10 +210,10 @@ function SettingsDrawer() {
             <>
             <ListItem key="explicit">
               <IosSwitchMaterialUi
-                colorKnobOnLeft={allowExplicit ? palette[0] : "white"}
-                colorKnobOnRight={allowExplicit ? palette[0] : "white"}
-                colorSwitch={allowExplicit ? "white" : palette[1]}
-                knobOnLeft={allowExplicit}
+                colorKnobOnLeft={!allowExplicit ? palette[0] : "white"}
+                colorKnobOnRight={!allowExplicit ? palette[0] : "white"}
+                colorSwitch={!allowExplicit ? "white" : palette[1]}
+                knobOnLeft={!allowExplicit}
                 onChange={handleExplicit}
 								id="allowExplicit"
               />              
