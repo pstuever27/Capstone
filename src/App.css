@@ -157,9 +157,28 @@ body {
   font-size:50px;
   cursor:pointer;
   float:inline-end;
+  opacity:0;
+  transition: opacity ease 0.3s;
 }
 
-.hideDequeueTrack {
+#queueGridCol:hover #qremove {
+  opacity:1;
+}
+
+#playNext {
+  font-size:50px;
+  cursor:pointer;
+  float:inline-start;
+  padding-right: 20px;
+  opacity:0.3;
+  transition: opacity ease 0.3s;
+}
+
+#playNext:hover {
+  opacity:1;
+}
+
+.hideTrackButtons {
   display: none;
 }
 
