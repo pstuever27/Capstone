@@ -58,7 +58,7 @@ function SpotifyPlaylists() {
         setIsLoading(false);
         setTimeout(() => {
             fetchTracks();
-        }, 2500);
+        }, 2000);
     };
     
     const { setFallbackTracks } = useContext( QueueContext );
@@ -67,7 +67,8 @@ function SpotifyPlaylists() {
     const fetchTracks = async () => {
         let playlistID = document.getElementById("selectPlaylist").value;
         if (playlistID === "") {
-            alert("Please fetch playlists first and make sure a playlist is selected.")
+            console.log("Error! Please fetch playlists first and make sure a playlist is selected.");
+            console.log("You may be se  eing message because the SQL server reached max connections!");
             return;
         }
 
