@@ -193,28 +193,28 @@ function NowPlaying() {
 
   const { palette, update } = useContext( PaletteContext );
 
-  const { songQueue, fallbackTracks, shuffleSwitch, fallbackSwitch, dequeue, setQueue, clearQueue, moveRandomToFront } = useContext( QueueContext );
+  const { songQueue, fallbackTracks, dequeue, setQueue, clearQueue, moveRandomToFront } = useContext( QueueContext );
 
   const playNextSong = async (time_to_end) => {
     // adjustable variable for the sake that Spotify's currently playing switches when crossfade starts
     // making it super hard to squeeze the next song in before the current song ends
     let crossfade_stupid = 6200; // right now, it seems like a good area is ~4.2s greater than crossfade.
 
-    // ADDING FROM FALLBCAK
-    if (songQueue.length === 0 && fallbackSwitch) {
-      // console.log("Queue is empty, pulling from fallbackTracks");
-      // Handle the case where the queue is empty
-      if (fallbackTracks.length > 0) {
-        const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
-        addToQueue(fallbackTracks[randomIndex]);
-      } else {
-        // console.log("haha if you see this, you need to select a playlist and then hit \"Get Tracks of Selected Playlist\"");
+    // ADDING FROM FALLBACK
+    if (songQueue.length === 0) {
+      // CHECKS FALLBACK ENABLED OR NOT
+      if (cookie.get("fallback")) {
+        // CHECKS FALLBACK NOT EMPTY
+        if (fallbackTracks.length > 0) {
+          const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+          addToQueue(fallbackTracks[randomIndex]);
+        }
       }
     // ADDING FROM QUEUE
     } else {
       if (time_to_end < crossfade_stupid) {
         // Shuffle Queue
-        if (shuffleSwitch) {
+        if (cookie.get("shuffle")) {
           const randomIndex = Math.floor(Math.random() * songQueue.length);
           const selectedSong = songQueue[randomIndex];
           const shuffledQueue = songQueue.filter(song => song !== selectedSong);
@@ -229,7 +229,7 @@ function NowPlaying() {
       } else {
         setTimeout(() => {
           // Shuffle Queue
-          if (shuffleSwitch) {
+          if (cookie.get("shuffle")) {
             const randomIndex = Math.floor(Math.random() * songQueue.length);
             const selectedSong = songQueue[randomIndex];
             const shuffledQueue = songQueue.filter(song => song !== selectedSong);
