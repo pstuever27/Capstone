@@ -48,8 +48,6 @@ const QueueContext = createContext( {
   clearFallbackTracks: () => {},
   addBlocklist: () => {},
   clearBlocklist: () => {},
-  toggleShuffle: () => {},
-  toggleFallback: () => {},
 } );
 
 export default QueueContext;
