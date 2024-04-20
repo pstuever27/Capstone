@@ -104,8 +104,8 @@ function SettingsDrawer() {
   }, [shuffle])
 
   useEffect(() => {
-    cookie.set('fallback', shuffle, { path: '/' });
-  }, [shuffle])
+    cookie.set('fallback', disableFallback, { path: '/' });
+  }, [disableFallback])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -155,18 +155,14 @@ function SettingsDrawer() {
     setAllowExplicit(!tmp);
   }
 
-  const { shuffleSwitch, fallbackSwitch, toggleShuffle, toggleFallback } = useContext( QueueContext );
-
   const handleShuffle = () => {
     let tmp = shuffle;
     setShuffle(!tmp);
-    toggleShuffle();
   }
 
   const handleFallback = () => {
     let tmp = disableFallback;
     setFallback(!tmp);
-    toggleFallback();
   }
 
   const listStyle = {
@@ -225,20 +221,19 @@ function SettingsDrawer() {
               <IosSwitchMaterialUi
                 ccolorKnobOnLeft= "white"
 								colorKnobOnRight = {palette[0]}
-                colorSwitch={ shuffle ? hexToRgb( "#c4c4c4" ) : "white" }
-                knobOnLeft={shuffle}
-
+                colorSwitch={ !shuffle ? hexToRgb( "#c4c4c4" ) : "white" }
+                knobOnLeft={!shuffle}
                 onChange={handleShuffle}
                 id="shuffleQueue"
               />              
-            <ListItemText primaryTypographyProps={{ style: listStyle, paddingLeft : "13px" }} primary="Randomize Queue" />
+            <ListItemText primaryTypographyProps={{ style: listStyle, paddingLeft : "13px" }} primary="Shuffled Queue" />
               </ListItem>
               <ListItem key="fallback" >
               <IosSwitchMaterialUi
                 colorKnobOnLeft= "white"
 								colorKnobOnRight = {palette[0]}
-                colorSwitch={ disableFallback ? hexToRgb( "#c4c4c4" ) : "white" }
-                knobOnLeft={disableFallback}
+                colorSwitch={ !disableFallback ? hexToRgb( "#c4c4c4" ) : "white" }
+                knobOnLeft={!disableFallback}
                 onChange={handleFallback}
                 id="disableFallback"
               />              
