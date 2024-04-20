@@ -282,7 +282,7 @@ function Splash()
                 cookie.set('username', username, { path: '/' });
                 cookie.set('explicit', true, { path: '/' });
                 cookie.set('shuffle', false, { path: '/' })
-                cookie.set('fallback', false, { path: '/' })
+                cookie.set('fallback', true, { path: '/' })
                 //"skipLock" session storage cookie is needed for host too for the majority vote mechanism (more details in comments of NowPlaying.jsx)
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
                 sessionStorage.setItem('replayLock', 'unlocked'); //initializes replayLock to be unlocked when first entering site
