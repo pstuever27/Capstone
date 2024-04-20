@@ -12,6 +12,9 @@
  * Date Revised: 4/15/2024
  * Revision: Chinh Nguyen - Updated handling of switch toggles for shuffle queue, added new switch Fallback Queue to drawer with similar handling as shuffle queue, added QueueContext to component
  * 
+ * Date Revised: 4/19/2024
+ * Revision: Nicholas Nguyen - fixed toggle buttons; knobs now have color depending on whether they're activated
+ * 
  * Preconditions: Created or joined a room and on home page.
  *  @inputs : None 
  * Postconditions: Renders collapsable drawer with functional buttons. 
@@ -41,7 +44,7 @@ import LogoutIcon from '../images/logout.png';
 import LoginIcon from '../images/enter.png';
 import BackIcon from '../images/back.png';
 import Divider from '@mui/material/Divider';
-import { ListItemIcon, Menu } from "@mui/material";
+import { ListItemIcon, Menu, darken, hexToRgb } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useLocation } from 'react-router-dom'
 import Switch from '@mui/material/Switch';
@@ -55,6 +58,7 @@ import { useSelector } from "react-redux";
 import GuestList from "./guestList";
 import BlockList from "./blockList";
 import QueueContext from './queueContext'; 
+import { rgba } from "@mantine/core";
 
 function SettingsDrawer() {
 
@@ -156,14 +160,12 @@ function SettingsDrawer() {
   const handleShuffle = () => {
     let tmp = shuffle;
     setShuffle(!tmp);
-    // console.log("Attempted to toggle shuffleSwitch state");
     toggleShuffle();
   }
 
   const handleFallback = () => {
     let tmp = disableFallback;
     setFallback(!tmp);
-    // console.log("Attempted to toggle toggleFallback state");
     toggleFallback();
   }
 
@@ -210,9 +212,9 @@ function SettingsDrawer() {
             <>
             <ListItem key="explicit">
               <IosSwitchMaterialUi
-                colorKnobOnLeft={!allowExplicit ? palette[0] : "white"}
-                colorKnobOnRight={!allowExplicit ? palette[0] : "white"}
-                colorSwitch={!allowExplicit ? "white" : palette[1]}
+								colorKnobOnLeft= "white"
+								colorKnobOnRight = {palette[0]}
+                colorSwitch={ !allowExplicit ? hexToRgb( "#c4c4c4" ) : "white" }
                 knobOnLeft={!allowExplicit}
                 onChange={handleExplicit}
 								id="allowExplicit"
@@ -221,10 +223,11 @@ function SettingsDrawer() {
             </ListItem>
             <ListItem key="shuffle" >
               <IosSwitchMaterialUi
-                colorKnobOnLeft={shuffle ? palette[0] : "white"}
-                colorKnobOnRight={shuffle ? palette[0] : "white"}
-                colorSwitch={shuffle ? "white" : palette[1]}
+                ccolorKnobOnLeft= "white"
+								colorKnobOnRight = {palette[0]}
+                colorSwitch={ shuffle ? hexToRgb( "#c4c4c4" ) : "white" }
                 knobOnLeft={shuffle}
+
                 onChange={handleShuffle}
                 id="shuffleQueue"
               />              
@@ -232,9 +235,9 @@ function SettingsDrawer() {
               </ListItem>
               <ListItem key="fallback" >
               <IosSwitchMaterialUi
-                colorKnobOnLeft={disableFallback ? palette[0] : "white"}
-                colorKnobOnRight={disableFallback ? palette[0] : "white"}
-                colorSwitch={disableFallback ? "white" : palette[1]}
+                colorKnobOnLeft= "white"
+								colorKnobOnRight = {palette[0]}
+                colorSwitch={ disableFallback ? hexToRgb( "#c4c4c4" ) : "white" }
                 knobOnLeft={disableFallback}
                 onChange={handleFallback}
                 id="disableFallback"

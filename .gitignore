@@ -71,3 +71,6 @@ Splash Screen/Server/require/error.php
 Splash Screen/Server/require/sql.php
 FrontEndReact_Dev/client.json
 FrontEndReact_Dev/data/
+data/.accessToken
+data/.refreshToken
+data/.roomCode

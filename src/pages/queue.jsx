@@ -13,6 +13,9 @@
 // Revised on: 04/19/2024
 // Revision: Kieran added a play next up arrow button that moves the song to the top of the queue
 //
+// Revised on: 04/19/2024
+// Revision: Nicholas surrounded the arrow symbol with a b tag to manipulate later in CSS
+//
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Handles queue data structure and rendering
@@ -61,7 +64,7 @@ function Queue() {
                       const modifiedQueue = songQueue.filter(songs => songs !== song); //first we remove the track from where it is
                       let front = [song]; 
                       setQueue(front.concat(modifiedQueue)); //puts song to the front so it can be played next, and updates the queue with these changes
-                    }} >&#10514;</span> {/* "&#10514;" renders the up-arrow-bar symbol on the screen as a play next symbol to be clicked */}
+                    }} ><b>&#10514;</b></span> {/* "&#10514;" renders the up-arrow-bar symbol on the screen as a play next symbol to be clicked */}
                     
                     { song.name }
                     
@@ -73,6 +76,8 @@ function Queue() {
                   <p id = "qartists">
                     { song.artists.map((_artist) => _artist.name).join(", ") }
                   </p>
+
+									
                 </div> );
               } ) } 
           </div>

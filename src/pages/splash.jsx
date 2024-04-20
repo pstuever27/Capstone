@@ -25,6 +25,8 @@
  *  Revision: Added session storage initialization for more secure skiplock mechanism
  * Date Revised: 4/05/2024 - Kieran Delaney
  *  Revision: Added session storage initialization for replayLock mechanism
+ * Date Revised: 4/19/2024 - Nicholas Nguyen
+ * 	Revision: Wrapped the entire container in another div to center the splash screen on mobile despite media queries
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -127,7 +129,6 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                 } );
-                // console.log( "black" );
             }
 
             else
@@ -141,7 +142,6 @@ function Splash()
                 setButtonColor( prev => {
                     return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "tealText" );
                 } );
-                // console.log( "teal" );
             }
 
             // handle focus advancement of input boxes once a valid input is given
@@ -184,7 +184,6 @@ function Splash()
             // prevent name entry on incomplete code entry
             if( roomCode.join("").length < 4 ) 
             {
-                // console.log( "silly goose" );
                 return;
             }
             makeRequest("join", roomCode.join(""));
@@ -209,7 +208,6 @@ function Splash()
         for (var i = 0; i < 4; i++) {
             code += chars[Math.floor(Math.random() * chars.length)];
         }
-        // // console.log(code); //Console log for dev purposes
         return code;
     };
 
@@ -222,7 +220,6 @@ function Splash()
             setHostJoinSuccess(true); //Set the hostJoinSuccess state to true
         }
         else { //Doesn't get hit right now, after spotify integration it will be fixed.
-            // console.log("Doing spotify login flow...");
             //Call spotify login flow and store necessary info there
         }
     }
@@ -258,24 +255,20 @@ function Splash()
         if (phpResponse) {
             // Case for good room code on join
             if (phpResponse.status == 'ok_join') {
-                // console.log("good!");
                 cookie.set('roomCode', roomCode.join(""), { path: '/' });
             }
             //Case for good room code generation on host 
             if (phpResponse.status == 'ok_host') {
-                // console.log("good host!");
                 dispatch(setCode(hostCode));
             }
             //Error handling
             else if (phpResponse.status == 'error') {
-                // console.log(phpResponse.error); // This will need to be replaced with front-end error box
                 if (phpResponse.error == 'Bad host code!') {
                     // genCode();
                 }
             }
             // Case for good name entry on join
             else if (phpResponse.status == "good_name") {
-                // console.log("moving on!");
                 cookie.set('username', username, { path: '/' });
                 //"skipLock" session storage cookie is a boolean save state for ensuring that a user can only submit one vote towards skipping the current track. it is stored in cookies to ensure it won't be unlocked by refreshing the page
                 sessionStorage.setItem('skipLock', 'unlocked'); //initializes skiplock to be unlocked when first entering site
@@ -285,7 +278,6 @@ function Splash()
             }
             // Case for good name entry on host. Shouldn't fail unless there's server error
             else if (phpResponse.status == "good_host_name") {
-                // console.log("Host good!");
                 cookie.set('roomCode', roomCode, { path: '/' });
                 cookie.set('username', username, { path: '/' });
                 cookie.set('explicit', true, { path: '/' });
@@ -302,64 +294,68 @@ function Splash()
     // Finally, this component will return divs with all the necessary inputs and buttons
     return (
         // contains all the elements on the page
-        <div id = "main-container">
-            {/*Contains the name entry text field*/}
-            
-            { hostJoinSuccess ? 
-                (<div id = "hidden-name" style={{opacity: 1}}>
-                    <input type="text" 
-                        className="name-input"
-                        minLength={3}
-                        // placeholder="What's your name?"
-                        placeholder = { placeholderName }
-                        onFocus = { handleFocus }
-                        onBlur = { handleBlur}
-                        onChange={ e => handleNameChange( e ) }/><b id = "hand" onClick={ sync }>&#9758;</b>
-                </div> )
+				<div id = "center-splash">
+					<div id = "main-container">
+							{/*Contains the name entry text field*/}
+							
+							{ hostJoinSuccess ? 
+									(<div id = "hidden-name" style={{opacity: 1}}>
+											<input type="text" 
+													className="name-input"
+													minLength={3}
+													// placeholder="What's your name?"
+													placeholder = { placeholderName }
+													onFocus = { handleFocus }
+													onBlur = { handleBlur}
+													// allows user to press enter to submit name
+													onKeyDown={ e => { if ( e.key === "Enter" ) { sync() } } }
+													onChange={ e => handleNameChange( e ) }/><b id = "hand" onClick={ sync }>&#9758;</b>
+									</div> )
 
-            : 
-            
-            (
-                <div id = "welcome">
-                    {/* container holds the input boxes to collect user input */}
-                    <div id="code-input-container">
-                        {/* code.map "lays out" the input fields for our code input.
-                        think of it like rendering each code input box */}
-                        {placeholderCode.map((code_char, index) => (
-                            <input
-                                className={inputColor.join(" ")}
-                                type="text"
-                                maxLength="1"
-                                key={index}
-                                placeholder={placeholderCode[index]}
-                                ref={boxRefs[index]}
-                                onChange={e => handleCodeChange(e, index)}
-                                onKeyDown={e => handleBackTrack(e, index)}
-                            />
-                        ))}
-                    </div>
-                    
-                    <button 
-                        className={buttonColor.join(" ")}
-                        onClick={sync} 
-                        id="sync-button"
-                    >SYNC</button>
-        
-                    {/* Contains the 'host a room' button
-                        On clicking this, a roomCode will be generated and name input will be requested.
-                        Finally, the information will be stored in the mySQL server */}
-                    <div id="host-button-container">
-                        <button
-                            className="tealText"
-                            onClick={host}
-                            id="host-button"
-                        >Host a Room</button>
-                    </div>
-                </div>
-            )}
+							: 
+							
+							(
+									<div id = "welcome">
+											{/* container holds the input boxes to collect user input */}
+											<div id="code-input-container">
+													{/* code.map "lays out" the input fields for our code input.
+													think of it like rendering each code input box */}
+													{placeholderCode.map((code_char, index) => (
+															<input
+																	className={inputColor.join(" ")}
+																	type="text"
+																	maxLength="1"
+																	key={index}
+																	placeholder={placeholderCode[index]}
+																	ref={boxRefs[index]}
+																	onChange={e => handleCodeChange(e, index)}
+																	onKeyDown={e => handleBackTrack(e, index)}
+															/>
+													))}
+											</div>
+											
+											<button 
+													className={buttonColor.join(" ")}
+													onClick={sync} 
+													id="sync-button"
+											>SYNC</button>
+					
+											{/* Contains the 'host a room' button
+													On clicking this, a roomCode will be generated and name input will be requested.
+													Finally, the information will be stored in the mySQL server */}
+											<div id="host-button-container">
+													<button
+															className="tealText"
+															onClick={host}
+															id="host-button"
+													>Host a Room</button>
+											</div>
+									</div>
+							)}
 
-                
-        </div>
+									
+					</div>
+				</div>	
     );
 }
 

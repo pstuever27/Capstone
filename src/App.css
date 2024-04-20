@@ -16,6 +16,11 @@
  Revision on: 02/25/24
  Revision: Kieran added CSS code for styling skip button when it's locked to make it apparent to end-user that their skip vote went through 
             (the skip button fades in opacity, doesn't have click cursor or movement on hover)
+ Revision on: 04/19/2024
+ Revision: Nicholas fixed several bugs with the splash screen and added final UI improvements and modifications to overall styling and functionality of some elements.
+						Additionally completed mobile UI styling and finished media queries.
+ 
+
  Postconditions: Sets styling specifications for rendering webpage content
  Error conditions: None
  Side effects: No known side effects
@@ -159,6 +164,7 @@ body {
   float:inline-end;
   opacity:0;
   transition: opacity ease 0.3s;
+	translate: 0 -20px;
 }
 
 #queueGridCol:hover #qremove {
@@ -172,10 +178,16 @@ body {
   padding-right: 20px;
   opacity:0.3;
   transition: opacity ease 0.3s;
+	translate: 0 -20px;
 }
 
 #playNext:hover {
   opacity:1;
+}
+
+#playNext b {
+	font-size: 32px;
+	margin-bottom:20px;
 }
 
 .hideTrackButtons {
@@ -462,22 +474,36 @@ h1 {
     display: block;
   }
 
+	#drawerDiv {
+		overflow: hidden;
+		position: fixed;
+	}
+
   h1 { 
     position: relative;
     padding-top: 0;
   }
 
   .third > div {
-    height: 100vh;
+    height: 130vh;
   }
   
   #searchBox {
     width: 80vw;
   }
 
+	#panel-3 {
+		max-height: 160%;
+		height: 160%;
+	}
+
   #searchResults {
     width: 81vw;
   }
+
+	#welcome {
+		flex-direction: column;
+	}
 }
 
 @media ( max-height: 1080px ) {
@@ -507,6 +533,17 @@ h1 {
   margin: 2px;
   /* set 2px margin on all sides so input
      boxes aren't touching each other */
+}
+
+#center-splash {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	border-style: none;
+	border-color: Red;
+	margin: 0;
+	height: 100vh;
+	z-index: 5;
 }
 
 #host-button-container {

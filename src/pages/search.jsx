@@ -21,6 +21,8 @@
 // Revision: Chinh removed Shuffle Queue button
 // Revised on: 4/15/2024
 // Revision: Chinh removed Shuffle Queue checkbox (moved to drawer.jsx!)
+// Revised on: 4/19/2024
+// Revision: Nicholas removed console.log statements
 // Preconditions: Must have npm and node installed to run in dev environment. 
 //                Also see SpotifyAPI.js for its preconditions.
 // Postconditions: Renders searchbar which allows searching songs from spotify and 
@@ -242,7 +244,6 @@ function Search() {
         setSearchRes(data.map(item => item));
         return;
       }
-      // console.log(data);
 
       // print spotify request json data to the browser's console. 
       // useful for navigating through the json structure with the gui dropdowns as a reference on how 
@@ -268,8 +269,6 @@ function Search() {
 
   
   useEffect(() => {
-    // console.log("Previous:", previousQueue);
-    // console.log("Current:", songQueue);
     if (songQueue && (songQueue != previousQueue)) {
       addQueueRequest('update-queue', cookie.get("roomCode"), songQueue);
     }
