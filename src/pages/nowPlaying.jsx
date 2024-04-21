@@ -306,6 +306,9 @@ function NowPlaying() {
         setQueue(queueResponse);
         // console.log("Local:", songQueue);
       }
+      else {
+        clearQueue(); //Getting here means there's no queue
+      }
       // console.log("Local:", songQueue);
     }
 

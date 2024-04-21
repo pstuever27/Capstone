@@ -34,10 +34,15 @@ $status = 'wait';
 $stmt = $mysql->prepare('SELECT id FROM client WHERE userName = ? AND roomCode = ?');
 //ping command
 $ping = $mysql->prepare('UPDATE client SET ping = ? WHERE userName = ? AND roomCode = ?');
+//Getting room info
+$room = $mysql->prepare('SELECT * FROM room WHERE roomCode = ?');
+
 //Set parameter to 'roomCode' from JS call
 $stmt->bind_param('ss', $_POST['username'], $_POST['roomCode']);
 //ping parameters
 $ping->bind_param('iss', $timestamp, $_POST['username'], $_POST['roomCode']);
+//Room parameters
+$room->bind_param('s', $_POST['roomCode']);
 
 //Execute SQL 
 $stmt->execute();
@@ -48,6 +53,12 @@ $row = mysqli_fetch_row($result);
 $result->free_result();
 
 $ping->execute(); //send ping timestamp so host can know if guest is no longer active if they aren't pinging
+
+$room->execute();
+$roomResult = $room->get_result();
+$roomRow = $roomResult->fetch_assoc();
+
+$explicit = $roomRow['explicit'];
 
 //If the row doesn't exist or there was no result, then the room doesn't exist. Error out
 if (!$result || !$row) {
@@ -73,6 +84,7 @@ else {
     //Set up JSON to respond with
     $response = [
         'roomCode' => $roomCode,
+        'explicit' => $explicit,
         'status' => $status,
     ];
 

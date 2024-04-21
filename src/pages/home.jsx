@@ -58,8 +58,8 @@ function Home() {
   const [blocklist, modBlocklist] = useState([]);
   
   // Hook that grabs the makeRequest function and phpResponse state from phpAPI
-  const { makeRequest } = phpAPI();
-  
+  const { makeRequest, phpResponse } = phpAPI();
+
   // const { toggleDrawer } = SettingsDrawer();
   
   const cookie = new Cookies(); //Using cookies for information passing
@@ -74,6 +74,14 @@ function Home() {
   const location = useLocation(); //Window location in react-router
 
   dispatch(setCode(cookie.get('roomCode'))); //Reset the roomCode in redux to the cookie's stored value
+
+  useEffect(() => {
+    if (phpResponse?.explicit) {
+      if (phpResponse.explicit != cookie.get('explicit')) {
+        cookie.set('explicit', Boolean(phpResponse.explicit), { path: '/' });
+      }
+    }
+  },[phpResponse])
 
   //UseEffect will check if the room is currently open, but only from the guest's point of view
   useEffect(() => { //this is VERY important for multiple functions: automatically sends user back to splash screen if the host closes the room, AND sends a ping timestamp for the guest to the database so the host can detect whether they're still active or if they've left and should be automatically kicked for inactivity

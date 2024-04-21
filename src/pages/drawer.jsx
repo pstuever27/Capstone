@@ -97,6 +97,7 @@ function SettingsDrawer() {
 
   useEffect(() => {
     cookie.set('explicit', allowExplicit, { path: '/' });
+    makeRequest('setExplicit', cookie.get('roomCode'), allowExplicit);
   }, [allowExplicit])
 
   useEffect(() => {
