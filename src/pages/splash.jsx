@@ -28,7 +28,7 @@
  * Date Revised: 4/19/2024 - Nicholas Nguyen
  * 	Revision: Wrapped the entire container in another div to center the splash screen on mobile despite media queries
  * Date Revised: 4/21/2024 - Kieran Delaney
- * 	Revision: Added ability to paste the room code into the room code text field
+ * 	Revision: Added ability to paste the room code into the room code text field, and enter key listening for room code sync button
  * 
  * Preconditions: 
  *  @inputs : None 
@@ -172,6 +172,9 @@ function Splash()
             // focus onto the previous box
             boxRefs[ index - 1 ].current.focus();
         }
+        else if ( e.key === 'Enter'){
+            sync();
+        }
     };
 
     // handle changing the name of the room or user
@@ -254,7 +257,7 @@ function Splash()
 
     //added useeffect for allowing for being able to paste code into field rather than manually typing
     useEffect(() => {
-        document.addEventListener('paste', (ev) => {
+        const pasteCode = (ev) => {
             if(!hostJoinSuccess){ //only on the enter room code screen
                 ev.preventDefault();
                 let pastedText = (ev.clipboardData || window.clipboardData).getData('text');
@@ -281,44 +284,19 @@ function Splash()
                     setButtonColor( prev => {
                         return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
                     } );
+
+                    boxRefs[3].current.focus(); //allows us to be able to hit enter key to run sync function, as the focus is on the input field so the onkeydown will run for that
                 }
             }
-        });
+        }
+
+        document.addEventListener('paste', pasteCode);
       
-          // Clean up the event listener when the component unmounts
-          return () => {
-            window.removeEventListener('paste', (ev) => {
-                if(!hostJoinSuccess){ //only on the enter room code screen
-                    ev.preventDefault();
-                    let pastedText = (ev.clipboardData || window.clipboardData).getData('text');
-    
-                    pastedText = pastedText.toUpperCase();
-                    //remove any trailing spaces or other whitespace
-                    pastedText = pastedText.replace(/\s+/g, '');
-    
-                    if(pastedText.length == 4 && regex.test( pastedText )){ //room codes are 4 characters long and meets our regex room code format requirements                    
-                        //convert the string into an array for inputting into the placeholder on the screen
-                        pastedText = pastedText.split(''); //pastedText is now of array type
-                        // now that it's an array, we can set the global roomCode to this current code
-                        dispatch(setCode(pastedText));
-                        
-                        //places each character into the fields on the screen
-                        pastedText.map((char, index) => {
-                            boxRefs[ index ].current.value = char;
-                        })
-    
-                        //sets UI so show room code added and allow sync button to be pressed
-                        setInputColor( prev => {
-                            return inputColor.filter( item => item !== "tealBackground" && item !== "blackBackground" ).concat( "blackBackground" );
-                        } );
-                        setButtonColor( prev => {
-                            return buttonColor.filter( item => item !== "tealText" && item !== "blackText" ).concat( "blackText" );
-                        } );
-                    }
-                }
-            });
-          };
-    }, [hostJoinSuccess])
+        // Clean up the event listener when the component unmounts
+        return () => {
+            document.removeEventListener('paste', pasteCode);
+        };
+    }, []) //empty dependency array so that this unmounts the event listener properly. tested it and we are able to paste again once we get into the homepage after typing your name and joining the room
 
     // Watches the phpResponse state and triggers when it's changed
     useEffect(() => {
